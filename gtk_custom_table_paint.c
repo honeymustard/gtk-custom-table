@@ -383,7 +383,22 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
 
                     font_temp = priv->table_cols[j]->meta->font;
                 }
-                 
+
+                /* determine background image */
+                if(priv->table_rows[i]->cell[j]->meta->has_bg_image == TRUE) {
+
+                    char *bg_image = priv->table_rows[i]->cell[j]->meta->bg_image;
+
+                    cairo_save(cr);
+                    cairo_surface_t *t;
+                    t = cairo_image_surface_create_from_png(bg_image);
+                    cairo_set_source_surface(cr, t, 
+                        priv->table_column_offset_temp[j] + 10, 
+                        offset + 5);
+                    cairo_paint(cr);
+                    cairo_restore(cr);
+                }
+                     
                 /* BEGIN PANGO RENDERING */
 
                 PangoLayout *layout = NULL;
