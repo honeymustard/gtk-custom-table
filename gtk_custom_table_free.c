@@ -19,7 +19,6 @@
 
 
 #include "gtk_custom_table.h"
-#include <stdlib.h>
 
 
 /**
@@ -33,7 +32,7 @@ void gtk_custom_table_free_cells(GtkCustomTablePrivate *priv) {
     /* free memory occupied by table cells */
     for(i = 0; i < (priv->table_x * priv->table_y); i++) {
 
-        /* free cell text */
+        /* free cell text and image */
         if(priv->table_cell[i]->text != NULL) {
             free(priv->table_cell[i]->text);
         }

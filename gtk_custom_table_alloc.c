@@ -58,9 +58,11 @@ void gtk_custom_table_alloc(GtkCustomTablePrivate *priv, int cols, int rows,
         priv->table_cell[i]->text = NULL;
         priv->table_cell[i]->meta = malloc(sizeof(struct table_meta));
         priv->table_cell[i]->meta->font = NULL;
+        priv->table_cell[i]->meta->bg_image = NULL;
         priv->table_cell[i]->meta->align = PANGO_ALIGN_NONE;
         priv->table_cell[i]->meta->graphable = FALSE;
         priv->table_cell[i]->meta->has_bg_color = FALSE;
+        priv->table_cell[i]->meta->has_bg_image = FALSE;
 
         for(k = 0; k < 3; k++) {
             priv->table_cell[i]->meta->graph[k] = rgb_graph[k];
@@ -73,9 +75,11 @@ void gtk_custom_table_alloc(GtkCustomTablePrivate *priv, int cols, int rows,
         priv->table_rows[i] = malloc(sizeof(struct table_rows));
         priv->table_rows[i]->meta = malloc(sizeof(struct table_meta));
         priv->table_rows[i]->meta->font = NULL;
+        priv->table_rows[i]->meta->bg_image = NULL;
         priv->table_rows[i]->meta->align = PANGO_ALIGN_NONE;
         priv->table_rows[i]->meta->graphable = FALSE;
         priv->table_rows[i]->meta->has_bg_color = FALSE;
+        priv->table_rows[i]->meta->has_bg_image = FALSE;
 
         priv->table_rows[i]->row_genesis = i;
 
@@ -99,9 +103,11 @@ void gtk_custom_table_alloc(GtkCustomTablePrivate *priv, int cols, int rows,
         priv->table_cols[i] = malloc(sizeof(struct table_cols));
         priv->table_cols[i]->meta = malloc(sizeof(struct table_meta));
         priv->table_cols[i]->meta->font = PANGO_DEFAULT_FONT;
+        priv->table_cols[i]->meta->bg_image = NULL;
         priv->table_cols[i]->meta->align = PANGO_ALIGN_LEFT;
         priv->table_cols[i]->meta->graphable = FALSE;
         priv->table_cols[i]->meta->has_bg_color = FALSE;
+        priv->table_cols[i]->meta->has_bg_image = FALSE;
 
         for(k = 0; k < 3; k++) {
             priv->table_cols[i]->meta->graph[k] = rgb_graph[k];
