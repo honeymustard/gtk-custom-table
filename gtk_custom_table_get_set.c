@@ -142,6 +142,24 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
 
 
 /**
+ * set background-image to specific cell..
+ * @param GtkWidget *table    current table
+ * @param int col             column 
+ * @param int row             row
+ * @param char *filename      image filename
+ */
+void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row, 
+    char *filename) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->table_rows[row]->cell[col]->meta->bg_image = filename;
+    priv->table_rows[row]->cell[col]->meta->has_bg_image = TRUE;
+}
+
+
+/**
  * mark a column as graphable.. i.e. integers will show up as graph..
  * @param GtkWidget *table    current table
  * @param int col             column 
