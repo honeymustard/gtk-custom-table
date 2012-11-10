@@ -65,9 +65,11 @@ struct _GtkCustomTableClass {
 struct table_meta {
 
     char *font;
+    char *bg_image;
     double color[3];
     double graph[3];
     gboolean graphable;
+    gboolean has_bg_image;
     gboolean has_bg_color;
     PangoAlignment align;
 };
@@ -178,6 +180,8 @@ void gtk_custom_table_resize(GtkWidget *table, int cols,
 void gtk_custom_table_free(GtkWidget *table);
 
 /* public getters and setters */
+void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row, 
+    char *filename);
 void gtk_custom_table_set_cell_color(GtkWidget *table, int col, 
     int row, double rgb[]);
 void gtk_custom_table_set_row_color(GtkWidget *table, int row, 
