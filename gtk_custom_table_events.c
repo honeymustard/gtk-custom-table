@@ -132,7 +132,8 @@ gboolean gtk_custom_table_expose(GtkWidget *table, GdkEventExpose *event) {
     /* use invalidate_rect here to combat smooth-scroll lag on windows */
     if(priv->table_scroll_lock == 0) {
 
-        gdk_window_invalidate_rect(GDK_WINDOW(table->window), NULL, TRUE);
+        gdk_window_invalidate_rect(GDK_WINDOW(table->window), 
+            &table->allocation, TRUE);
         priv->table_scroll_lock = 1;
 
         return FALSE;
