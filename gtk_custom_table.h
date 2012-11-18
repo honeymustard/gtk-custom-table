@@ -27,8 +27,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
-#include "strnatcmp/strnatcmp.h"
-
 
 #define GTK_TYPE_CUSTOM_TABLE             (gtk_custom_table_get_type ())
 #define GTK_CUSTOM_TABLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CUSTOM_TABLE, GtkCustomTable))
