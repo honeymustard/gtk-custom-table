@@ -104,7 +104,7 @@ void gtk_custom_table_alloc(GtkCustomTablePrivate *priv, int cols, int rows,
         priv->table_cols[i]->meta = malloc(sizeof(struct table_meta));
         priv->table_cols[i]->meta->font = PANGO_DEFAULT_FONT;
         priv->table_cols[i]->meta->bg_image = NULL;
-        priv->table_cols[i]->meta->align = PANGO_ALIGN_LEFT;
+        priv->table_cols[i]->meta->align = PANGO_ALIGN_RIGHT;
         priv->table_cols[i]->meta->graphable = FALSE;
         priv->table_cols[i]->meta->has_bg_color = FALSE;
         priv->table_cols[i]->meta->has_bg_image = FALSE;
