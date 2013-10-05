@@ -52,16 +52,16 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
     priv->table_col_primary = 2;
 
     /* create header & footer */
-    priv->table_head = malloc(sizeof(struct table_rows));
-    priv->table_foot = malloc(sizeof(struct table_rows));
+    priv->table_head = malloc(sizeof(TableRows));
+    priv->table_foot = malloc(sizeof(TableRows));
 
-    priv->table_head->cell = malloc(sizeof(struct table_cell *) * cols); 
-    priv->table_foot->cell = malloc(sizeof(struct table_cell *) * cols); 
+    priv->table_head->cell = malloc(sizeof(TableCell *) * cols); 
+    priv->table_foot->cell = malloc(sizeof(TableCell *) * cols); 
 
     int i = 0;
     int j = 0;
 
-    priv->table_head->meta = malloc(sizeof(struct table_meta));
+    priv->table_head->meta = malloc(sizeof(TableMeta));
     priv->table_head->meta->font = NULL;
     priv->table_head->meta->bg_image = NULL;
     priv->table_head->meta->align = PANGO_ALIGN_NONE;
@@ -75,7 +75,7 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
         priv->table_head->meta->color[i] = rgb_cell[i];
     }
 
-    priv->table_foot->meta = malloc(sizeof(struct table_meta));
+    priv->table_foot->meta = malloc(sizeof(TableMeta));
     priv->table_foot->meta->font = NULL;
     priv->table_foot->meta->bg_image = NULL;
     priv->table_foot->meta->align = PANGO_ALIGN_NONE;
@@ -92,10 +92,10 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
     for(i = 0; i < cols; i++) {
 
         /* create new table cell */
-        priv->table_head->cell[i] = malloc(sizeof (struct table_cell));
+        priv->table_head->cell[i] = malloc(sizeof(TableCell));
         priv->table_head->cell[i]->text = NULL;
 
-        priv->table_head->cell[i]->meta = malloc(sizeof(struct table_meta));
+        priv->table_head->cell[i]->meta = malloc(sizeof(TableMeta));
         priv->table_head->cell[i]->meta->font = NULL;
         priv->table_head->cell[i]->meta->bg_image = NULL;
         priv->table_head->cell[i]->meta->align = PANGO_ALIGN_NONE;
@@ -109,10 +109,10 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
             priv->table_head->cell[i]->meta->color[j] = rgb_cell[j];
         }
 
-        priv->table_foot->cell[i] = malloc(sizeof (struct table_cell));
+        priv->table_foot->cell[i] = malloc(sizeof(TableCell));
         priv->table_foot->cell[i]->text = NULL;
 
-        priv->table_foot->cell[i]->meta = malloc(sizeof(struct table_meta));
+        priv->table_foot->cell[i]->meta = malloc(sizeof(TableMeta));
         priv->table_foot->cell[i]->meta->font = NULL;
         priv->table_foot->cell[i]->meta->bg_image = NULL;
         priv->table_foot->cell[i]->meta->align = PANGO_ALIGN_NONE;
@@ -127,7 +127,10 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
         }
     }
 
-    gtk_custom_table_alloc(priv, cols, rows, column_widths);
+    priv->table_x = cols;
+    priv->table_y = rows;
+
+    gtk_custom_table_alloc(table, column_widths);
 
     return table;
 }

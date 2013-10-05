@@ -37,37 +37,37 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
     }
     else {
         priv->table_max_width = table->allocation.width;
+        gtk_custom_table_calc(table);
     }
-
-    gtk_custom_table_calc(priv);
-
-    GtkAdjustment *adjust = gtk_viewport_get_vadjustment(
-        GTK_VIEWPORT(table->parent));
-
-    gtk_adjustment_set_step_increment(adjust, 500.0);
-    gtk_adjustment_set_page_increment(adjust, 500.0);
 
     int scroll_beg_row = (event->area.y / 25) - 1;
     int scroll_end_row = ((event->area.y + event->area.height) / 25) + 2;
 
     scroll_beg_row = scroll_beg_row < 0 ? 0 : scroll_beg_row;
 
+    if(scroll_end_row > priv->table_y) {
+        scroll_end_row = priv->table_y;
+    }
+
     cairo_t *cr = gdk_cairo_create(table->window);
 
-    cairo_rectangle (cr,
-        event->area.x, event->area.y,
-        event->area.width, event->area.height);
-    cairo_clip (cr);
+    cairo_rectangle(cr,
+        event->area.x, 
+        event->area.y,
+        event->area.width, 
+        event->area.height);
+
+    cairo_clip(cr);
 
     int i = 0;
     int j = 0;
 
     cairo_set_line_width(cr, 1);
 
-    struct table_meta *meta_temp = NULL;
+    TableMeta *meta_temp = NULL;
 
     /* DRAW HEADER ROW */    
-    if((scroll_beg_row == 0) && priv->table_has_header) {
+    if(priv->table_has_header && (scroll_beg_row == 0)) {
 
         for(i = 0; i < priv->table_x; i++) {
 
@@ -192,12 +192,12 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
     double graph_width = 0;
 
     /* for temporary meta cells */
-    struct table_meta *meta_cell = NULL;
-    struct table_meta *meta_rows = NULL;
-    struct table_meta *meta_cols = NULL;
+    TableMeta *meta_cell = NULL;
+    TableMeta *meta_rows = NULL;
+    TableMeta *meta_cols = NULL;
 
     /* only draw those columns which will be visible on window surface */
-    for(i = scroll_beg_row; i < scroll_end_row && i < priv->table_y; i++) {
+    for(i = scroll_beg_row; i < scroll_end_row; i++) {
 
         /* get row meta data */
         meta_rows = priv->table_rows[i]->meta;
@@ -282,17 +282,20 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
             int is_integer = gtk_custom_table_is_integer(
                 priv->table_rows[i]->cell[j]->text);
 
-            if(meta_cell->graphable && is_integer) {
+            if(is_integer) {
 
-                meta_temp = meta_cell;
-            }
-            else if(meta_rows->graphable && is_integer) {
+                if(meta_cell->graphable) {
 
-                meta_temp = meta_rows;
-            }
-            else if(meta_cols->graphable && is_integer) {
+                    meta_temp = meta_cell;
+                }
+                else if(meta_rows->graphable) {
 
-                meta_temp = meta_cols;
+                    meta_temp = meta_rows;
+                }
+                else if(meta_cols->graphable) {
+
+                    meta_temp = meta_cols;
+                }
             }
 
             /* DRAW CELL DATA AS GRAPH */
@@ -433,10 +436,10 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
     }
 
 
-    int t_height = priv->table_row_height * (priv->table_y + priv->table_has_header);
-
     /* DRAW FOOTER ROW */ 
-    if((scroll_end_row >= priv->table_y) && priv->table_has_footer) {
+    if(priv->table_has_footer && (scroll_end_row >= priv->table_y)) {
+
+        int height = priv->table_row_height * (priv->table_y + priv->table_has_header);
 
         for(i = 0; i < priv->table_x; i++) {
 
@@ -454,7 +457,7 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
             /* draw footer background color */
             cairo_rectangle(cr, 
                 priv->table_column_offset_temp[i] + 0.5, 
-                t_height, 
+                height, 
                 priv->table_column_widths_temp[i], 
                 priv->table_row_height
             );
@@ -477,7 +480,7 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
 
             cairo_move_to(cr, 
                 priv->table_column_offset_temp[i] + 10, 
-                t_height + 4
+                height + 4
             );
 
             /* determine cell text alignment */
@@ -541,13 +544,8 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
             pango_font_description_free(description);
             g_object_unref(layout);
         }
-
-        t_height += priv->table_row_height;
     }
 
     cairo_destroy(cr);
-
-    /* make sure the scrollbars are up to speed */
-    gtk_widget_set_size_request(table, priv->table_min_width, t_height);
 }
 

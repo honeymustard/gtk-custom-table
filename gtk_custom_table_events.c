@@ -121,13 +121,13 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
  * gtk custom table expose event handler..
  * @param GtkWidget *table         table that was exposed
  * @param GdkEventExpose *event    gdk expose-event object
- * @return gboolean                returns true or false
+ * @return gboolean                returns false
  */
 gboolean gtk_custom_table_expose(GtkWidget *table, GdkEventExpose *event) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+#ifdef GDK_WINDOWING_WIN32
 
-    gtk_custom_table_paint(table, event);
+    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* use invalidate_rect here to combat smooth-scroll lag on windows */
     if(priv->table_scroll_lock == 0) {
@@ -139,8 +139,16 @@ gboolean gtk_custom_table_expose(GtkWidget *table, GdkEventExpose *event) {
         return FALSE;
     }
 
+    gtk_custom_table_paint(table, event);
     priv->table_scroll_lock = 0;
 
-    return FALSE;
+#endif
+#ifdef GDK_WINDOWING_X11
+
+    gtk_custom_table_paint(table, event);
+
+#endif
+
+    return TRUE;
 }
 

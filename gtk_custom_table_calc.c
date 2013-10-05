@@ -23,9 +23,12 @@
 
 /**
  * calculate current table column widths and offsets
- * @param GtkCustomTablePrivate *table    current table..
+ * @param GtkWidget *table    current table..
  */
-void gtk_custom_table_calc(GtkCustomTablePrivate *table) {
+void gtk_custom_table_calc(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     int i = 0;
 
@@ -34,16 +37,16 @@ void gtk_custom_table_calc(GtkCustomTablePrivate *table) {
     int offset = 0;
 
     /* calculate total fixed width and total */
-    for(i = 0; i < table->table_x; i++) {
+    for(i = 0; i < priv->table_x; i++) {
 
         /* skip hidden columns */
-        if(table->table_column_hidden[i] == TRUE) {
+        if(priv->table_column_hidden[i] == TRUE) {
             continue;
         }
 
         /* sum up specified width */
-        if(table->table_column_widths[i] != -1) {
-            specified += table->table_column_widths[i];
+        if(priv->table_column_widths[i] != -1) {
+            specified += priv->table_column_widths[i];
         }
         /* sum up cols with unlimited width */
         else {
@@ -52,27 +55,27 @@ void gtk_custom_table_calc(GtkCustomTablePrivate *table) {
     }
     
     /* divvy up remainder of space to cells without widths */
-    for(i = 0; i < table->table_x; i++) {
+    for(i = 0; i < priv->table_x; i++) {
 
         /* skip hidden columns */
-        if(table->table_column_hidden[i] == TRUE) {
+        if(priv->table_column_hidden[i] == TRUE) {
             continue;
         }
 
-        if(table->table_column_widths[i] == -1) {
-            table->table_column_widths_temp[i] = (table->table_max_width - specified) 
+        if(priv->table_column_widths[i] == -1) {
+            priv->table_column_widths_temp[i] = (priv->table_max_width - specified) 
                 / unlimited; 
         }
         else {
-            table->table_column_widths_temp[i] = table->table_column_widths[i];
+            priv->table_column_widths_temp[i] = priv->table_column_widths[i];
         }
 
         /* calculate offset of each column, for alignment */
-        table->table_column_offset_temp[i] = offset;
-        offset += table->table_column_widths_temp[i];
+        priv->table_column_offset_temp[i] = offset;
+        offset += priv->table_column_widths_temp[i];
     }
 
     /* set end of table offset */
-    table->table_column_offset_temp[i] = offset - 1;
+    priv->table_column_offset_temp[i] = offset - 1;
 }
 

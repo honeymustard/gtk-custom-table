@@ -39,7 +39,7 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
         g_error("table overflow");
     }
 
-    struct table_rows *table_row;
+    TableRows *table_row;
 
     /* type is header */
     if(strcmp(type, "header") == 0) {
@@ -79,7 +79,7 @@ int gtk_custom_table_get_indexof(GtkWidget *table, char *text) {
         g_error("table does not have a primary index");
     }
 
-    gtk_custom_table_tree_get_recurse(priv, priv->table_tree, text, 
+    gtk_custom_table_tree_get_recurse(table, priv->table_tree, text, 
         priv->table_col_primary);
 
     int index = GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_tree_index;
@@ -126,7 +126,7 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
         /* head node is null, take care of it */
         if(priv->table_tree == NULL) {
 
-            priv->table_tree = malloc(sizeof (struct table_tree));
+            priv->table_tree = malloc(sizeof(TableTree));
             priv->table_tree->data = priv->table_rows[row];
             priv->table_tree->left = NULL;
             priv->table_tree->right = NULL;
@@ -278,7 +278,7 @@ void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    struct table_meta *meta = priv->table_rows[row]->cell[col]->meta;
+    TableMeta *meta = priv->table_rows[row]->cell[col]->meta;
 
     meta->has_bg_color = value;
 }

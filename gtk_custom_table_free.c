@@ -25,7 +25,10 @@
  * free all table cells and data from a specific table widget
  * @param GtkWidget *table    table to be freed
  */
-void gtk_custom_table_free_cells(GtkCustomTablePrivate *priv) {
+void gtk_custom_table_free_cells(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     int i = 0;
 
@@ -74,7 +77,7 @@ void gtk_custom_table_free(GtkWidget *table) {
 
     int i = 0;
 
-    gtk_custom_table_free_cells(priv);
+    gtk_custom_table_free_cells(table);
 
     /* free memory occupied by header/footer */
     for(i = 0; i < priv->table_x; i++) {

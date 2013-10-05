@@ -30,8 +30,8 @@
  */
 int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
 
-    struct table_rows *row1 = *(((struct table_rows **)cmp1));
-    struct table_rows *row2 = *(((struct table_rows **)cmp2));
+    TableRows *row1 = *(((TableRows **)cmp1));
+    TableRows *row2 = *(((TableRows **)cmp2));
 
     char *x = row1->cell[row1->priv->table_sort_index]->text;
     char *y = row2->cell[row2->priv->table_sort_index]->text;
@@ -98,8 +98,8 @@ void gtk_custom_table_sort(GtkWidget *table, int col, int orient) {
     priv->table_sort_order = orient == -1 ? !priv->table_sort_order : orient;
 
     /* perform qsort on table cells array */
-    qsort((void *)priv->table_rows, priv->table_y, 
-        sizeof(struct table_rows *), gtk_custom_table_compare);
+    qsort((void *)priv->table_rows, priv->table_y, sizeof(TableRows *), 
+        gtk_custom_table_compare);
 
     int i = 0;
 

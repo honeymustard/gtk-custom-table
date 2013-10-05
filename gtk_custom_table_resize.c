@@ -40,19 +40,19 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
     int t_copy_cell = t_copy_cols * t_copy_rows;
 
     /* copy table meta-data */
-    struct table_meta **table_cols = malloc(sizeof(struct table_meta *) * t_copy_cols); 
-    struct table_meta **table_rows = malloc(sizeof(struct table_meta *) * t_copy_rows); 
-    struct table_meta **table_cell = malloc(sizeof(struct table_meta *) * t_copy_cell); 
+    TableMeta **table_cols = malloc(sizeof(TableMeta *) * t_copy_cols); 
+    TableMeta **table_rows = malloc(sizeof(TableMeta *) * t_copy_rows); 
+    TableMeta **table_cell = malloc(sizeof(TableMeta *) * t_copy_cell); 
 
     int i = 0;
     int j = 0;
     int k = 0;
 
-    struct table_meta *meta = NULL;
+    TableMeta *meta = NULL;
 
     for(i = 0; i < t_copy_rows; i++) {
         
-        table_rows[i] = malloc(sizeof(struct table_meta));
+        table_rows[i] = malloc(sizeof(TableMeta));
         
         meta = priv->table_rows[i]->meta;
 
@@ -72,7 +72,7 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
 
     for(i = 0; i < t_copy_cols; i++) {
 
-        table_cols[i] = malloc(sizeof(struct table_meta));
+        table_cols[i] = malloc(sizeof(TableMeta));
 
         meta = priv->table_cols[i]->meta;
 
@@ -101,7 +101,7 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
                 continue;
             }
 
-            table_cell[cell] = malloc(sizeof(struct table_meta));
+            table_cell[cell] = malloc(sizeof(TableMeta));
 
             meta = priv->table_rows[i]->cell[j]->meta;
 
@@ -122,7 +122,7 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
         }
     }
 
-    gtk_custom_table_free_cells(priv);
+    gtk_custom_table_free_cells(table);
 
     int col_widths[t_cols];
 
@@ -144,7 +144,7 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
     priv->table_x = t_cols;
     priv->table_y = t_rows;
 
-    gtk_custom_table_alloc(priv, priv->table_x, priv->table_y, col_widths);
+    gtk_custom_table_alloc(table, col_widths);
 
     /* put saved meta-data back into table */
     for(i = 0; i < t_copy_rows; i++) {

@@ -23,9 +23,9 @@
 
 /**
  * free memory occupied by primed column's binary tree..
- * @param struct table_tree *tree    the root of the tree..
+ * @param TableTree *tree    the root of the tree..
  */
-void gtk_custom_table_tree_free(struct table_tree *tree) {
+void gtk_custom_table_tree_free(TableTree *tree) {
 
     if(tree != NULL) {
         
@@ -40,13 +40,16 @@ void gtk_custom_table_tree_free(struct table_tree *tree) {
 
 /**
  * recursively look for value in tree specified by col, save row index
- * @param GtkCustomTablePrivate *priv    private table structure
- * @param struct table_tree *tree        binary tree with values
- * @param char *value                    value to be found
- * @param int col                        column in which to look
+ * @param GtkWidget *table    private table structure
+ * @param TableTree *tree     binary tree with values
+ * @param char *value         value to be found
+ * @param int col             column in which to look
  */
-void gtk_custom_table_tree_get_recurse(GtkCustomTablePrivate *priv, 
-        struct table_tree *tree, char *value, int col) {
+void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree, 
+    char *value, int col) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* if tree is null we've gone too far */
     if(tree == NULL) {
@@ -62,22 +65,21 @@ void gtk_custom_table_tree_get_recurse(GtkCustomTablePrivate *priv,
     else {
 
         gtk_custom_table_tree_get_recurse(
-            priv, tree->left, value, col);
+            table, tree->left, value, col);
 
         gtk_custom_table_tree_get_recurse(
-            priv, tree->right, value, col);
+            table, tree->right, value, col);
     }
 }
 
 
 /**
  * add a reference to a table row in a binary tree based on primary index..
- * @param struct table_tree *tree     widget's index tree..
- * @param struct table_cell **data    row of table cells in question..
- * @param int primary                 primary index column..
+ * @param TableTree *tree    widget's index tree..
+ * @param TableRows *data    row of table cells in question..
+ * @param int primary        primary index column..
  */
-void gtk_custom_table_tree_add(struct table_tree *tree, struct table_rows *data, 
-        int primary) {
+void gtk_custom_table_tree_add(TableTree *tree, TableRows *data, int primary) {
 
     /* found an empty node, add to it and stop */
     if(tree->data == NULL) {
@@ -98,7 +100,7 @@ void gtk_custom_table_tree_add(struct table_tree *tree, struct table_rows *data,
             /* if this is a null node, create a new one */
             if(tree->left == NULL) {
 
-                tree->left = malloc(sizeof (struct table_tree));
+                tree->left = malloc(sizeof(TableTree));
                 (tree->left)->data = NULL;
             }
 
@@ -110,7 +112,7 @@ void gtk_custom_table_tree_add(struct table_tree *tree, struct table_rows *data,
             /* if this is a null node, create a new one */
             if(tree->right == NULL) {
 
-                tree->right = malloc(sizeof (struct table_tree));
+                tree->right = malloc(sizeof(TableTree));
                 (tree->right)->data = NULL;
             }
 
