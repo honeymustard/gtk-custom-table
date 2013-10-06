@@ -20,6 +20,7 @@
 
 #include "gtk_custom_table.h"
 #include "strnatcmp/strnatcmp.h"
+#include <stdlib.h>
 
 
 /**
@@ -33,44 +34,52 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
     TableRows *row1 = *(((TableRows **)cmp1));
     TableRows *row2 = *(((TableRows **)cmp2));
 
-    char *x = row1->cell[row1->priv->table_sort_index]->text;
-    char *y = row2->cell[row2->priv->table_sort_index]->text;
+    int col = row1->priv->table_sort_index;
+    int sort = row1->priv->table_sort_order != GTK_CUSTOM_TABLE_ASC;
 
-    int sort = row1->priv->table_sort_order;
+    int result = 0;
 
-    /* exception for monetary strings beginning with $ */
-    if(x[0] == '$' && y[0] == '$') {
+    /* check to see if column has a sorting format */
+    if(row1->priv->table_cols[col]->meta->has_format) {
 
-        if(strlen(x) != strlen(y)) { 
-            return sort != GTK_CUSTOM_TABLE_ASC ? 
-                strnatcmp(y, x) : strnatcmp(x, y);
+        int format = row1->priv->table_cols[col]->meta->format;
+
+        /* compare large integers with optional junk */
+        if(format == FORMAT_INTEGER_UNSIGNED) {
+
+            unsigned long x = 0;
+            unsigned long y = 0;
+
+            x = gtk_custom_table_string_parseint(row1->cell[col]->text);
+            y = gtk_custom_table_string_parseint(row2->cell[col]->text);
+
+            result = sort ? (y < x) ? -1 : (y > x) : (x < y) ? -1 : (x > y);
         }
-        else {
-            return sort != GTK_CUSTOM_TABLE_ASC ? 
-                strnatcmp(x, y) : strnatcmp(y, x);
+        /* compare large integers with optional +/- signs */
+        else if(format == FORMAT_INTEGER_SIGNED) {
+
+            int x = atoll(row1->cell[col]->text);
+            int y = atoll(row2->cell[col]->text);
+
+            result = sort ? (y < x) ? -1 : (y > x) : (x < y) ? -1 : (x > y);
         }
     }
-    /* exception for strings beginning with + or - */
-    else if((x[0] == '+' || x[0] == '-') && 
-        (y[0] == '+' || y[0] == '-')) {
+    /* use natural compare sort */
+    else {
 
-        if(x[0] == '+' && y[0] == '+') {
+        char *x = row1->cell[col]->text;
+        char *y = row2->cell[col]->text;
 
-            return sort != GTK_CUSTOM_TABLE_ASC ? 
-                strnatcmp(x, y) : strnatcmp(y, x);
-        }
+        result = sort ? strnatcmp(y, x) : strnatcmp(x, y);
     }
-
-    /* use standard natural sort */
-    int result = sort != GTK_CUSTOM_TABLE_ASC ?
-        strnatcmp(y, x) : strnatcmp(x, y);
 
     /* use secondary sorting to break ties */
     if(result == 0) {
 
-        return sort != GTK_CUSTOM_TABLE_ASC ? 
-            row1->row_genesis > row2->row_genesis :
-            row2->row_genesis > row1->row_genesis;
+        int x = row1->row_genesis;
+        int y = row2->row_genesis;
+
+        result = sort ? x > y : y > x;
     }
 
     return result;

@@ -46,48 +46,19 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
 
     int i = 0;
     int j = 0;
-    int k = 0;
-
-    TableMeta *meta = NULL;
 
     for(i = 0; i < t_copy_rows; i++) {
         
         table_rows[i] = malloc(sizeof(TableMeta));
         
-        meta = priv->table_rows[i]->meta;
-
-        for(j = 0; j < 3; j++) {
-
-            table_rows[i]->color[j] = meta->color[j];
-            table_rows[i]->graph[j] = meta->graph[j];
-        }
-
-        table_rows[i]->graphable = meta->graphable;
-        table_rows[i]->has_bg_color = meta->has_bg_color;
-        table_rows[i]->has_bg_image = meta->has_bg_image;
-        table_rows[i]->align = meta->align;
-        table_rows[i]->font = meta->font;
-        table_rows[i]->bg_image = meta->bg_image;
+        memcpy(table_rows[i], priv->table_rows[i]->meta, sizeof(TableMeta));
     }
 
     for(i = 0; i < t_copy_cols; i++) {
 
         table_cols[i] = malloc(sizeof(TableMeta));
 
-        meta = priv->table_cols[i]->meta;
-
-        for(j = 0; j < 3; j++) {
-
-            table_cols[i]->color[j] = meta->color[j];
-            table_cols[i]->graph[j] = meta->graph[j];
-        }
-
-        table_cols[i]->graphable = meta->graphable;
-        table_cols[i]->has_bg_color = meta->has_bg_color;
-        table_cols[i]->has_bg_image = meta->has_bg_image;
-        table_cols[i]->align = meta->align;
-        table_cols[i]->font = meta->font;
-        table_cols[i]->bg_image = meta->bg_image;
+        memcpy(table_cols[i], priv->table_cols[i]->meta, sizeof(TableMeta));
     }
 
     int cell = 0;
@@ -103,20 +74,8 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
 
             table_cell[cell] = malloc(sizeof(TableMeta));
 
-            meta = priv->table_rows[i]->cell[j]->meta;
-
-            for(k = 0; k < 3; k++) {
-
-                table_cell[cell]->color[k] = meta->color[k];
-                table_cell[cell]->graph[k] = meta->graph[k];
-            }
-
-            table_cell[cell]->graphable = meta->graphable;
-            table_cell[cell]->has_bg_color = meta->has_bg_color;
-            table_cell[cell]->has_bg_image = meta->has_bg_image;
-            table_cell[cell]->align = meta->align;
-            table_cell[cell]->font = meta->font;
-            table_cell[cell]->bg_image = meta->bg_image;
+            memcpy(table_cell[cell], priv->table_rows[i]->cell[j]->meta, 
+                sizeof(TableMeta));
 
             cell++;
         }
@@ -149,68 +108,27 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
     /* put saved meta-data back into table */
     for(i = 0; i < t_copy_rows; i++) {
         
-        meta = priv->table_rows[i]->meta;
-
-        for(j = 0; j < 3; j++) {
-
-            meta->color[j] = table_rows[i]->color[j];
-            meta->graph[j] = table_rows[i]->graph[j];
-        }
-
-        meta->graphable = table_rows[i]->graphable;
-        meta->has_bg_color = table_rows[i]->has_bg_color;
-        meta->has_bg_image = table_rows[i]->has_bg_image;
-        meta->align = table_rows[i]->align;
-        meta->font = table_rows[i]->font;
-        meta->bg_image = table_rows[i]->bg_image;
+        memcpy(priv->table_rows[i]->meta, table_rows[i], sizeof(TableMeta));
 
         free(table_rows[i]);
     }
 
-    free(table_rows);
-
     for(i = 0; i < t_copy_cols; i++) {
 
-        meta = priv->table_cols[i]->meta;
-
-        for(j = 0; j < 3; j++) {
-
-            meta->color[j] = table_cols[i]->color[j];
-            meta->graph[j] = table_cols[i]->graph[j];
-        }
-
-        meta->graphable = table_cols[i]->graphable;
-        meta->has_bg_color = table_cols[i]->has_bg_color;
-        meta->has_bg_image = table_cols[i]->has_bg_image;
-        meta->align = table_cols[i]->align;
-        meta->font = table_cols[i]->font;
-        meta->bg_image = table_cols[i]->bg_image;
+        memcpy(priv->table_cols[i]->meta, table_cols[i], sizeof(TableMeta));
 
         free(table_cols[i]);
     }
 
-    free(table_cols);
-
     for(i = 0; i < t_copy_cell; i++) {
-        
-        meta = priv->table_cell[i]->meta;
 
-        for(j = 0; j < 3; j++) {
-
-            meta->color[j] = table_cell[i]->color[j];
-            meta->graph[j] = table_cell[i]->graph[j];
-        }
-
-        meta->graphable = table_cell[i]->graphable;
-        meta->has_bg_color = table_cell[i]->has_bg_color;
-        meta->has_bg_image = table_cell[i]->has_bg_image;
-        meta->align = table_cell[i]->align;
-        meta->font = table_cell[i]->font;
-        meta->bg_image = table_cell[i]->bg_image;
+        memcpy(priv->table_cell[i]->meta, table_cell[i], sizeof(TableMeta));
 
         free(table_cell[i]);
     }
 
+    free(table_rows);
+    free(table_cols);
     free(table_cell);
 }
 

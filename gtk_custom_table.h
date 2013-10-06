@@ -36,9 +36,19 @@
 #define GTK_CUSTOM_TABLE_GET_CLASS        (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CUSTOM_TABLE, GtkCustomTableClass))
 #define GTK_CUSTOM_TABLE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GTK_TYPE_CUSTOM_TABLE, GtkCustomTablePrivate))
 
+/* table orientation definitions */
 #define GTK_CUSTOM_TABLE_ASC 0
 #define GTK_CUSTOM_TABLE_DESC 1
 #define GTK_CUSTOM_TABLE_INVERT -1
+
+/* text format definitions */
+typedef enum { 
+
+    FORMAT_NONE, 
+    FORMAT_INTEGER_SIGNED, 
+    FORMAT_INTEGER_UNSIGNED
+
+} TextFormat;
 
 #define PANGO_DEFAULT_FONT "Monospace 10"
 #define PANGO_ALIGN_NONE -1
@@ -72,10 +82,12 @@ struct table_meta {
     char *bg_image;
     double color[3];
     double graph[3];
+    TextFormat format;
+    PangoAlignment align;
     gboolean graphable;
+    gboolean has_format;
     gboolean has_bg_image;
     gboolean has_bg_color;
-    PangoAlignment align;
 };
 
 /* table cells */
@@ -152,7 +164,6 @@ struct _GtkCustomTablePrivate {
 GtkType gtk_custom_table_get_type(void);
 
 /* widget private functions */
-void gtk_custom_table_resize(GtkWidget *table, int cols, int rows);
 void gtk_custom_table_calc(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event);
 void gtk_custom_table_tree_free(TableTree *tree);
@@ -160,7 +171,6 @@ void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree,
     char *value, int col);
 void gtk_custom_table_tree_add(TableTree *tree, TableRows *data, int primary);
 void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]);
-int  gtk_custom_table_is_integer(char *string);
 void gtk_custom_table_free_cells(GtkWidget *table);
 
 /* widget event functions */
@@ -218,6 +228,8 @@ void gtk_custom_table_set_head_row_alignment(GtkWidget *table,
     PangoAlignment align);
 void gtk_custom_table_set_foot_row_alignment(GtkWidget *table, 
     PangoAlignment align);
+void gtk_custom_table_set_column_format(GtkWidget *table, int col, 
+    TextFormat format);
 void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, 
     int row, gboolean value);
 void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col, 
@@ -234,6 +246,13 @@ int  gtk_custom_table_get_rows(GtkWidget *table);
 int  gtk_custom_table_get_cols(GtkWidget *table);
 int  gtk_custom_table_get_indexof(GtkWidget *table, char *value);
 char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row);
+
+/* public string functions */
+int    gtk_custom_table_string_is_integer(char *string);
+unsigned long gtk_custom_table_string_parseint(char *string);
+char * gtk_custom_table_string_thousand_separator(char *string);
+char * gtk_custom_table_string_strip_alpha(char *string);
+
 
 double checkers[2][3];
 double rgb_header[3];

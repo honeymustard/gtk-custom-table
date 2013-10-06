@@ -362,6 +362,14 @@ void gtk_custom_table_set_column_shade(GtkWidget *table, int col, gboolean value
     GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_column_hidden[col] = value;
 }
 
+void gtk_custom_table_set_column_format(GtkWidget *table, int col, 
+    TextFormat format) {
+
+    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    priv->table_cols[col]->meta->has_format = TRUE; 
+    priv->table_cols[col]->meta->format = format;
+}
+
 void gtk_custom_table_set_column_alignment(GtkWidget *table, int col, 
     PangoAlignment align) {
 

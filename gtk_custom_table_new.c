@@ -65,7 +65,9 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
     priv->table_head->meta->font = NULL;
     priv->table_head->meta->bg_image = NULL;
     priv->table_head->meta->align = PANGO_ALIGN_NONE;
+    priv->table_head->meta->format = FORMAT_NONE;
     priv->table_head->meta->graphable = FALSE;
+    priv->table_head->meta->has_format = FALSE;
     priv->table_head->meta->has_bg_color = FALSE;
     priv->table_head->meta->has_bg_image = FALSE;
 
@@ -79,7 +81,9 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
     priv->table_foot->meta->font = NULL;
     priv->table_foot->meta->bg_image = NULL;
     priv->table_foot->meta->align = PANGO_ALIGN_NONE;
+    priv->table_foot->meta->format = FORMAT_NONE;
     priv->table_foot->meta->graphable = FALSE;
+    priv->table_foot->meta->has_format = FALSE;
     priv->table_foot->meta->has_bg_color = FALSE;
     priv->table_foot->meta->has_bg_image = FALSE;
 
@@ -99,7 +103,9 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
         priv->table_head->cell[i]->meta->font = NULL;
         priv->table_head->cell[i]->meta->bg_image = NULL;
         priv->table_head->cell[i]->meta->align = PANGO_ALIGN_NONE;
+        priv->table_head->cell[i]->meta->format = FORMAT_NONE;
         priv->table_head->cell[i]->meta->graphable = FALSE;
+        priv->table_head->cell[i]->meta->has_format = FALSE;
         priv->table_head->cell[i]->meta->has_bg_color = FALSE;
         priv->table_head->cell[i]->meta->has_bg_image = FALSE;
 
@@ -116,7 +122,9 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
         priv->table_foot->cell[i]->meta->font = NULL;
         priv->table_foot->cell[i]->meta->bg_image = NULL;
         priv->table_foot->cell[i]->meta->align = PANGO_ALIGN_NONE;
+        priv->table_foot->cell[i]->meta->format = FORMAT_NONE;
         priv->table_foot->cell[i]->meta->graphable = FALSE;
+        priv->table_foot->cell[i]->meta->format = FALSE;
         priv->table_foot->cell[i]->meta->has_bg_color = FALSE;
         priv->table_foot->cell[i]->meta->has_bg_image = FALSE;
 

@@ -65,7 +65,9 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
         priv->table_cell[i]->meta->font = NULL;
         priv->table_cell[i]->meta->bg_image = NULL;
         priv->table_cell[i]->meta->align = PANGO_ALIGN_NONE;
+        priv->table_cell[i]->meta->format = FORMAT_NONE;
         priv->table_cell[i]->meta->graphable = FALSE;
+        priv->table_cell[i]->meta->has_format = FALSE;
         priv->table_cell[i]->meta->has_bg_color = FALSE;
         priv->table_cell[i]->meta->has_bg_image = FALSE;
 
@@ -82,7 +84,9 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
         priv->table_rows[i]->meta->font = NULL;
         priv->table_rows[i]->meta->bg_image = NULL;
         priv->table_rows[i]->meta->align = PANGO_ALIGN_NONE;
+        priv->table_rows[i]->meta->format = FORMAT_NONE;
         priv->table_rows[i]->meta->graphable = FALSE;
+        priv->table_rows[i]->meta->has_format = FALSE;
         priv->table_rows[i]->meta->has_bg_color = FALSE;
         priv->table_rows[i]->meta->has_bg_image = FALSE;
 
@@ -110,7 +114,9 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
         priv->table_cols[i]->meta->font = PANGO_DEFAULT_FONT;
         priv->table_cols[i]->meta->bg_image = NULL;
         priv->table_cols[i]->meta->align = PANGO_ALIGN_RIGHT;
+        priv->table_cols[i]->meta->format = FORMAT_NONE;
         priv->table_cols[i]->meta->graphable = FALSE;
+        priv->table_cols[i]->meta->has_format = FALSE;
         priv->table_cols[i]->meta->has_bg_color = FALSE;
         priv->table_cols[i]->meta->has_bg_image = FALSE;
 

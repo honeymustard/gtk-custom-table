@@ -278,29 +278,23 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
 
             meta_temp = NULL;
 
-            /* check if data is numeric */
-            int is_integer = gtk_custom_table_is_integer(
-                priv->table_rows[i]->cell[j]->text);
+            if(meta_cell->graphable) {
 
-            if(is_integer) {
+                meta_temp = meta_cell;
+            }
+            else if(meta_rows->graphable) {
 
-                if(meta_cell->graphable) {
+                meta_temp = meta_rows;
+            }
+            else if(meta_cols->graphable) {
 
-                    meta_temp = meta_cell;
-                }
-                else if(meta_rows->graphable) {
-
-                    meta_temp = meta_rows;
-                }
-                else if(meta_cols->graphable) {
-
-                    meta_temp = meta_cols;
-                }
+                meta_temp = meta_cols;
             }
 
             /* DRAW CELL DATA AS GRAPH */
-            if(meta_temp != NULL) {
-                
+            if(meta_temp != NULL && gtk_custom_table_string_is_integer(
+                    priv->table_rows[i]->cell[j]->text)) {
+
                 /* calculate graph size */
                 graph_step = (priv->table_column_widths_temp[j] - 8) / 100.0;
                 graph_amount = atoi(priv->table_rows[i]->cell[j]->text);
@@ -354,6 +348,7 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
                     text_temp = temp;
                 }
                 else {
+
                     text_temp = priv->table_rows[i]->cell[j]->text;
                 }
 
