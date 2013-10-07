@@ -45,8 +45,8 @@ int gtk_custom_table_string_is_integer(char *string) {
 
 /**
  * sanitize a string and convert it to integer..
- * @param char *string    string to be converted
- * @return char *         returns an integer
+ * @param char *string      string to be converted
+ * @return unsigned long    returns an integer
  */
 unsigned long gtk_custom_table_string_parseint(char *string) {
 
