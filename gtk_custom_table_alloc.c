@@ -80,7 +80,7 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
         priv->table_cell[i]->text = NULL;
         priv->table_cell[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->table_cell[i], temp, sizeof(TableMeta));
+        memcpy(priv->table_cell[i]->meta, temp, sizeof(TableMeta));
 
         for(k = 0; k < 3; k++) {
             priv->table_cell[i]->meta->graph[k] = rgb_graph[k];
@@ -93,7 +93,7 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
         priv->table_rows[i] = malloc(sizeof(TableRows));
         priv->table_rows[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->table_rows[i], temp, sizeof(TableMeta));
+        memcpy(priv->table_rows[i]->meta, temp, sizeof(TableMeta));
 
         priv->table_rows[i]->row_genesis = i;
 
@@ -117,9 +117,10 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
         priv->table_cols[i] = malloc(sizeof(TableCols));
         priv->table_cols[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->table_cols[i], temp, sizeof(TableMeta));
+        memcpy(priv->table_cols[i]->meta, temp, sizeof(TableMeta));
 
         priv->table_cols[i]->meta->align = PANGO_ALIGN_RIGHT;
+        priv->table_cols[i]->meta->font = PANGO_DEFAULT_FONT;
 
         for(k = 0; k < 3; k++) {
             priv->table_cols[i]->meta->graph[k] = rgb_graph[k];
