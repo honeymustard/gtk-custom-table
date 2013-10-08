@@ -52,11 +52,13 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
         priv->table_has_footer = 1;
     }
     
-    int rows = priv->table_y * priv->table_row_height;
-    int head = priv->table_has_header * priv->table_row_height;
-    int foot = priv->table_has_footer * priv->table_row_height;
+    int rows_h = priv->table_y;
+    int head_h = priv->table_has_header;
+    int foot_h = priv->table_has_footer;
 
-    gtk_widget_set_size_request(table, -1, rows + head + foot);
+    int height = (rows_h + head_h + foot_h) * priv->table_row_height;
+
+    gtk_widget_set_size_request(table, -1, height);
 
     /* free old text as needed */
     if(table_row->cell[col]->text != NULL) {
