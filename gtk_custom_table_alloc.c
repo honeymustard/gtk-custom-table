@@ -96,6 +96,7 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
         memcpy(priv->table_rows[i]->meta, temp, sizeof(TableMeta));
 
         priv->table_rows[i]->row_genesis = i;
+        priv->table_rows[i]->row_current = 0;
 
         for(k = 0; k < 3; k++) {
             priv->table_rows[i]->meta->graph[k] = rgb_graph[k];
