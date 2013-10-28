@@ -138,8 +138,8 @@ struct _GtkCustomTablePrivate {
     int table_has_primary;
     int table_col_primary;
     int table_min_width;
-    int table_max_width;
-    int table_min_height;
+    int table_max_width;  /* never used.. */
+    int table_min_height; /* never used.. gtk_custom_table_new */
     int table_max_height;
     int table_row_height;
     int table_scroll_lock;
@@ -174,6 +174,9 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]);
 void gtk_custom_table_free_cells(GtkWidget *table);
 
 /* widget event functions */
+gboolean gtk_custom_table_focus_in(GtkWidget *table, GdkEventFocus *event);
+gboolean gtk_custom_table_focus_out(GtkWidget *table, GdkEventFocus *event);
+gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event);
 gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event);
 gboolean gtk_custom_table_mouse_released(GtkWidget *table, 
     GdkEventButton *event);

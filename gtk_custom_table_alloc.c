@@ -35,9 +35,9 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
     int head_h = priv->table_has_header;
     int foot_h = priv->table_has_footer;
 
-    int height = (rows_h + head_h + foot_h) * priv->table_row_height;
+    priv->table_max_height = (rows_h + head_h + foot_h) * priv->table_row_height;
 
-    gtk_widget_set_size_request(table, -1, height);
+    gtk_widget_set_size_request(table, -1, priv->table_max_height);
 
     int cols = priv->table_x;
     int rows = priv->table_y;

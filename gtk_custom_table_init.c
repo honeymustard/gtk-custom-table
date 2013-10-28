@@ -53,10 +53,17 @@ static void gtk_custom_table_init(GtkCustomTable *table) {
     gtk_widget_add_events(GTK_WIDGET(table), 
         GDK_BUTTON_PRESS_MASK | 
         GDK_BUTTON_RELEASE_MASK | 
+        GDK_KEY_PRESS_MASK | 
+        GDK_KEY_RELEASE_MASK | 
         GDK_POINTER_MOTION_MASK
     );
 
+    gtk_widget_set_can_focus(GTK_WIDGET(table), TRUE);
+
     /* connect these events to callbacks */
+    g_signal_connect(G_OBJECT(table), "key_press_event", 
+        G_CALLBACK(gtk_custom_table_key_released), NULL);
+
     g_signal_connect(G_OBJECT(table), "button_release_event", 
         G_CALLBACK(gtk_custom_table_mouse_released), NULL);
 

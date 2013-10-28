@@ -32,16 +32,13 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* update table dimensions for redrawing table */
-    if(table->allocation.width < priv->table_min_width) {
-        priv->table_max_width = priv->table_min_width;
-    }
-    else {
-        priv->table_max_width = table->allocation.width;
+    if(table->allocation.width > priv->table_min_width) {
         gtk_custom_table_calc(table);
     }
 
-    int scroll_beg_row = (event->area.y / 25) - 1;
-    int scroll_end_row = ((event->area.y + event->area.height) / 25) + 2;
+    int scroll_beg_row = (event->area.y / priv->table_row_height) - 1;
+    int scroll_end_row = ((event->area.y + event->area.height) / 
+        priv->table_row_height) + 2;
 
     scroll_beg_row = scroll_beg_row < 0 ? 0 : scroll_beg_row;
 

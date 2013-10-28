@@ -19,6 +19,70 @@
 
 
 #include "gtk_custom_table.h"
+#include <gdk/gdkkeysyms.h>
+
+
+/**
+ * key-released handler for scrolling with arrow keys..
+ * @param GtkWidget *table      current table..
+ * @param GdkEventKey *event    key event
+ * @return                      gboolean
+ */
+gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
+
+    GtkAdjustment *adj = NULL;
+    adj = gtk_viewport_get_vadjustment(GTK_VIEWPORT(table->parent));
+
+    int step = 10;
+    int value = adj->value;
+    int upper = adj->upper - adj->page_size;
+
+    gboolean retval = FALSE;
+
+    switch(event->keyval) {
+
+        case GDK_Up:
+
+            value -= step;
+ 
+            if(value >= 0) {
+
+                gtk_widget_grab_focus(table);
+            }
+
+            gtk_adjustment_set_value(adj, value < 0 ? 0 : value);
+
+            retval = value > 0 ? TRUE : FALSE;
+
+            break;
+
+        case GDK_Down:
+
+            value += step;
+
+            int cond = value <= upper;
+
+            if(cond) {
+
+                gtk_widget_grab_focus(table);
+            }
+
+            gtk_adjustment_set_value(adj, !cond ? upper : value);
+
+            retval = cond ? TRUE : FALSE;
+
+          break;
+
+        default:
+
+            return FALSE;
+    }
+
+    gtk_viewport_set_vadjustment(GTK_VIEWPORT(table->parent), adj);
+    gtk_adjustment_changed(adj);
+
+    return retval;
+}
 
 
 /**
@@ -135,6 +199,7 @@ gboolean gtk_custom_table_expose(GtkWidget *table, GdkEventExpose *event) {
         gdk_window_invalidate_rect(GDK_WINDOW(table->window), 
             &table->allocation, TRUE);
         priv->table_scroll_lock = 1;
+        gdk_window_process_updates(GDK_WINDOW(table->window), TRUE); /* test this */
 
         return FALSE;
     }
