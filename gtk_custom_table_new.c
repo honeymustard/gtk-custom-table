@@ -43,7 +43,6 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
     priv->table_has_primary = 0;
     priv->table_has_header = 0;
     priv->table_has_footer = 0;
-    priv->table_scroll_lock = 0;
     priv->table_tree = NULL;
     priv->table_sort_index = 0;
     priv->table_sort_order = 0;

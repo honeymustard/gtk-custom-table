@@ -51,11 +51,14 @@ static void gtk_custom_table_init(GtkCustomTable *table) {
 
     /* enable table events events */
     gtk_widget_add_events(GTK_WIDGET(table), 
+
         GDK_BUTTON_PRESS_MASK | 
         GDK_BUTTON_RELEASE_MASK | 
         GDK_KEY_PRESS_MASK | 
         GDK_KEY_RELEASE_MASK | 
-        GDK_POINTER_MOTION_MASK
+        GDK_POINTER_MOTION_MASK | 
+        GDK_SCROLL_MASK | 
+        GDK_CONFIGURE
     );
 
     gtk_widget_set_can_focus(GTK_WIDGET(table), TRUE);
@@ -69,5 +72,11 @@ static void gtk_custom_table_init(GtkCustomTable *table) {
 
     g_signal_connect(G_OBJECT(table), "button_press_event", 
         G_CALLBACK(gtk_custom_table_clicked), NULL);
+
+    g_signal_connect(G_OBJECT(table), "scroll_event", 
+        G_CALLBACK(gtk_custom_table_scroll), NULL);
+
+    g_signal_connect(G_OBJECT(table), "configure_event", 
+        G_CALLBACK(gtk_custom_table_config), NULL);
 }
 

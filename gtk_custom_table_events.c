@@ -23,17 +23,36 @@
 
 
 /**
+ * configure handler for custom table..
+ * @param GtkWidget *table    current table..
+ * @param GdkEvent *event     configure event
+ * @return gboolean           gboolean
+ */
+gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event) {
+
+    GtkScrolledWindow *scroll = GTK_SCROLLED_WINDOW(table->parent->parent);
+    GtkWidget *vscroll = gtk_scrolled_window_get_vscrollbar(scroll);
+
+    gtk_range_set_increments(GTK_RANGE(vscroll), 200, 200);
+    gtk_range_set_update_policy(GTK_RANGE(vscroll), GTK_UPDATE_DELAYED);
+    gtk_range_set_min_slider_size(GTK_RANGE(vscroll), 100);
+
+    return TRUE;
+}
+
+
+/**
  * key-released handler for scrolling with arrow keys..
  * @param GtkWidget *table      current table..
  * @param GdkEventKey *event    key event
- * @return                      gboolean
+ * @return gboolean             gboolean
  */
 gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
     GtkAdjustment *adj = NULL;
     adj = gtk_viewport_get_vadjustment(GTK_VIEWPORT(table->parent));
 
-    int step = 10;
+    int step = 80;
     int value = adj->value;
     int upper = adj->upper - adj->page_size;
 
@@ -71,15 +90,12 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
             retval = cond ? TRUE : FALSE;
 
-          break;
+            break;
 
         default:
 
             return FALSE;
     }
-
-    gtk_viewport_set_vadjustment(GTK_VIEWPORT(table->parent), adj);
-    gtk_adjustment_changed(adj);
 
     return retval;
 }
@@ -89,7 +105,7 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
  * custom table clicked handler, changes curson when clicking headers
  * @param GtkWidget *table         current table..
  * @param GdkEventMotion *event    gdk motion event
- * @return                         gboolean
+ * @return gboolean                gboolean
  */
 gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
 
@@ -135,7 +151,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
  * custom table mouse-button-released handler.. for clicking headers..
  * @param GtkWidget *table         current table..
  * @param GdkEventButton *event    button event
- * @return                         gboolean
+ * @return gboolean                gboolean
  */
 gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event) {
 
@@ -182,37 +198,56 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
 
 
 /**
+ * gtk custom table wheel-scroll event handler..
+ * @param GtkWidget *table         table that was scrolled
+ * @param GdkEventScroll *event    gdk scroll event
+ * @return gboolean                gboolean
+ */
+gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
+
+    GtkAdjustment *adj = NULL;
+    adj = gtk_viewport_get_vadjustment(GTK_VIEWPORT(table->parent));
+
+    int step = 200;
+    int value = adj->value;
+    int upper = adj->upper - adj->page_size;
+
+    switch(event->direction) {
+
+        case GDK_SCROLL_DOWN:
+
+            value += step;
+ 
+            gtk_adjustment_set_value(adj, value > upper ? upper : value);
+
+            break;
+
+        case GDK_SCROLL_UP:
+
+            value -= step;
+ 
+            gtk_adjustment_set_value(adj, value < 0 ? 0 : value);
+
+            break;
+
+        default:
+
+            return FALSE;
+    }
+
+    return TRUE;
+}
+
+
+/**
  * gtk custom table expose event handler..
  * @param GtkWidget *table         table that was exposed
  * @param GdkEventExpose *event    gdk expose-event object
- * @return gboolean                returns false
+ * @return gboolean                returns true
  */
 gboolean gtk_custom_table_expose(GtkWidget *table, GdkEventExpose *event) {
 
-#ifdef GDK_WINDOWING_WIN32
-
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-
-    /* use invalidate_rect here to combat smooth-scroll lag on windows */
-    if(priv->table_scroll_lock == 0) {
-
-        gdk_window_invalidate_rect(GDK_WINDOW(table->window), 
-            &table->allocation, TRUE);
-        priv->table_scroll_lock = 1;
-        gdk_window_process_updates(GDK_WINDOW(table->window), TRUE); /* test this */
-
-        return FALSE;
-    }
-
     gtk_custom_table_paint(table, event);
-    priv->table_scroll_lock = 0;
-
-#endif
-#ifdef GDK_WINDOWING_X11
-
-    gtk_custom_table_paint(table, event);
-
-#endif
 
     return TRUE;
 }
