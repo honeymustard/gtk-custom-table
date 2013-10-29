@@ -205,6 +205,8 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
  */
 gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
 
+    gtk_widget_grab_focus(table);
+
     GtkAdjustment *adj = NULL;
     adj = gtk_viewport_get_vadjustment(GTK_VIEWPORT(table->parent));
 
