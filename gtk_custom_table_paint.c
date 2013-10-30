@@ -385,12 +385,16 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
                     char *bg_image = priv->table_rows[i]->cell[j]->meta->bg_image;
 
                     cairo_save(cr);
-                    cairo_surface_t *t;
-                    t = cairo_image_surface_create_from_png(bg_image);
-                    cairo_set_source_surface(cr, t, 
-                        priv->table_column_offset_temp[j] + 10, 
-                        offset + 5);
-                    cairo_paint(cr);
+                    cairo_surface_t *sur;
+                    sur = cairo_image_surface_create_from_png(bg_image);
+
+                    if(cairo_surface_status(sur) == CAIRO_STATUS_SUCCESS) {
+
+                        cairo_set_source_surface(cr, sur, 
+                            priv->table_column_offset_temp[j] + 10, 
+                            offset + 5);
+                        cairo_paint(cr);
+                    }
                     cairo_restore(cr);
                 }
                      
