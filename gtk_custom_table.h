@@ -169,11 +169,11 @@ struct _GtkCustomTablePrivate {
 
 
 /* important, required for casting */
-GtkType gtk_custom_table_get_type(void);
+GType gtk_custom_table_get_type(void);
 
 /* widget private functions */
 void gtk_custom_table_calc(GtkWidget *table);
-void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event);
+void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
 void gtk_custom_table_tree_free(TableTree *tree);
 void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree, 
     char *value, int col);
@@ -186,7 +186,8 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event);
 gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event);
 gboolean gtk_custom_table_mouse_released(GtkWidget *table, 
     GdkEventButton *event);
-gboolean gtk_custom_table_expose(GtkWidget *table, GdkEventExpose *event);
+gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data);
+gboolean gtk_custom_table_destroy(GtkWidget *table, GdkEvent *event);
 gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event);
 gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event);
 

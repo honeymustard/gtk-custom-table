@@ -26,19 +26,30 @@
  * @param GtkCustomTablePrivate *table    current table
  * @param GdkEventExpose *event           expose event
  */
-void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
+void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* update table dimensions for redrawing table */
-    if(table->allocation.width > priv->table_min_width) {
+    if(gtk_widget_get_allocated_width(table) > priv->table_min_width) {
         gtk_custom_table_calc(table);
     }
 
-    int scroll_beg_row = (event->area.y / priv->table_row_height) - 1;
-    int scroll_end_row = ((event->area.y + event->area.height) / 
-        priv->table_row_height) + 2;
+    cairo_rectangle_list_t *rl = cairo_copy_clip_rectangle_list(cr);
+    cairo_rectangle_t *r = &rl->rectangles[0];
+
+    /*
+    printf("x: %f\n", r->x);
+    printf("y: %f\n", r->y);
+    printf("width: %f\n", r->width);
+    printf("height: %f\n", r->height);
+    */
+
+    int scroll_beg_row = (r->y / priv->table_row_height) - 1;
+    int scroll_end_row = ((r->y + r->height) / priv->table_row_height) + 0;
+
+    cairo_rectangle_list_destroy(rl);
 
     scroll_beg_row = scroll_beg_row < 0 ? 0 : scroll_beg_row;
 
@@ -46,15 +57,8 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
         scroll_end_row = priv->table_y;
     }
 
-    cairo_t *cr = gdk_cairo_create(table->window);
-
-    cairo_rectangle(cr,
-        event->area.x, 
-        event->area.y,
-        event->area.width, 
-        event->area.height);
-
-    cairo_clip(cr);
+    //printf("beg: %d\n", scroll_beg_row);
+    //printf("end: %d\n", scroll_end_row);
 
     int i = 0;
     int j = 0;
@@ -541,7 +545,5 @@ void gtk_custom_table_paint(GtkWidget *table, GdkEventExpose *event) {
             g_object_unref(layout);
         }
     }
-
-    cairo_destroy(cr);
 }
 

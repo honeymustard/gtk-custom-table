@@ -27,6 +27,6 @@
  */
 void gtk_custom_table_refresh(GtkWidget *widget) {
 
-    gdk_window_invalidate_rect(GDK_WINDOW(widget->window), NULL, TRUE);
+    gdk_window_invalidate_rect(GDK_WINDOW(gtk_widget_get_window(widget)), NULL, TRUE);
 }
 

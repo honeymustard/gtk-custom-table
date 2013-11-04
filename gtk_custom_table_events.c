@@ -30,14 +30,7 @@
  */
 gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event) {
 
-    GtkScrolledWindow *scroll = GTK_SCROLLED_WINDOW(table->parent->parent);
-    GtkWidget *vscroll = gtk_scrolled_window_get_vscrollbar(scroll);
-
-    gtk_range_set_increments(GTK_RANGE(vscroll), 200, 200);
-    gtk_range_set_update_policy(GTK_RANGE(vscroll), GTK_UPDATE_DELAYED);
-    gtk_range_set_min_slider_size(GTK_RANGE(vscroll), 100);
-
-    return TRUE;
+    return FALSE;
 }
 
 
@@ -50,17 +43,17 @@ gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event) {
 gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
     GtkAdjustment *adj = NULL;
-    adj = gtk_viewport_get_vadjustment(GTK_VIEWPORT(table->parent));
+    adj = gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(gtk_widget_get_parent(table)));
 
     int step = 80;
-    int value = adj->value;
-    int upper = adj->upper - adj->page_size;
+    int value = gtk_adjustment_get_value(adj);
+    int upper = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
 
     gboolean retval = FALSE;
 
     switch(event->keyval) {
 
-        case GDK_Up:
+        case GDK_KEY_Up:
 
             value -= step;
  
@@ -75,7 +68,7 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
             break;
 
-        case GDK_Down:
+        case GDK_KEY_Down:
 
             value += step;
 
@@ -132,8 +125,8 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
                 if(priv->table_column_index[i] == FALSE) {
 
                     cur = gdk_cursor_new(GDK_HAND1);
-                    gdk_window_set_cursor(table->window, cur);
-                    gdk_cursor_unref(cur);
+                    gdk_window_set_cursor(gtk_widget_get_window(table), cur);
+                    g_object_unref(cur);
 
                     return FALSE;
                 }
@@ -169,8 +162,8 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
     }
 
     GdkCursor *cur_arrow = gdk_cursor_new(GDK_ARROW);
-    gdk_window_set_cursor(table->window, cur_arrow);
-    gdk_cursor_unref(cur_arrow);
+    gdk_window_set_cursor(gtk_widget_get_window(table), cur_arrow);
+    g_object_unref(cur_arrow);
 
     int i = 0;
 
@@ -208,11 +201,11 @@ gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
     gtk_widget_grab_focus(table);
 
     GtkAdjustment *adj = NULL;
-    adj = gtk_viewport_get_vadjustment(GTK_VIEWPORT(table->parent));
+    adj = gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(gtk_widget_get_parent(table)));
 
     int step = 200;
-    int value = adj->value;
-    int upper = adj->upper - adj->page_size;
+    int value = gtk_adjustment_get_value(adj);
+    int upper = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
 
     switch(event->direction) {
 
@@ -242,15 +235,29 @@ gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
 
 
 /**
- * gtk custom table expose event handler..
- * @param GtkWidget *table         table that was exposed
- * @param GdkEventExpose *event    gdk expose-event object
- * @return gboolean                returns true
+ * gtk custom table draw event handler..
+ * @param GtkWidget *table    table that was exposed
+ * @param cairo_t *cr         cairo context
+ * @return gboolean           returns true
  */
-gboolean gtk_custom_table_expose(GtkWidget *table, GdkEventExpose *event) {
+gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data) {
 
-    gtk_custom_table_paint(table, event);
+    gtk_custom_table_paint(table, cr);
 
     return TRUE;
+}
+
+
+/**
+ * handle widget destroy event by freeing resources..
+ * @param GtkWidget *table    current table
+ * @param GdkEvent *event     destroy event
+ * @return gboolean           returns false
+ */
+gboolean gtk_custom_table_destroy(GtkWidget *table, GdkEvent *event) {
+
+    gtk_custom_table_free(table);
+
+    return FALSE;
 }
 

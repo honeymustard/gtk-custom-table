@@ -29,15 +29,10 @@ G_DEFINE_TYPE(GtkCustomTable, gtk_custom_table, GTK_TYPE_DRAWING_AREA);
 
 
 /**
- * set-up custom widget signals, if applicable..
+ * set-up custom widget signals if applicable..
  * @param GtkCustomTableClass *class    
  */
 static void gtk_custom_table_class_init(GtkCustomTableClass *class) {
-    
-    GtkWidgetClass *widget_class;
-
-    widget_class = GTK_WIDGET_CLASS(class);
-    widget_class->expose_event = gtk_custom_table_expose;
     
     g_type_class_add_private(class, sizeof(GtkCustomTablePrivate));
 }
@@ -78,5 +73,12 @@ static void gtk_custom_table_init(GtkCustomTable *table) {
 
     g_signal_connect(G_OBJECT(table), "configure_event", 
         G_CALLBACK(gtk_custom_table_config), NULL);
+ 
+    g_signal_connect(G_OBJECT(table), "draw",
+        G_CALLBACK(gtk_custom_table_draw), NULL);
+
+    g_signal_connect(G_OBJECT(table), "destroy",
+        G_CALLBACK(gtk_custom_table_destroy), NULL);
+
 }
 

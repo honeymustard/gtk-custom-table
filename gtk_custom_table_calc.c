@@ -63,8 +63,9 @@ void gtk_custom_table_calc(GtkWidget *table) {
         }
 
         if(priv->table_column_widths[i] == -1) {
-            priv->table_column_widths_temp[i] = (table->allocation.width - specified) 
-                / unlimited; 
+
+            int width = gtk_widget_get_allocated_width(table);
+            priv->table_column_widths_temp[i] = (width - specified) / unlimited; 
         }
         else {
             priv->table_column_widths_temp[i] = priv->table_column_widths[i];
