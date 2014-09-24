@@ -57,7 +57,7 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
             value -= step;
  
-            if(value >= 0) {
+            if(value > 0) {
 
                 gtk_widget_grab_focus(table);
             }
@@ -72,7 +72,7 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
             value += step;
 
-            int cond = value <= upper;
+            int cond = value < upper;
 
             if(cond) {
 
