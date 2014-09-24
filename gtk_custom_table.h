@@ -28,6 +28,9 @@
 #include <ctype.h>
 #include <unistd.h>
 
+/* important, required for casting */
+GType gtk_custom_table_get_type(void);
+
 #define GTK_TYPE_CUSTOM_TABLE             (gtk_custom_table_get_type ())
 #define GTK_CUSTOM_TABLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_CUSTOM_TABLE, GtkCustomTable))
 #define GTK_CUSTOM_TABLE_CLASS(obj)       (G_TYPE_CHECK_CLASS_CAST ((obj), GTK_CUSTOM_TABLE,  GtkCustomTableClass))
@@ -167,9 +170,6 @@ struct _GtkCustomTablePrivate {
     TableRows **table_rows;
 };
 
-
-/* important, required for casting */
-GType gtk_custom_table_get_type(void);
 
 /* widget private functions */
 void gtk_custom_table_calc(GtkWidget *table);
