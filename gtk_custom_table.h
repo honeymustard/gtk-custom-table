@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,6 +243,8 @@ void gtk_custom_table_set_foot_row_alignment(GtkWidget *table,
 void gtk_custom_table_set_column_format(GtkWidget *table, int col, 
     TextFormat format);
 void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, 
+    int row, gboolean value);
+void gtk_custom_table_set_cell_bg_image_enable(GtkWidget *table, int col, 
     int row, gboolean value);
 void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col, 
     char *font);

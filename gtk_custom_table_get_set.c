@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,6 +289,25 @@ void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row,
     TableMeta *meta = priv->table_rows[row]->cell[col]->meta;
 
     meta->has_bg_color = value;
+}
+
+
+/**
+ * enable or disable table cell background image..
+ * @param GtkWidget *table    current table
+ * @param int col             cell x index
+ * @param int row             cell y index
+ * gboolean value             value, true or false
+ */
+void gtk_custom_table_set_cell_bg_image_enable(GtkWidget *table, int col, int row, 
+        gboolean value) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    TableMeta *meta = priv->table_rows[row]->cell[col]->meta;
+
+    meta->has_bg_image = value;
 }
 
 
