@@ -41,8 +41,6 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
     int scroll_beg_row = (r->y / priv->table_row_height) - 1;
     int scroll_end_row = ((r->y + r->height) / priv->table_row_height) + 1;
-
-    cairo_rectangle_list_destroy(rl);
     
     scroll_beg_row = scroll_beg_row < 0 ? 0 : scroll_beg_row;
 
@@ -58,6 +56,8 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     printf("paint rows   : (%d -> %d)\n", scroll_beg_row, scroll_end_row);
     
     #endif
+
+    cairo_rectangle_list_destroy(rl);
 
     int i = 0;
     int j = 0;
