@@ -1,6 +1,6 @@
 ########################################################################
 #
-# Copyright (C) 2014  Adrian Solumsmo
+# Copyright (C) 2011-2014  Adrian Solumsmo
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@
 
 # Program variables..
 LINKDLL = gtk_custom_table.dll
-LINKLIB = gtk_custom_table_dll.a
+LINKLIB = gtk_custom_table.dll.a
 VERSION = 1.0.0
-DELFILE = $(LINKDLL) $(LINKLIB) *.o $(OBJECTS) $(DDFILES)
+DELFILE = $(LINKDLL) $(LINKLIB) $(OBJECTS) $(DDFILES)
 CFLAGS  = -c -Wall -Wno-unused-local-typedefs -MMD -MP -Isrc -Ilib
 FINDDIR = src lib
 LDFLAGS = -shared -Wl,--as-needed\
-          -Wl,-no-undefined,--enable-runtime-pseudo-reloc,--out-implib,$(LINKLIB)
+          -Wl,-no-undefined,--enable-runtime-pseudo-reloc\
+		  -Wl,--out-implib,$(LINKLIB)
 CC      = gcc
 
 # Program source and object files..
@@ -51,7 +52,6 @@ debug: CFLAGS += -g -DDEBUG
 debug: linux
 
 # Faux target..
-linux: OS = LINUX
 linux: GTK3 = `pkg-config --cflags --libs gtk+-3.0`
 linux: PACKAGES = $(GTK3) -lgthread-2.0
 linux: CFLAGS += $(PACKAGES)
@@ -65,7 +65,7 @@ linux: $(OBJECTS)
 #
 ########################################################################
 
-.PHONY : mingw32-make mingw32-debug mingw32-clean windows
+.PHONY : mingw32-make mingw32-debug mingw32-clean mingw32-examples windows
 
 # MinGW release..
 mingw32-make: WINDOWS = -mwindows
@@ -78,7 +78,6 @@ mingw32-debug: CFLAGS += -g -DDEBUG
 mingw32-debug: windows
 
 # MinGW make..
-windows: OS = WINDOWS
 windows: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
 windows: PACKAGES = $(GTK3)
 windows: CFLAGS += $(PACKAGES)
@@ -88,12 +87,15 @@ windows: $(OBJECTS)
 # MinGW clean..
 mingw32-clean: clean
 
+# MinGW examples..
+mingw32-examples: examples
+
 ########################################################################
 # Shared targets..
 #
 ########################################################################
 
-.PHONY : dist purge
+.PHONY : dist purge examples
 
 clean:
 	-@rm $(DELFILE) 2>/dev/null || echo "it's clean"
@@ -101,17 +103,17 @@ clean:
 purge:
 	-@find ./ -regex ".*\(\.swp\|\.swo\|~\|\.fuse.*\)" -delete
 
+examples: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
+examples: LINK = $(GTK3) $(LINKDLL)
+examples: 
+	$(CC) -c -Isrc examples/example-01.c -o examples/example-01.o $(LINK)
+	$(CC) -o examples/example-01.exe examples/example-01.o $(LINK)
+
+
 ########################################################################
 # Project targets..
 #
 ########################################################################
-
-.PHONY : totem
-totem: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
-totem: LINK = $(GTK3) $(LINKDLL)
-totem:
-	$(CC) -c -Isrc main.c $(LINK)
-	$(CC) -o main.exe main.o $(LINK)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $< -o $@
