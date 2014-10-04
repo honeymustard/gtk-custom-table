@@ -29,6 +29,7 @@
  * @param GtkWidget *table    table to be resized
  * @param int cols            amount of cols
  * @param int rows            amount of rows
+ * @return void
  */
 void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
 

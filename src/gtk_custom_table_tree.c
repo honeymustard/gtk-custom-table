@@ -27,6 +27,7 @@
 /**
  * @brief free memory occupied by primed column's binary tree..
  * @param TableTree *tree    the root of the tree..
+ * @return void
  */
 void gtk_custom_table_tree_free(TableTree *tree) {
 
@@ -47,6 +48,7 @@ void gtk_custom_table_tree_free(TableTree *tree) {
  * @param TableTree *tree     binary tree with values
  * @param char *value         value to be found
  * @param int col             column in which to look
+ * @return void
  */
 void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree, 
     char *value, int col) {
@@ -81,6 +83,7 @@ void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree,
  * @param TableTree *tree    widget's index tree..
  * @param TableRows *data    row of table cells in question..
  * @param int primary        primary index column..
+ * @return void
  */
 void gtk_custom_table_tree_add(TableTree *tree, TableRows *data, int primary) {
 

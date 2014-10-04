@@ -34,6 +34,7 @@ G_DEFINE_TYPE(GtkCustomTable, gtk_custom_table, GTK_TYPE_DRAWING_AREA);
 /**
  * @brief set-up custom widget signals if applicable
  * @param GtkCustomTableClass *class    
+ * @return void
  */
 static void gtk_custom_table_class_init(GtkCustomTableClass *class) {
     
@@ -44,6 +45,7 @@ static void gtk_custom_table_class_init(GtkCustomTableClass *class) {
 /**
  * @brief add custom widget event masks and callbacks
  * @param GtkCustomTable *table    
+ * @return void
  */
 static void gtk_custom_table_init(GtkCustomTable *table) {
 

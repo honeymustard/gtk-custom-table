@@ -30,6 +30,7 @@
  * @param int col             column index
  * @param char *text          text to be added
  * @param char *type          type is either 'header' or 'footer'
+ * @return void
  */
 void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col, 
         char *text, char *type) {
@@ -78,7 +79,7 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
  * @brief get the index of a string of text in a table.. 
  * @param GtkWidget *table    table widget in which to search..
  * @param char *text          text to be searched for
- * @return                    returns index on success, else -1
+ * @return int                returns index on success, else -1
  */
 int gtk_custom_table_get_indexof(GtkWidget *table, char *text) {
 
@@ -106,6 +107,7 @@ int gtk_custom_table_get_indexof(GtkWidget *table, char *text) {
  * @param int col             col to write to
  * @param int row             row to write to
  * @param *char text          text to be written
+ * @return void
  */
 void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row, 
     char *text) {
@@ -158,6 +160,7 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
  * @param int col             column 
  * @param int row             row
  * @param char *filename      image filename
+ * @return void
  */
 void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row, 
     char *filename) {
@@ -175,6 +178,7 @@ void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row,
  * @param GtkWidget *table    current table
  * @param int col             column 
  * @param gboolean value      turn on or off
+ * @return void
  */
 void gtk_custom_table_set_column_graph(GtkWidget *table, int col, 
     gboolean value) {
@@ -191,6 +195,7 @@ void gtk_custom_table_set_column_graph(GtkWidget *table, int col,
  * @param GtkWidget *table    current working table
  * @param int col             column 
  * @param double rgb[]        array of colors for graph
+ * @return void
  */
 void gtk_custom_table_set_graph_color_col(GtkWidget *table, int col,  
         double rgb[]) {
@@ -214,6 +219,7 @@ void gtk_custom_table_set_graph_color_col(GtkWidget *table, int col,
  * @param int col             column 
  * @param int row             row
  * @param double rgb[]        array of colors for graph
+ * @return void
  */
 void gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col,  
         int row, double rgb[]) {
@@ -236,6 +242,7 @@ void gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col,
  * @param GtkWidget *table    current working table
  * @param int row             row
  * @param double rgb[]        array of colors for graph
+ * @return void
  */
 void gtk_custom_table_set_row_color(GtkWidget *table, int row, 
         double rgb[]) {
@@ -259,6 +266,7 @@ void gtk_custom_table_set_row_color(GtkWidget *table, int row,
  * @param int col             column 
  * @param int row             row
  * @param double rgb[]        array of colors for graph
+ * @return void
  */
 void gtk_custom_table_set_cell_color(GtkWidget *table, int col, int row, 
         double rgb[]) {
@@ -281,7 +289,7 @@ void gtk_custom_table_set_cell_color(GtkWidget *table, int col, int row,
  * @param GtkWidget *table    current table
  * @param int col             cell x index
  * @param int row             cell y index
- * gboolean value             value, true or false
+ * @return void
  */
 void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row, 
         gboolean value) {
@@ -300,7 +308,7 @@ void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row,
  * @param GtkWidget *table    current table
  * @param int col             cell x index
  * @param int row             cell y index
- * gboolean value             value, true or false
+ * @return void
  */
 void gtk_custom_table_set_cell_bg_image_enable(GtkWidget *table, int col, int row, 
         gboolean value) {
@@ -319,6 +327,7 @@ void gtk_custom_table_set_cell_bg_image_enable(GtkWidget *table, int col, int ro
  * @param GtkWidget *table     current table
  * @param int index            row index
  * @param char ***container    container which equals NULL..
+ * @return void
  */
 void gtk_custom_table_get_row(GtkWidget *table, int index, char ***container) {
     
@@ -346,6 +355,7 @@ void gtk_custom_table_get_row(GtkWidget *table, int index, char ***container) {
  * @param GtkWidget *table    current table
  * @param int col             col value
  * @param int row             row value
+ * @return char *             returns the cell text
  */
 char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row) {
     
@@ -363,7 +373,7 @@ char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row) {
 /**
  * @brief get the row count of a table
  * @param GtkWidget *table    current table
- * @returns int               returns row count
+ * @return int                returns row count
  */
 int gtk_custom_table_get_rows(GtkWidget *table) {
 
@@ -374,7 +384,7 @@ int gtk_custom_table_get_rows(GtkWidget *table) {
 /**
  * @brief get the column count of a table
  * @param GtkWidget *table    current table
- * @returns int               returns columns count
+ * @return int                returns columns count
  */
 int gtk_custom_table_get_cols(GtkWidget *table) {
 
@@ -387,7 +397,7 @@ int gtk_custom_table_get_cols(GtkWidget *table) {
  * @param GtkWidget *table    current table
  * @param int col             column to set as prime
  * @param gboolean value      enable or disables prime
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_column_prime(GtkWidget *table, int col, gboolean value) {
 
@@ -401,7 +411,7 @@ void gtk_custom_table_set_column_prime(GtkWidget *table, int col, gboolean value
  * @param GtkWidget *table    current table
  * @param int col             column to set as index
  * @param gboolean value      enable or disables index
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_column_index(GtkWidget *table, int col, gboolean value) {
 
@@ -414,7 +424,7 @@ void gtk_custom_table_set_column_index(GtkWidget *table, int col, gboolean value
  * @param GtkWidget *table    current table
  * @param int col             column to be hidden
  * @param gboolean value      enable or disables hidden column
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_column_shade(GtkWidget *table, int col, gboolean value) {
 
@@ -427,7 +437,7 @@ void gtk_custom_table_set_column_shade(GtkWidget *table, int col, gboolean value
  * @param GtkWidget *table     current table
  * @param int col              column to be assigned a text format
  * @param TextFormat format    text format to be used
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_column_format(GtkWidget *table, int col, 
     TextFormat format) {
@@ -443,7 +453,7 @@ void gtk_custom_table_set_column_format(GtkWidget *table, int col,
  * @param GtkWidget *table        current table
  * @param int col                 column to get an alignment
  * @param PangoAlignment align    alignment to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_column_alignment(GtkWidget *table, int col, 
     PangoAlignment align) {
@@ -457,7 +467,7 @@ void gtk_custom_table_set_column_alignment(GtkWidget *table, int col,
  * @param GtkWidget *table        current table
  * @param int row                 row to get an alignment
  * @param PangoAlignment align    alignment to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_row_alignment(GtkWidget *table, int row, 
     PangoAlignment align) {
@@ -470,7 +480,7 @@ void gtk_custom_table_set_row_alignment(GtkWidget *table, int row,
  * @brief set the text alignment for header row
  * @param GtkWidget *table        current table
  * @param PangoAlignment align    alignment to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_head_row_alignment(GtkWidget *table, 
     PangoAlignment align) {
@@ -483,7 +493,7 @@ void gtk_custom_table_set_head_row_alignment(GtkWidget *table,
  * @brief set the text alignment for footer row
  * @param GtkWidget *table        current table
  * @param PangoAlignment align    alignment to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_foot_row_alignment(GtkWidget *table, 
     PangoAlignment align) {
@@ -498,7 +508,7 @@ void gtk_custom_table_set_foot_row_alignment(GtkWidget *table,
  * @param int col                 cell column
  * @param int row                 cell row
  * @param PangoAlignment align    alignment to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_cell_alignment(GtkWidget *table, int col, 
     int row, PangoAlignment align) {
@@ -513,7 +523,7 @@ void gtk_custom_table_set_cell_alignment(GtkWidget *table, int col,
  * @param GtkWidget *table        current table
  * @param int col                 cell column
  * @param PangoAlignment align    alignment to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col, 
     PangoAlignment align) {
@@ -528,7 +538,7 @@ void gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col,
  * @param GtkWidget *table        current table
  * @param int col                 cell column
  * @param PangoAlignment align    alignment to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col, 
     PangoAlignment align) {
@@ -542,7 +552,7 @@ void gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col,
  * @brief set the sort index for a table column
  * @param GtkWidget *table    current table
  * @param int col             column to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_sort_index(GtkWidget *table, int col) {
     
@@ -554,7 +564,7 @@ void gtk_custom_table_set_sort_index(GtkWidget *table, int col) {
  * @brief enable or disable sorting for a table
  * @param GtkWidget *table    current table
  * @param gboolean value      either true or false
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_sortable(GtkWidget *table, gboolean value) {
  
@@ -567,7 +577,7 @@ void gtk_custom_table_set_sortable(GtkWidget *table, gboolean value) {
  * @param GtkWidget *table    current table
  * @param int col             column for which to set the text
  * @param char *text          text to apply to cell
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_head_text(GtkWidget *table, int col, char *text) {
 
@@ -580,7 +590,7 @@ void gtk_custom_table_set_head_text(GtkWidget *table, int col, char *text) {
  * @param GtkWidget *table    current table
  * @param int col             column for which to set the text
  * @param char *text          text to apply to cell
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text) {
     
@@ -593,7 +603,7 @@ void gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text) {
  * @param GtkWidget *table    current table
  * @param int col             column for which to set the font
  * @param char *font          font to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col, 
     char *font) {
@@ -608,7 +618,7 @@ void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col,
  * @param GtkWidget *table    current table
  * @param int col             column for which to set the font
  * @param char *font          font to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col, 
     char *font) {
@@ -622,7 +632,7 @@ void gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col,
  * @brief set the font for a header row
  * @param GtkWidget *table    current table
  * @param char *font          font to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_head_row_font(GtkWidget *table, char *font) {
 
@@ -635,7 +645,7 @@ void gtk_custom_table_set_head_row_font(GtkWidget *table, char *font) {
  * @brief set the font for a footer row
  * @param GtkWidget *table    current table
  * @param char *font          font to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font) {
 
@@ -650,7 +660,7 @@ void gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font) {
  * @param int col             cell column
  * @param int row             cell row
  * @param char *font          font to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_cell_font(GtkWidget *table, int col, 
     int row, char *font) {
@@ -665,7 +675,7 @@ void gtk_custom_table_set_cell_font(GtkWidget *table, int col,
  * @param GtkWidget *table    current table
  * @param int row             row for which to set the font
  * @param char *font          font to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_row_font(GtkWidget *table, int row, 
     char *font) {
@@ -680,7 +690,7 @@ void gtk_custom_table_set_row_font(GtkWidget *table, int row,
  * @param GtkWidget *table    current table
  * @param int col             column for which to set the font
  * @param char *font          font to use
- * @returns void
+ * @return void
  */
 void gtk_custom_table_set_column_font(GtkWidget *table, int col, 
     char *font) {

@@ -30,7 +30,7 @@
  * @brief comparision callback function for table sorting
  * @param const void *cmp1    pointer to comparable 1
  * @param const void *cmp2    pointer to comparable 2
- * @return                    see: strcmp
+ * @return int                see: strcmp
  */
 int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
 
@@ -94,6 +94,7 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
  * @param GtkWidget *table    current table widget
  * @param int col             sort table by contents of table[col]
  * @param int orit            sort orientation, desc, asc or inverse
+ * @return void
  */
 void gtk_custom_table_sort(GtkWidget *table, int col, int orient) {
 
