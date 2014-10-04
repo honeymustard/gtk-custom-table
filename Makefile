@@ -22,7 +22,7 @@ LINKDLL = gtk_custom_table.dll
 LINKLIB = gtk_custom_table.dll.a
 VERSION = 1.0.0
 DELFILE = $(LINKDLL) $(LINKLIB) $(OBJECTS) $(DDFILES)
-CFLAGS  = -c -Wall -Wno-unused-local-typedefs -MMD -MP -Isrc -Ilib
+CFLAGS  = -c -Wall -Wno-unused-local-typedefs -MMD -MP -Isrc -Ilib -Iinclude
 FINDDIR = src lib
 LDFLAGS = -shared -Wl,--as-needed\
           -Wl,-no-undefined,--enable-runtime-pseudo-reloc\

@@ -166,12 +166,15 @@ struct _GtkCustomTablePrivate {
 /* widget private functions */
 void gtk_custom_table_calc(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
+void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]);
+void gtk_custom_table_free_cells(GtkWidget *table);
+
+/* private tree functions */
 void gtk_custom_table_tree_free(TableTree *tree);
 void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree, 
     char *value, int col);
 void gtk_custom_table_tree_add(TableTree *tree, TableRows *data, int primary);
-void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]);
-void gtk_custom_table_free_cells(GtkWidget *table);
+
 
 /* widget event functions */
 gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event);
