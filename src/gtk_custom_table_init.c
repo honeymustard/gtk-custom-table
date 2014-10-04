@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
 #include "gtk_custom_table.h"
 
 
+/** @file */
+
+
 static void gtk_custom_table_class_init(GtkCustomTableClass *class);
 static void gtk_custom_table_init(GtkCustomTable *table);
 
@@ -29,7 +32,7 @@ G_DEFINE_TYPE(GtkCustomTable, gtk_custom_table, GTK_TYPE_DRAWING_AREA);
 
 
 /**
- * set-up custom widget signals if applicable..
+ * @brief set-up custom widget signals if applicable
  * @param GtkCustomTableClass *class    
  */
 static void gtk_custom_table_class_init(GtkCustomTableClass *class) {
@@ -39,7 +42,7 @@ static void gtk_custom_table_class_init(GtkCustomTableClass *class) {
 
 
 /**
- * add custom widget event masks and callbacks....
+ * @brief add custom widget event masks and callbacks
  * @param GtkCustomTable *table    
  */
 static void gtk_custom_table_init(GtkCustomTable *table) {
@@ -79,6 +82,5 @@ static void gtk_custom_table_init(GtkCustomTable *table) {
 
     g_signal_connect(G_OBJECT(table), "destroy",
         G_CALLBACK(gtk_custom_table_destroy), NULL);
-
 }
 

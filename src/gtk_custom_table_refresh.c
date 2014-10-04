@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,11 @@
 #include "gtk_custom_table.h"
 
 
+/** @file */
+
+
 /**
- * minor convenience function to force repaint of widget..
+ * @brief minor convenience function to force repaint of widget..
  * @param GtkWidget *table    table widget to refresh
  */
 void gtk_custom_table_refresh(GtkWidget *widget) {

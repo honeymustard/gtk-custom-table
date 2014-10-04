@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,11 @@
 #include <gdk/gdkkeysyms.h>
 
 
+/** @file */
+
+
 /**
- * configure handler for custom table..
+ * @brief configure handler for custom table..
  * @param GtkWidget *table    current table..
  * @param GdkEvent *event     configure event
  * @return gboolean           gboolean
@@ -35,7 +38,7 @@ gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event) {
 
 
 /**
- * key-released handler for scrolling with arrow keys..
+ * @brief key-released handler for scrolling with arrow keys..
  * @param GtkWidget *table      current table..
  * @param GdkEventKey *event    key event
  * @return gboolean             gboolean
@@ -95,7 +98,7 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
 
 /**
- * custom table clicked handler, changes curson when clicking headers
+ * @brief custom table clicked handler, changes curson when clicking headers
  * @param GtkWidget *table         current table..
  * @param GdkEventMotion *event    gdk motion event
  * @return gboolean                gboolean
@@ -141,7 +144,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
 
 
 /**
- * custom table mouse-button-released handler.. for clicking headers..
+ * @brief custom table mouse-button-released handler.. for clicking headers..
  * @param GtkWidget *table         current table..
  * @param GdkEventButton *event    button event
  * @return gboolean                gboolean
@@ -191,7 +194,7 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
 
 
 /**
- * gtk custom table wheel-scroll event handler..
+ * @brief gtk custom table wheel-scroll event handler..
  * @param GtkWidget *table         table that was scrolled
  * @param GdkEventScroll *event    gdk scroll event
  * @return gboolean                gboolean
@@ -235,7 +238,7 @@ gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
 
 
 /**
- * gtk custom table draw event handler..
+ * @brief gtk custom table draw event handler..
  * @param GtkWidget *table    table that was exposed
  * @param cairo_t *cr         cairo context
  * @return gboolean           returns true
@@ -249,7 +252,7 @@ gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data) {
 
 
 /**
- * handle widget destroy event by freeing resources..
+ * @brief handle widget destroy event by freeing resources..
  * @param GtkWidget *table    current table
  * @param GdkEvent *event     destroy event
  * @return gboolean           returns false

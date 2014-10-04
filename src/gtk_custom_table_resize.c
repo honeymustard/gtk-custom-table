@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,11 @@
 #include "gtk_custom_table.h"
 
 
+/** @file */
+
+
 /**
- * resize existing table to an arbitrary size
+ * @brief resize existing table to an arbitrary size
  * @param GtkWidget *table    table to be resized
  * @param int cols            amount of cols
  * @param int rows            amount of rows

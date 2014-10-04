@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,11 @@
 #include "gtk_custom_table.h"
 
 
+/** @file */
+
+
 /**
- * free memory occupied by primed column's binary tree..
+ * @brief free memory occupied by primed column's binary tree..
  * @param TableTree *tree    the root of the tree..
  */
 void gtk_custom_table_tree_free(TableTree *tree) {
@@ -39,7 +42,7 @@ void gtk_custom_table_tree_free(TableTree *tree) {
 
 
 /**
- * recursively look for value in tree specified by col, save row index
+ * @brief recursively look for value in tree specified by col, save row index
  * @param GtkWidget *table    private table structure
  * @param TableTree *tree     binary tree with values
  * @param char *value         value to be found
@@ -74,7 +77,7 @@ void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree,
 
 
 /**
- * add a reference to a table row in a binary tree based on primary index..
+ * @brief add a reference to a table row in a binary tree based on primary index..
  * @param TableTree *tree    widget's index tree..
  * @param TableRows *data    row of table cells in question..
  * @param int primary        primary index column..

@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,11 @@
 #include <stdlib.h>
 
 
+/** @file */
+
+
 /**
- * comparision callback function for table sorting
+ * @brief comparision callback function for table sorting
  * @param const void *cmp1    pointer to comparable 1
  * @param const void *cmp2    pointer to comparable 2
  * @return                    see: strcmp
@@ -87,7 +90,7 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
 
 
 /**
- * sort an existing table using qsort..
+ * @brief sort an existing table using qsort..
  * @param GtkWidget *table    current table widget
  * @param int col             sort table by contents of table[col]
  * @param int orit            sort orientation, desc, asc or inverse

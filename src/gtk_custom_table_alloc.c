@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,13 @@
 #include "gtk_custom_table.h"
 
 
-/**
- * create a new custom table and setup default variables
- * @param GtkWidget *table     current table widget
- * @param int column_widths    array of column widths
+/** @file */ 
+
+/** 
+ * @brief create a new custom table and setup default variables
+ * @param GtkWidget *table current table widget
+ * @param int column_widths array of column widths
+ * @return void
  */
 void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
 
@@ -145,5 +148,4 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
 
     free(temp);
 }
-
 

@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,11 @@
 #include <stdio.h>
 
 
+/** @file */
+
+
 /**
- * test if a string can be represented as an integer..
+ * @brief test if a string can be represented as an integer..
  * @param char *string    string to be tested
  * @return int            returns 1 if true else 0
  */
@@ -44,7 +47,7 @@ int gtk_custom_table_string_is_integer(char *string) {
 
 
 /**
- * sanitize a string and convert it to integer..
+ * @brief sanitize a string and convert it to integer..
  * @param char *string      string to be converted
  * @return unsigned long    returns an integer
  */
@@ -74,7 +77,7 @@ unsigned long gtk_custom_table_string_parseint(char *string) {
 
 
 /**
- * strip alphanumeric chars from string..
+ * @brief strip alphanumeric chars from string..
  * @param char *string    string to be stripped
  * @return char *         returns the stripped string
  */
@@ -100,7 +103,7 @@ char * gtk_custom_table_string_strip_alpha(char *string) {
 
 
 /**
- * add thousand separators to integer string..
+ * @brief add thousand separators to integer string..
  * @param char *string    string to be converted
  * @return char *         returns the converted string
  */

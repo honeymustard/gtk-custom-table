@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Copyright (C) 2011-2013  Adrian Solumsmo
+ * Copyright (C) 2011-2014  Adrian Solumsmo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,11 @@
 #include "gtk_custom_table.h"
 
 
+/** @file */
+
+
 /**
- * free all table cells and data from a specific table widget
+ * @brief free all table cells and data from a specific table widget
  * @param GtkWidget *table    table to be freed
  */
 void gtk_custom_table_free_cells(GtkWidget *table) {
@@ -67,7 +70,7 @@ void gtk_custom_table_free_cells(GtkWidget *table) {
 
 
 /**
- * free contents and structures from a specific table widget
+ * @brief free contents and structures from a specific table widget
  * @param GtkWidget *table    table to be freed
  */
 void gtk_custom_table_free(GtkWidget *table) {
