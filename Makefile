@@ -19,14 +19,11 @@
 
 # Program variables..
 LINKDLL = gtk_custom_table.dll
-LINKLIB = gtk_custom_table.dll.a
 VERSION = 1.0.0
-DELFILE = $(LINKDLL) $(LINKLIB) $(OBJECTS) $(DDFILES)
+DELFILE = $(LINKDLL) $(OBJECTS) $(DDFILES)
 CFLAGS  = -c -Wall -Wno-unused-local-typedefs -MMD -MP -Isrc -Ilib -Iinclude
 FINDDIR = src lib
-LDFLAGS = -shared -Wl,--as-needed\
-          -Wl,-no-undefined,--enable-runtime-pseudo-reloc\
-		  -Wl,--out-implib,$(LINKLIB)
+LDFLAGS = -shared -Wl,--as-needed,-no-undefined,--enable-runtime-pseudo-reloc
 CC      = gcc
 
 # Program source and object files..
@@ -106,7 +103,7 @@ purge:
 examples: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
 examples: LINK = $(GTK3) $(LINKDLL)
 examples: 
-	$(CC) -c -Isrc examples/example-01.c -o examples/example-01.o $(LINK)
+	$(CC) $(CFLAGS) examples/example-01.c -o examples/example-01.o $(LINK) 
 	$(CC) -o examples/example-01.exe examples/example-01.o $(LINK)
 
 

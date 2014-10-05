@@ -6,13 +6,11 @@ A custom table implementation for Gtk+3 written in C.
 
 **Linux:**
 
-    $ make
+    $ make                         # builds gtk_custom_table.so
     
 **Windows:**
 
-    $ mingw32-make mingw32-make
-
-    # builds gtk_custom_table.dll gtk_custom_table.dll.a
+    $ mingw32-make mingw32-make    # builds gtk_custom_table.dll
 
 ## Copyright
 

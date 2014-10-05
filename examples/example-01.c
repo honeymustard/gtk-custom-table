@@ -14,6 +14,11 @@ int main(int argc, char *argv[]) {
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
     //gtk_box_pack_start(GTK_BOX(vbox), mwin->menu, FALSE, FALSE, 0);
 
+    int widths[] = {
+        10, 10, 10, 10
+    };
+
+    gtk_custom_table_new(4, 4, 200, 200, widths);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     /* last steps, show window */
