@@ -18,9 +18,9 @@
 ########################################################################
 
 # Program variables..
-LINKDLL = gtk_custom_table.dll
+LIBRARY = gtk_custom_table
 VERSION = 1.0.0
-DELFILE = $(LINKDLL) $(OBJECTS) $(DDFILES)
+DELFILE = $(LIBRARY) $(OBJECTS) $(DDFILES)
 CFLAGS  = -c -Wall -Wno-unused-local-typedefs -MMD -MP -Isrc -Ilib -Iinclude
 FINDDIR = src lib
 LDFLAGS = -shared -Wl,--as-needed,-no-undefined,--enable-runtime-pseudo-reloc
@@ -49,11 +49,12 @@ debug: CFLAGS += -g -DDEBUG
 debug: linux
 
 # Faux target..
+linux: SO = $(LIBRARY).so
 linux: GTK3 = `pkg-config --cflags --libs gtk+-3.0`
 linux: PACKAGES = $(GTK3) -lgthread-2.0
 linux: CFLAGS += $(PACKAGES)
 linux: $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $(LINKDLL) $(OBJECTS) $(PACKAGES)
+	$(CC) $(LDFLAGS) -o $(SO) $(OBJECTS) $(PACKAGES)
 
 ########################################################################
 # Standard Windows build: MSYS, GTK+3
@@ -75,11 +76,12 @@ mingw32-debug: CFLAGS += -g -DDEBUG
 mingw32-debug: windows
 
 # MinGW make..
+windows: DLL = $(LIBRARY).dll
 windows: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
 windows: PACKAGES = $(GTK3)
 windows: CFLAGS += $(PACKAGES)
 windows: $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $(LINKDLL) $(OBJECTS) $(PACKAGES) $(WINDOWS)
+	$(CC) $(LDFLAGS) -o $(DLL) $(OBJECTS) $(PACKAGES) $(WINDOWS)
 
 # MinGW clean..
 mingw32-clean: clean
