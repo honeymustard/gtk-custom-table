@@ -28,9 +28,9 @@
 
 /**
  * @brief configure handler for custom table..
- * @param GtkWidget *table    current table..
- * @param GdkEvent *event     configure event
- * @return gboolean           gboolean
+ * @param table        current table
+ * @param event        configure event
+ * @return gboolean    gboolean
  */
 gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event) {
 
@@ -40,9 +40,9 @@ gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event) {
 
 /**
  * @brief key-released handler for scrolling with arrow keys..
- * @param GtkWidget *table      current table..
- * @param GdkEventKey *event    key event
- * @return gboolean             gboolean
+ * @param table        current table
+ * @param event        key event
+ * @return gboolean    gboolean
  */
 gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
@@ -100,9 +100,9 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event) {
 
 /**
  * @brief custom table clicked handler, changes curson when clicking headers
- * @param GtkWidget *table         current table..
- * @param GdkEventMotion *event    gdk motion event
- * @return gboolean                gboolean
+ * @param table        current table
+ * @param event        gdk motion event
+ * @return gboolean    gboolean
  */
 gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
 
@@ -146,9 +146,9 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
 
 /**
  * @brief custom table mouse-button-released handler.. for clicking headers..
- * @param GtkWidget *table         current table..
- * @param GdkEventButton *event    button event
- * @return gboolean                gboolean
+ * @param table        current table
+ * @param event        button event
+ * @return gboolean    gboolean
  */
 gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event) {
 
@@ -196,9 +196,9 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
 
 /**
  * @brief gtk custom table wheel-scroll event handler..
- * @param GtkWidget *table         table that was scrolled
- * @param GdkEventScroll *event    gdk scroll event
- * @return gboolean                gboolean
+ * @param table        table that was scrolled
+ * @param event        gdk scroll event
+ * @return gboolean    gboolean
  */
 gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
 
@@ -240,9 +240,10 @@ gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
 
 /**
  * @brief gtk custom table draw event handler..
- * @param GtkWidget *table    table that was exposed
- * @param cairo_t *cr         cairo context
- * @return gboolean           returns true
+ * @param table        table that was exposed
+ * @param cr           cairo context
+ * @param data         data is not used in function
+ * @return gboolean    returns true
  */
 gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data) {
 
@@ -254,9 +255,9 @@ gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data) {
 
 /**
  * @brief handle widget destroy event by freeing resources..
- * @param GtkWidget *table    current table
- * @param GdkEvent *event     destroy event
- * @return gboolean           returns false
+ * @param table        current table
+ * @param event        destroy event
+ * @return gboolean    returns false
  */
 gboolean gtk_custom_table_destroy(GtkWidget *table, GdkEvent *event) {
 

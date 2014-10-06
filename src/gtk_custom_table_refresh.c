@@ -27,7 +27,7 @@
 
 /**
  * @brief minor convenience function to force repaint of widget..
- * @param GtkWidget *table    table widget to refresh
+ * @param widget    widget to refresh
  * @return void
  */
 void gtk_custom_table_refresh(GtkWidget *widget) {

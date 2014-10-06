@@ -27,7 +27,7 @@
 
 /**
  * @brief calculate current table column widths and offsets
- * @param GtkWidget *table    current table..
+ * @param table    current table
  * @return void
  */
 void gtk_custom_table_calc(GtkWidget *table) {

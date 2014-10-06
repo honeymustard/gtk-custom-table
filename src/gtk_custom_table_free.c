@@ -27,7 +27,7 @@
 
 /**
  * @brief free all table cells and data from a specific table widget
- * @param GtkWidget *table    table to be freed
+ * @param table    table to be freed
  * @return void
  */
 void gtk_custom_table_free_cells(GtkWidget *table) {
@@ -73,7 +73,7 @@ void gtk_custom_table_free_cells(GtkWidget *table) {
 
 /**
  * @brief free contents and structures from a specific table widget
- * @param GtkWidget *table    table to be freed
+ * @param table    table to be freed
  * @return void
  */
 void gtk_custom_table_free(GtkWidget *table) {

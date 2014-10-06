@@ -32,9 +32,10 @@
 typedef struct _GtkCustomTableClass GtkCustomTableClass;
 typedef struct _GtkCustomTablePrivate GtkCustomTablePrivate;
 
-/* structure for all widget instances */
+/** structure for all widget instances */
 struct _GtkCustomTableClass {
     
+    /** widget parent class */
     GtkDrawingAreaClass parent_class;  
 };
 
@@ -45,87 +46,87 @@ typedef struct table_cols TableCols;
 typedef struct table_rows TableRows;
 typedef struct table_tree TableTree;
 
-/* table cell meta data */
+/** table row, column and cell meta data */
 struct table_meta {
 
-    char *font;
-    char *bg_image;
-    double color[3];
-    double graph[3];
-    TextFormat format;
-    PangoAlignment align;
-    gboolean graphable;
-    gboolean has_format;
-    gboolean has_bg_image;
-    gboolean has_bg_color;
+    char *font;             ///< current font
+    char *bg_image;         ///< current background image
+    double color[3];        ///< current background color
+    double graph[3];        ///< current graph background color
+    TextFormat format;      ///< current text format
+    PangoAlignment align;   ///< current text alignment
+    gboolean graphable;     ///< is current row, column, cell graphable
+    gboolean has_format;    ///< does current row, column, cell have a text format
+    gboolean has_bg_image;  ///< does current row, column, cell have a background image
+    gboolean has_bg_color;  ///< does current row, column, cell have a background color
 };
 
-/* table cells */
+/** structure for table cells */
 struct table_cell {
 
-    char *text;
-    TableMeta *meta;
+    char *text;       ///< table cell text
+    TableMeta *meta;  ///< table cell meta-data
 };
 
-/* table cols */
+/** structure for table cols */
 struct table_cols {
 
-    TableMeta *meta;
-    TableCell **cell;
+    TableMeta *meta;  ///< table columns meta-data
+    TableCell **cell; ///< cells in this table columns
 };
 
-/* table rows */
+/** structure for table rows */
 struct table_rows {
 
-    GtkCustomTablePrivate *priv;
+    GtkCustomTablePrivate *priv; ///< private table hook
 
-    int row_current;
-    int row_genesis;
-    TableMeta *meta;
-    TableCell **cell;
+    int row_current;  ///< current row
+    int row_genesis;  ///< original row
+    TableMeta *meta;  ///< table rows meta-data
+    TableCell **cell; ///< table cells in this row
 };
 
-/* table binary tree */
+/** structure for table binary tree */
 struct table_tree {
 
-    TableRows *data;
-    TableTree *left;
-    TableTree *right;
+    TableRows *data;  ///< table row
+    TableTree *left;  ///< left table sub-tree
+    TableTree *right; ///< right table sub-tree
 };
 
-/* structure for per instance private data */
+/** structure for per instance private data */
 struct _GtkCustomTablePrivate {
 
-    gboolean table_is_sortable;
+    gboolean table_is_sortable;     ///< is table sortable
 
-    int table_x;
-    int table_y;
-    int table_tree_index;
-    int table_sort_index;
-    int table_sort_order;
-    int table_has_header;
-    int table_has_footer;
-    int table_has_primary;
-    int table_col_primary;
-    int table_min_width;
-    int table_max_width;  /* never used.. */
-    int table_min_height; /* never used.. */
-    int table_max_height;
-    int table_row_height;
+    int table_x;                    ///< table rows
+    int table_y;                    ///< table cols
+    int table_tree_index;           ///< index of table tree
+    int table_sort_index;           ///< table sort index
+    int table_sort_order;           ///< table sort order
+    int table_has_header;           ///< does table have header
+    int table_has_footer;           ///< does table have footer
+    int table_has_primary;          ///< does table have a primary column
+    int table_col_primary;          ///< primary table column
+    int table_min_width;            ///< table minimum width
+    int table_max_width;            ///< table maximum width  /* never used.. */
+    int table_min_height;           ///< table minimum height /* never used.. */
+    int table_max_height;           ///< table maximum height
+    int table_row_height;           ///< table row height
 
-    int *table_column_widths;
-    int *table_column_index;
-    int *table_column_hidden;
-    int *table_column_widths_temp;
-    int *table_column_offset_temp;
+    int *table_column_widths;       ///< array of table column widths
+    int *table_column_index;        ///< array 
+    int *table_column_hidden;       ///< array of hidden table columns
+    int *table_column_widths_temp;  ///< temporary array for column widths
+    int *table_column_offset_temp;  ///< temporary array for column offsets
 
-    TableTree *table_tree;
-    TableRows *table_head;
-    TableRows *table_foot;
+    TableTree *table_tree;          ///< current table search tree
+    TableRows *table_head;          ///< current table header
+    TableRows *table_foot;          ///< current table footer
 
-    TableCell **table_cell;
-    TableCols **table_cols;
-    TableRows **table_rows;
+    TableCell **table_cell;         ///< current table cells
+    TableCols **table_cols;         ///< current table columns
+    TableRows **table_rows;         ///< current table rows
 };
 
 

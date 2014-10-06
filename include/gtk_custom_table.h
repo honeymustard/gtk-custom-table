@@ -58,12 +58,13 @@ typedef enum {
 } TextFormat;
 
 
-/* structure for per instance public data */
+/** structure for per instance public data */
 typedef struct _GtkCustomTable GtkCustomTable;
 
+/** custom table structure */
 struct _GtkCustomTable {
-    
-    GtkDrawingArea parent;
+
+    GtkDrawingArea parent; ///< parent widget
 };
 
 

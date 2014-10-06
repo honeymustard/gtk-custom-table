@@ -27,9 +27,9 @@
 
 /**
  * @brief resize existing table to an arbitrary size
- * @param GtkWidget *table    table to be resized
- * @param int cols            amount of cols
- * @param int rows            amount of rows
+ * @param table    table to be resized
+ * @param cols     amount of cols
+ * @param rows     amount of rows
  * @return void
  */
 void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {

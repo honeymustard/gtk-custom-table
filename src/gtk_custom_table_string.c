@@ -29,8 +29,8 @@
 
 /**
  * @brief test if a string can be represented as an integer..
- * @param char *string    string to be tested
- * @return int            returns 1 if true else 0
+ * @param string    string to be tested
+ * @return int      returns 1 if true else 0
  */
 int gtk_custom_table_string_is_integer(char *string) {
 
@@ -49,7 +49,7 @@ int gtk_custom_table_string_is_integer(char *string) {
 
 /**
  * @brief sanitize a string and convert it to integer..
- * @param char *string      string to be converted
+ * @param string            string to be converted
  * @return unsigned long    returns an integer
  */
 unsigned long gtk_custom_table_string_parseint(char *string) {
@@ -79,8 +79,8 @@ unsigned long gtk_custom_table_string_parseint(char *string) {
 
 /**
  * @brief strip alphanumeric chars from string..
- * @param char *string    string to be stripped
- * @return char *         returns the stripped string
+ * @param string     string to be stripped
+ * @return char *    returns the stripped string
  */
 char * gtk_custom_table_string_strip_alpha(char *string) {
 
@@ -105,8 +105,8 @@ char * gtk_custom_table_string_strip_alpha(char *string) {
 
 /**
  * @brief add thousand separators to integer string..
- * @param char *string    string to be converted
- * @return char *         returns the converted string
+ * @param string     string to be converted
+ * @return char *    returns the converted string
  */
 char * gtk_custom_table_string_thousand_separator(char *string) {
 

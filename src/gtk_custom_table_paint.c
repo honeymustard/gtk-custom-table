@@ -27,8 +27,8 @@
 
 /**
  * @brief calculate widget dimensions, paint to cairo context
- * @param GtkCustomTablePrivate *table    current table
- * @param GdkEventExpose *event           expose event
+ * @param table    current table
+ * @param cr       cairo context
  * @return void
  */
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {

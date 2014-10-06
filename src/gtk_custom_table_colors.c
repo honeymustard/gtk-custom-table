@@ -25,47 +25,55 @@
 /** @file */
 
 
+/** zebra stripes for rows */
 double checkers[2][3] = {
     {1.00, 1.00, 1.00}, 
     {0.90, 0.90, 0.95}, 
 };
 
+/** default header row color */
 double rgb_header[3] = {
     0.85, 
     0.85, 
     0.85, 
 };
 
+/** default footer row color */
 double rgb_footer[3] = {
     0.8, 
     0.8, 
     0.8, 
 };
 
+/** default bold header row color */
 double rgb_header_bold[3] = {
     0.90, 
     0.90, 
     0.90, 
 };
 
+/** default border color */
 double rgb_border[3] = {
     0.2, 
     0.2, 
     0.2, 
 };
 
+/** default text color */
 double rgb_text[3] = {
     0.1, 
     0.1, 
     0.1, 
 };
 
+/** default graph color */
 double rgb_graph[] = {
     0.00, 
     0.90, 
     0.00,
 };
 
+/** default cell color */
 double rgb_cell[] = {
     1.00, 
     1.00, 

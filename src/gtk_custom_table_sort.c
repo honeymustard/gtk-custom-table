@@ -29,9 +29,9 @@
 
 /**
  * @brief comparision callback function for table sorting
- * @param const void *cmp1    pointer to comparable 1
- * @param const void *cmp2    pointer to comparable 2
- * @return int                see: strcmp
+ * @param cmp1    pointer to comparable 1
+ * @param cmp2    pointer to comparable 2
+ * @return int    see: strcmp
  */
 int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
 
@@ -92,9 +92,9 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
 
 /**
  * @brief sort an existing table using qsort..
- * @param GtkWidget *table    current table widget
- * @param int col             sort table by contents of table[col]
- * @param int orit            sort orientation, desc, asc or inverse
+ * @param table     current table widget
+ * @param col       sort table by contents of table[col]
+ * @param orient    sort orientation, desc, asc or inverse
  * @return void
  */
 void gtk_custom_table_sort(GtkWidget *table, int col, int orient) {

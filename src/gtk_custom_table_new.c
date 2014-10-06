@@ -27,12 +27,12 @@
 
 /**
  * @brief create a new custom table and setup default variables
- * @param int cols               amount of table columns
- * @param int rows               amount of table rows
- * @param int min_width          minimun width of the table
- * @param int min_height         minimum height of the table
- * @param int column_widths[]    an array with the column widths
- * @return GtkWidget *table      returns newly created table widget
+ * @param cols             amount of table columns
+ * @param rows             amount of table rows
+ * @param min_width        minimun width of the table
+ * @param min_height       minimum height of the table
+ * @param column_widths    an array with the column widths
+ * @return table           returns newly created table widget
  */
 GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_height, 
     int column_widths[]) {
