@@ -25,8 +25,8 @@
 
 /** 
  * @brief create a new custom table and setup default variables
- * @param GtkWidget *table current table widget
- * @param int column_widths array of column widths
+ * @param GtkWidget *table     current table
+ * @param int column_widths    array of column widths
  * @return void
  */
 void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
