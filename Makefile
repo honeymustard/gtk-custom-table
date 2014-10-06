@@ -41,7 +41,7 @@ DDFILES = $(patsubst %.o,%.d,$(OBJECTS))
 .PHONY : all debug linux
 
 # Default for make..
-all: CFLAGS += -O2 -DINSTALL
+all: CFLAGS += -O2
 all: linux
 
 # Make debug..
