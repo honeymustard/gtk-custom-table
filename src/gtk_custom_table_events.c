@@ -19,6 +19,7 @@
 
 
 #include "gtk_custom_table.h"
+#include "gtk_custom_table_private.h"
 #include <gdk/gdkkeysyms.h>
 
 

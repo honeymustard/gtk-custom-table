@@ -19,6 +19,7 @@
 
 
 #include "gtk_custom_table.h"
+#include "gtk_custom_table_private.h"
 
 
 /** @file */
@@ -91,7 +92,7 @@ int gtk_custom_table_get_indexof(GtkWidget *table, char *text) {
         g_error("table does not have a primary index");
     }
 
-    gtk_custom_table_tree_get_recurse(table, priv->table_tree, text, 
+    gtk_custom_table_tree_get(table, priv->table_tree, text, 
         priv->table_col_primary);
 
     int index = GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_tree_index;

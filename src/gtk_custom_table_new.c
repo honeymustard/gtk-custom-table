@@ -19,6 +19,7 @@
 
 
 #include "gtk_custom_table.h"
+#include "gtk_custom_table_private.h"
 
 
 /** @file */
@@ -43,6 +44,7 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int min_width, int min_heig
 
     /* variable defaults */
     priv->table_min_width = min_width;
+    priv->table_min_height = min_height;
     priv->table_row_height = 25;
     priv->table_has_primary = 0;
     priv->table_has_header = 0;

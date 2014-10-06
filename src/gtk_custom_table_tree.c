@@ -19,6 +19,7 @@
 
 
 #include "gtk_custom_table.h"
+#include "gtk_custom_table_private.h"
 
 
 /** @file */
@@ -43,14 +44,14 @@ void gtk_custom_table_tree_free(TableTree *tree) {
 
 
 /**
- * @brief recursively look for value in tree specified by col, save row index
+ * @brief recursively get value from tree specified by col, save row index
  * @param GtkWidget *table    private table structure
  * @param TableTree *tree     binary tree with values
  * @param char *value         value to be found
  * @param int col             column in which to look
  * @return void
  */
-void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree, 
+void gtk_custom_table_tree_get(GtkWidget *table, TableTree *tree, 
     char *value, int col) {
 
     GtkCustomTablePrivate *priv;
@@ -69,11 +70,8 @@ void gtk_custom_table_tree_get_recurse(GtkWidget *table, TableTree *tree,
     /* else, go left then right */
     else {
 
-        gtk_custom_table_tree_get_recurse(
-            table, tree->left, value, col);
-
-        gtk_custom_table_tree_get_recurse(
-            table, tree->right, value, col);
+        gtk_custom_table_tree_get(table, tree->left, value, col);
+        gtk_custom_table_tree_get(table, tree->right, value, col);
     }
 }
 
