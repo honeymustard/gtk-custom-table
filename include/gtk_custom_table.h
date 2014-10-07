@@ -64,7 +64,7 @@ typedef struct _GtkCustomTable GtkCustomTable;
 /** custom table structure */
 struct _GtkCustomTable {
 
-    GtkDrawingArea parent; ///< parent widget
+    GtkDrawingArea parent; /**< parent widget */
 };
 
 
