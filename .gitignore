@@ -6,6 +6,8 @@
 *.d
 *.a
 *.dll
+*.so
 *.exe
 docs
+examples
 
