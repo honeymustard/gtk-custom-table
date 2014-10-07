@@ -18,7 +18,7 @@
 ########################################################################
 
 # Program variables..
-LIBRARY = gtk_custom_table
+LIBRARY = gtk-custom-table
 LINKNIX = lib$(LIBRARY).so
 LINKWIN = lib$(LIBRARY).dll
 VERSION = 1.0.0
