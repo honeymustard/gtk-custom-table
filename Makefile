@@ -19,11 +19,13 @@
 
 # Program variables..
 LIBRARY = gtk_custom_table
+LINKNIX = lib$(LIBRARY).so
+LINKWIN = lib$(LIBRARY).dll
 VERSION = 1.0.0
-DELFILE = $(LIBRARY).dll $(LIBRARY).so $(OBJECTS) $(DDFILES)
+DELFILE = $(LINKNIX) $(LINKWIN) $(OBJECTS) $(DDFILES)
 CFLAGS  = -c -Wall -Wno-unused-local-typedefs -MMD -MP -Isrc -Ilib -Iinclude
 FINDDIR = src lib
-LDFLAGS = -shared -Wl,--as-needed,-no-undefined,--enable-runtime-pseudo-reloc
+LDFLAGS = -shared -Wl,--as-needed
 CC      = gcc
 
 # Program source and object files..
@@ -34,7 +36,7 @@ DDFILES = $(patsubst %.o,%.d,$(OBJECTS))
 # Variables for example programs..
 EXAMDIR = examples
 EXCFILE = $(shell find $(EXAMDIR) -name "*.c")
-EXOFILE = $(patsubst %.c,%,$(EXCFILE))
+EXOFILE = $(patsubst %.c,%.o,$(EXCFILE))
 
 ########################################################################
 # Standard Linux build..
@@ -54,15 +56,15 @@ debug: CFLAGS += -g -DDEBUG
 debug: linux
 
 # Faux target..
-linux: LINKLIB = $(LIBRARY).so
 linux: GTK3 = `pkg-config --cflags --libs gtk+-3.0`
 linux: PACKAGES = $(GTK3) -lgthread-2.0
-linux: CFLAGS += $(PACKAGES)
+linux: CFLAGS += -fPIC $(PACKAGES)
 linux: $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $(LINKLIB) $(OBJECTS) $(PACKAGES)
+	$(CC) $(LDFLAGS) -o $(LINKNIX) $(OBJECTS) $(PACKAGES)
 
 # Examples..
 examples: GTK3 = `pkg-config --cflags --libs gtk+-3.0`
+examples: CFLAGS = -Wall -Iinclude -Wl,-rpath,$(shell pwd)
 examples: compile-ex
 
 ########################################################################
@@ -72,7 +74,7 @@ examples: compile-ex
 #
 ########################################################################
 
-.PHONY : mingw32-make mingw32-debug mingw32-clean mingw32-examples windows
+.PHONY : mingw32-make mingw32-debug mingw32-clean windows mingw32-examples
 
 # MinGW release..
 mingw32-make: WINDOWS = -mwindows
@@ -85,12 +87,12 @@ mingw32-debug: CFLAGS += -g -DDEBUG
 mingw32-debug: windows
 
 # MinGW make..
-windows: LINKLIB = $(LIBRARY).dll
+windows: LDFLAGS += -Wl,-no-undefined,--enable-runtime-pseudo-reloc
 windows: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
 windows: PACKAGES = $(GTK3)
 windows: CFLAGS += $(PACKAGES)
 windows: $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $(LINKLIB) $(OBJECTS) $(PACKAGES) $(WINDOWS)
+	$(CC) $(LDFLAGS) -o $(LINKWIN) $(OBJECTS) $(PACKAGES) $(WINDOWS)
 
 # MinGW clean..
 mingw32-clean: clean
@@ -98,6 +100,7 @@ mingw32-clean: clean
 # MinGW examples..
 mingw32-examples: EXT = .exe
 mingw32-examples: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
+mingw32-examples: CFLAGS = -Wall -Iinclude
 mingw32-examples: compile-ex
 
 ########################################################################
@@ -105,7 +108,7 @@ mingw32-examples: compile-ex
 #
 ########################################################################
 
-.PHONY : dist purge compile-ex
+.PHONY : dist purge compile-ex cleanex
 
 clean:
 	-@rm $(DELFILE) 2>/dev/null || echo "it's clean"
@@ -114,21 +117,23 @@ purge:
 	-@find ./ -regex ".*\(\.swp\|\.swo\|~\|\.fuse.*\)" -delete
 
 # Target to compile examples..
-compile-ex: PACKAGES = $(GTK3) -L. -lgtk_custom_table
-compile-ex: CFLAGS = -Wall -Iinclude
+compile-ex: PACKAGES = $(GTK3) -L. -l$(LIBRARY)
 compile-ex: $(EXOFILE)
-compile-ex: 
-	-@cp *.dll *.so $(EXAMDIR) 2>/dev/null || true
+	-@cp $(LINKWIN) $(EXAMDIR) 2>/dev/null || true
+
+# Clean examples dir
+cleanex:
+	-@rm $(EXAMDIR)/*.exe 2>/dev/null || echo "it's clean"
 
 ########################################################################
 # Project targets..
 #
 ########################################################################
 
-%: %.c
-	$(CC) $(CFLAGS) $< -o $@$(EXT) $(PACKAGES)
+examples/%.o: examples/%.c
+	$(CC) $(CFLAGS) $< -o examples/$*$(EXT) $(PACKAGES)
 
-%.o: %.c
+src/%.o: src/%.c
 	$(CC) $(CFLAGS) $< -o $@
 
 -include $(DDFILES)
