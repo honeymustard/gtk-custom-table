@@ -41,11 +41,11 @@ EXOFILE = $(patsubst %.c,%.o,$(EXCFILE))
 ########################################################################
 # Standard Linux build..
 #
-# make | make [ debug | clean | examples ]
+# make | make [ debug | clean | make-all | debug-all | examples ]
 #
 ########################################################################
 
-.PHONY : all debug linux examples
+.PHONY : all debug make-all debug-all linux examples
 
 # Default for make..
 all: CFLAGS += -O2
@@ -54,6 +54,10 @@ all: linux
 # Make debug..
 debug: CFLAGS += -g -DDEBUG
 debug: linux
+
+# Make all..
+make-all: all examples
+debug-all: debug examples
 
 # Faux target..
 linux: GTK3 = `pkg-config --cflags --libs gtk+-3.0`
@@ -74,7 +78,8 @@ examples: compile-ex
 #
 ########################################################################
 
-.PHONY : mingw32-make mingw32-debug mingw32-clean windows mingw32-examples
+.PHONY : mingw32-make mingw32-debug mingw32-clean windows
+.PHONY : mingw32-make-all mingw32-debug-all mingw32-examples
 
 # MinGW release..
 mingw32-make: WINDOWS = -mwindows
@@ -85,6 +90,10 @@ mingw32-make: windows
 mingw32-debug: WINDOWS = 
 mingw32-debug: CFLAGS += -g -DDEBUG
 mingw32-debug: windows
+
+# MinGW all..
+mingw32-make-all: mingw32-make mingw32-examples
+mingw32-debug-all: mingw32-debug mingw32-examples
 
 # MinGW make..
 windows: LDFLAGS += -Wl,-no-undefined,--enable-runtime-pseudo-reloc
