@@ -254,6 +254,23 @@ gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data) {
 
 
 /**
+ * @brief gtk custom table realize event handler..
+ * @param table        table that was realized
+ * @param data         data is not used in function
+ * @return gboolean    returns true
+ */
+gboolean gtk_custom_table_realize(GtkWidget *table, gpointer data) {
+
+    if(!GTK_IS_SCROLLABLE(gtk_widget_get_parent(table))) {
+
+        g_error("GtkCustomTable must have a scrollable parent widget!");
+    }
+
+    return TRUE;
+}
+
+
+/**
  * @brief handle widget destroy event by freeing resources..
  * @param table        current table
  * @param event        destroy event

@@ -83,6 +83,9 @@ static void gtk_custom_table_init(GtkCustomTable *table) {
  
     g_signal_connect(G_OBJECT(table), "draw",
         G_CALLBACK(gtk_custom_table_draw), NULL);
+    
+    g_signal_connect(G_OBJECT(table), "realize",
+        G_CALLBACK(gtk_custom_table_realize), NULL);
 
     g_signal_connect(G_OBJECT(table), "destroy",
         G_CALLBACK(gtk_custom_table_destroy), NULL);

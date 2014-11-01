@@ -131,9 +131,9 @@ struct _GtkCustomTablePrivate {
 
 
 /* internal functions */
-void gtk_custom_table_calc(GtkWidget *table);
+void gtk_custom_table_calc_widths(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
-void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]);
+void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]);
 void gtk_custom_table_free_cells(GtkWidget *table);
 
 /* internal binary tree functions */
@@ -146,6 +146,7 @@ gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event);
 gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event);
 gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event);
 gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data);
+gboolean gtk_custom_table_realize(GtkWidget *table, gpointer data);
 gboolean gtk_custom_table_destroy(GtkWidget *table, GdkEvent *event);
 gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event);
 gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event);
