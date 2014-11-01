@@ -30,7 +30,7 @@
  * @param table    current table
  * @return void
  */
-void gtk_custom_table_calc(GtkWidget *table) {
+void gtk_custom_table_calc_widths(GtkWidget *table) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
@@ -58,6 +58,8 @@ void gtk_custom_table_calc(GtkWidget *table) {
             unlimited += 1;
         }
     }
+
+    priv->table_min_width = specified;
     
     /* divvy up remainder of space to cells without widths */
     for(i = 0; i < priv->table_x; i++) {
@@ -70,7 +72,9 @@ void gtk_custom_table_calc(GtkWidget *table) {
         if(priv->table_column_widths[i] == -1) {
 
             int width = gtk_widget_get_allocated_width(table);
-            priv->table_column_widths_temp[i] = (width - specified) / unlimited; 
+            int temp = width - specified;
+
+            priv->table_column_widths_temp[i] = (temp >= 0 ? temp : 0) / unlimited;
         }
         else {
             priv->table_column_widths_temp[i] = priv->table_column_widths[i];
@@ -83,5 +87,7 @@ void gtk_custom_table_calc(GtkWidget *table) {
 
     /* set end of table offset */
     priv->table_column_offset_temp[i] = offset - 1;
+
+    priv->table_max_width = offset;
 }
 

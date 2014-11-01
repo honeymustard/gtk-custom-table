@@ -306,6 +306,23 @@ void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row,
 
 
 /**
+ * @brief set the minimum width and height of a table
+ * @param table     current table
+ * @param width     minimun width of the table
+ * @param height    minimum height of the table
+ * @return void
+ */
+void gtk_custom_table_set_min_size(GtkWidget *table, int width, int height) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->table_min_width = width;
+    priv->table_min_height = height;
+}
+
+
+/**
  * @brief enable or disable table cell background image..
  * @param table    current table
  * @param col      cell x index
