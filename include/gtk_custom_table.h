@@ -69,13 +69,14 @@ struct _GtkCustomTable {
 
 
 /* widget public functions */
-GtkWidget* gtk_custom_table_new(int rows, int cols, int min_width, int min_height, int column_widths[]);
+GtkWidget* gtk_custom_table_new(int cols, int rows, int col_widths[]);
 void  gtk_custom_table_refresh(GtkWidget *table);
 void  gtk_custom_table_sort(GtkWidget *table, int col, int orientation);
 void  gtk_custom_table_resize(GtkWidget *table, int cols, int rows);
 void  gtk_custom_table_free(GtkWidget *table);
 
-/* public getters and setters */
+/* public setters */
+void  gtk_custom_table_set_min_size(GtkWidget *table, int width, int height);
 void  gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row, char *filename);
 void  gtk_custom_table_set_cell_color(GtkWidget *table, int col, int row, double rgb[]);
 void  gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]);
@@ -93,7 +94,6 @@ void  gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col, PangoA
 void  gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col, PangoAlignment align);
 void  gtk_custom_table_set_head_text(GtkWidget *table, int col, char *text);
 void  gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text);
-void  gtk_custom_table_get_row(GtkWidget *table, int index, char ***container);
 void  gtk_custom_table_set_row_alignment(GtkWidget *table, int row, PangoAlignment align);
 void  gtk_custom_table_set_head_row_alignment(GtkWidget *table, PangoAlignment align);
 void  gtk_custom_table_set_foot_row_alignment(GtkWidget *table, PangoAlignment align);
@@ -107,6 +107,9 @@ void  gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font);
 void  gtk_custom_table_set_cell_font(GtkWidget *table, int col, int row, char *font);
 void  gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font);
 void  gtk_custom_table_set_column_font(GtkWidget *table, int col, char *font);
+
+/* public getters */
+void  gtk_custom_table_get_row(GtkWidget *table, int index, char ***container);
 int   gtk_custom_table_get_rows(GtkWidget *table);
 int   gtk_custom_table_get_cols(GtkWidget *table);
 int   gtk_custom_table_get_indexof(GtkWidget *table, char *value);
