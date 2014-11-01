@@ -26,11 +26,11 @@
 
 /** 
  * @brief create a new custom table and setup default variables
- * @param table            current table
- * @param column_widths    array of column widths
+ * @param table         current table
+ * @param col_widths    array of column widths
  * @return void
  */
-void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
+void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
@@ -41,7 +41,9 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
 
     priv->table_max_height = (rows_h + head_h + foot_h) * priv->table_row_height;
 
-    gtk_widget_set_size_request(table, -1, priv->table_max_height);
+    int width = priv->table_min_width > 0 ? priv->table_min_width : -1;
+
+    gtk_widget_set_size_request(table, width, priv->table_max_height);
 
     int cols = priv->table_x;
     int rows = priv->table_y;
@@ -138,7 +140,7 @@ void gtk_custom_table_alloc(GtkWidget *table, int column_widths[]) {
             priv->table_cols[i]->cell[j] = priv->table_cell[cell % priv->table_x];
         }
 
-        priv->table_column_widths[i] = column_widths[i];
+        priv->table_column_widths[i] = col_widths[i];
         priv->table_column_index[i] = FALSE;
         priv->table_column_hidden[i] = FALSE;
         priv->table_column_widths_temp[i] = 0;
