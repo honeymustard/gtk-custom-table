@@ -37,32 +37,26 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* update table dimensions for redrawing table */
-    if(gtk_widget_get_allocated_width(table) > priv->table_min_width) {
-        gtk_custom_table_calc(table);
-    }
+    gtk_custom_table_calc_widths(table);
 
-    cairo_rectangle_list_t *rl = cairo_copy_clip_rectangle_list(cr);
-    cairo_rectangle_t *r = &rl->rectangles[0];
+    /* paint rows based on current scroll adjustment */
+    GtkAdjustment *adj = NULL;
+    adj = gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(gtk_widget_get_parent(table)));
 
-    int scroll_beg_row = (r->y / priv->table_row_height) - 1;
-    int scroll_end_row = ((r->y + r->height) / priv->table_row_height) + 1;
+    int scroll_top = gtk_adjustment_get_value(adj);
+    int scroll_bot = scroll_top + (int)gtk_adjustment_get_page_size(adj);
+
+    int scroll_beg_row = (scroll_top / priv->table_row_height) - 1;
+    int scroll_end_row = (scroll_bot / priv->table_row_height) + 1;
     
     scroll_beg_row = scroll_beg_row < 0 ? 0 : scroll_beg_row;
-
-    if(scroll_end_row > priv->table_y) {
-        scroll_end_row = priv->table_y;
-    }
+    scroll_end_row = scroll_end_row > priv->table_y ? priv->table_y : scroll_end_row;
 
     #ifdef DEBUG
 
-    printf("\n");
-    printf("paint coords : (%d,%d)\n", (int)r->x, (int)r->y);
-    printf("paint size   : (%d,%d)\n", (int)r->width, (int)r->height);
-    printf("paint rows   : (%d -> %d)\n", scroll_beg_row, scroll_end_row);
+    printf("\npaint rows : (%d -> %d)\n", scroll_beg_row, scroll_end_row);
     
     #endif
-
-    cairo_rectangle_list_destroy(rl);
 
     int i = 0;
     int j = 0;
@@ -164,8 +158,12 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             layout = pango_cairo_create_layout(cr);
             description = pango_font_description_from_string(font_temp);
 
-            pango_layout_set_text(layout, 
+            /* make sure text is not empty */
+            if(priv->table_head->cell[i]->text != NULL) {
+
+                pango_layout_set_text(layout, 
                     priv->table_head->cell[i]->text, -1);
+            }
 
             pango_layout_set_font_description(layout, 
                 description);
@@ -401,8 +399,10 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                         cairo_set_source_surface(cr, sur, 
                             priv->table_column_offset_temp[j] + 10, 
                             offset + 5);
+
                         cairo_paint(cr);
                     }
+
                     cairo_restore(cr);
                 }
                      
@@ -414,13 +414,19 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 layout = pango_cairo_create_layout(cr);
                 description = pango_font_description_from_string(font_temp);
                
-                pango_layout_set_text(layout, text_temp, -1);
+                /* make sure text is not empty */
+                if(text_temp != NULL) {
+
+                    pango_layout_set_text(layout, text_temp, -1);
+                }
+
+                int text_box = priv->table_column_widths_temp[j] - 20;
 
                 pango_layout_set_font_description(layout, 
                     description);
 
                 pango_layout_set_width(layout, 
-                    (priv->table_column_widths_temp[j] - 20) * PANGO_SCALE);
+                    (text_box > 0 ? text_box : 1) * PANGO_SCALE);
 
                 pango_layout_set_height(layout, 
                     priv->table_row_height * PANGO_SCALE);
@@ -525,8 +531,12 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             layout = pango_cairo_create_layout(cr);
             description = pango_font_description_from_string(font_temp);
 
-            pango_layout_set_text(layout, 
-                priv->table_foot->cell[i]->text, -1);
+            /* make sure text is not empty */
+            if(priv->table_foot->cell[i]->text != NULL) {
+
+                pango_layout_set_text(layout, 
+                    priv->table_foot->cell[i]->text, -1);
+            }
 
             pango_layout_set_font_description(layout, 
                 description);
