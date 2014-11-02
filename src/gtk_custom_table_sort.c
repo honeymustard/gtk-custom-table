@@ -38,15 +38,15 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
     TableRows *row1 = *(((TableRows **)cmp1));
     TableRows *row2 = *(((TableRows **)cmp2));
 
-    int col = row1->priv->table_sort_index;
-    int sort = row1->priv->table_sort_order != GTK_CUSTOM_TABLE_ASC;
+    int col = row1->priv->sort_index;
+    int sort = row1->priv->sort_order != GTK_CUSTOM_TABLE_ASC;
 
     int result = 0;
 
     /* check to see if column has a sorting format */
-    if(row1->priv->table_cols[col]->meta->has_format) {
+    if(row1->priv->cols[col]->meta->has_format) {
 
-        int format = row1->priv->table_cols[col]->meta->format;
+        int format = row1->priv->cols[col]->meta->format;
 
         /* compare large integers with optional junk */
         if(format == FORMAT_INTEGER_UNSIGNED) {
@@ -103,24 +103,24 @@ void gtk_custom_table_sort(GtkWidget *table, int col, int orient) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* only sort if table is sortable */
-    if(priv->table_is_sortable == FALSE) {
+    if(priv->is_sortable == FALSE) {
         return; 
     }
 
     /* set next table sort order */
-    priv->table_sort_index = col;
-    priv->table_sort_order = orient == -1 ? !priv->table_sort_order : orient;
+    priv->sort_index = col;
+    priv->sort_order = orient == -1 ? !priv->sort_order : orient;
 
     /* perform qsort on table cells array */
-    qsort((void *)priv->table_rows, priv->table_y, sizeof(TableRows *), 
+    qsort((void *)priv->rows, priv->y, sizeof(TableRows *), 
         gtk_custom_table_compare);
 
     int i = 0;
 
     /* reset row index, so that binary search can find them */
-    for(i = 0; i < priv->table_y; i++) {
+    for(i = 0; i < priv->y; i++) {
 
-        priv->table_rows[i]->row_current = i;
+        priv->rows[i]->row_current = i;
     }
 }
 

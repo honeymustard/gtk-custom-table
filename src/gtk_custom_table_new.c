@@ -40,105 +40,103 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int col_widths[]) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* variable defaults */
-    priv->table_is_sortable = FALSE;
-    priv->table_min_width = 0;
-    priv->table_min_height = 0;
-    priv->table_row_height = 25;
-    priv->table_has_primary = 0;
-    priv->table_has_header = 0;
-    priv->table_has_footer = 0;
-    priv->table_tree = NULL;
-    priv->table_sort_index = 0;
-    priv->table_sort_order = 0;
-    priv->table_tree_index = -1;
-    priv->table_col_primary = 2;
+    priv->is_sortable = FALSE;
+    priv->row_height = 25;
+    priv->has_primary = 0;
+    priv->has_header = 0;
+    priv->has_footer = 0;
+    priv->tree = NULL;
+    priv->sort_index = 0;
+    priv->sort_order = 0;
+    priv->tree_index = -1;
+    priv->col_primary = 2;
 
     /* create header & footer */
-    priv->table_head = malloc(sizeof(TableRows));
-    priv->table_foot = malloc(sizeof(TableRows));
+    priv->head = malloc(sizeof(TableRows));
+    priv->foot = malloc(sizeof(TableRows));
 
-    priv->table_head->cell = malloc(sizeof(TableCell *) * cols); 
-    priv->table_foot->cell = malloc(sizeof(TableCell *) * cols); 
+    priv->head->cell = malloc(sizeof(TableCell *) * cols); 
+    priv->foot->cell = malloc(sizeof(TableCell *) * cols); 
 
     int i = 0;
     int j = 0;
 
-    priv->table_head->meta = malloc(sizeof(TableMeta));
-    priv->table_head->meta->font = NULL;
-    priv->table_head->meta->bg_image = NULL;
-    priv->table_head->meta->align = PANGO_ALIGN_NONE;
-    priv->table_head->meta->format = FORMAT_NONE;
-    priv->table_head->meta->graphable = FALSE;
-    priv->table_head->meta->has_format = FALSE;
-    priv->table_head->meta->has_bg_color = FALSE;
-    priv->table_head->meta->has_bg_image = FALSE;
+    priv->head->meta = malloc(sizeof(TableMeta));
+    priv->head->meta->font = NULL;
+    priv->head->meta->bg_image = NULL;
+    priv->head->meta->align = PANGO_ALIGN_NONE;
+    priv->head->meta->format = FORMAT_NONE;
+    priv->head->meta->graphable = FALSE;
+    priv->head->meta->has_format = FALSE;
+    priv->head->meta->has_bg_color = FALSE;
+    priv->head->meta->has_bg_image = FALSE;
 
     for(i = 0; i < 3; i++) {
 
-        priv->table_head->meta->graph[i] = rgb_graph[i];
-        priv->table_head->meta->color[i] = rgb_cell[i];
+        priv->head->meta->graph[i] = rgb_graph[i];
+        priv->head->meta->color[i] = rgb_cell[i];
     }
 
-    priv->table_foot->meta = malloc(sizeof(TableMeta));
-    priv->table_foot->meta->font = NULL;
-    priv->table_foot->meta->bg_image = NULL;
-    priv->table_foot->meta->align = PANGO_ALIGN_NONE;
-    priv->table_foot->meta->format = FORMAT_NONE;
-    priv->table_foot->meta->graphable = FALSE;
-    priv->table_foot->meta->has_format = FALSE;
-    priv->table_foot->meta->has_bg_color = FALSE;
-    priv->table_foot->meta->has_bg_image = FALSE;
+    priv->foot->meta = malloc(sizeof(TableMeta));
+    priv->foot->meta->font = NULL;
+    priv->foot->meta->bg_image = NULL;
+    priv->foot->meta->align = PANGO_ALIGN_NONE;
+    priv->foot->meta->format = FORMAT_NONE;
+    priv->foot->meta->graphable = FALSE;
+    priv->foot->meta->has_format = FALSE;
+    priv->foot->meta->has_bg_color = FALSE;
+    priv->foot->meta->has_bg_image = FALSE;
 
     for(i = 0; i < 3; i++) {
 
-        priv->table_foot->meta->graph[i] = rgb_graph[i];
-        priv->table_foot->meta->color[i] = rgb_cell[i];
+        priv->foot->meta->graph[i] = rgb_graph[i];
+        priv->foot->meta->color[i] = rgb_cell[i];
     }
 
     for(i = 0; i < cols; i++) {
 
         /* create new table cell */
-        priv->table_head->cell[i] = malloc(sizeof(TableCell));
-        priv->table_head->cell[i]->text = NULL;
+        priv->head->cell[i] = malloc(sizeof(TableCell));
+        priv->head->cell[i]->text = NULL;
 
-        priv->table_head->cell[i]->meta = malloc(sizeof(TableMeta));
-        priv->table_head->cell[i]->meta->font = NULL;
-        priv->table_head->cell[i]->meta->bg_image = NULL;
-        priv->table_head->cell[i]->meta->align = PANGO_ALIGN_NONE;
-        priv->table_head->cell[i]->meta->format = FORMAT_NONE;
-        priv->table_head->cell[i]->meta->graphable = FALSE;
-        priv->table_head->cell[i]->meta->has_format = FALSE;
-        priv->table_head->cell[i]->meta->has_bg_color = FALSE;
-        priv->table_head->cell[i]->meta->has_bg_image = FALSE;
+        priv->head->cell[i]->meta = malloc(sizeof(TableMeta));
+        priv->head->cell[i]->meta->font = NULL;
+        priv->head->cell[i]->meta->bg_image = NULL;
+        priv->head->cell[i]->meta->align = PANGO_ALIGN_NONE;
+        priv->head->cell[i]->meta->format = FORMAT_NONE;
+        priv->head->cell[i]->meta->graphable = FALSE;
+        priv->head->cell[i]->meta->has_format = FALSE;
+        priv->head->cell[i]->meta->has_bg_color = FALSE;
+        priv->head->cell[i]->meta->has_bg_image = FALSE;
 
         for(j = 0; j < 3; j++) {
 
-            priv->table_head->cell[i]->meta->graph[j] = rgb_graph[j];
-            priv->table_head->cell[i]->meta->color[j] = rgb_cell[j];
+            priv->head->cell[i]->meta->graph[j] = rgb_graph[j];
+            priv->head->cell[i]->meta->color[j] = rgb_cell[j];
         }
 
-        priv->table_foot->cell[i] = malloc(sizeof(TableCell));
-        priv->table_foot->cell[i]->text = NULL;
+        priv->foot->cell[i] = malloc(sizeof(TableCell));
+        priv->foot->cell[i]->text = NULL;
 
-        priv->table_foot->cell[i]->meta = malloc(sizeof(TableMeta));
-        priv->table_foot->cell[i]->meta->font = NULL;
-        priv->table_foot->cell[i]->meta->bg_image = NULL;
-        priv->table_foot->cell[i]->meta->align = PANGO_ALIGN_NONE;
-        priv->table_foot->cell[i]->meta->format = FORMAT_NONE;
-        priv->table_foot->cell[i]->meta->graphable = FALSE;
-        priv->table_foot->cell[i]->meta->format = FALSE;
-        priv->table_foot->cell[i]->meta->has_bg_color = FALSE;
-        priv->table_foot->cell[i]->meta->has_bg_image = FALSE;
+        priv->foot->cell[i]->meta = malloc(sizeof(TableMeta));
+        priv->foot->cell[i]->meta->font = NULL;
+        priv->foot->cell[i]->meta->bg_image = NULL;
+        priv->foot->cell[i]->meta->align = PANGO_ALIGN_NONE;
+        priv->foot->cell[i]->meta->format = FORMAT_NONE;
+        priv->foot->cell[i]->meta->graphable = FALSE;
+        priv->foot->cell[i]->meta->format = FALSE;
+        priv->foot->cell[i]->meta->has_bg_color = FALSE;
+        priv->foot->cell[i]->meta->has_bg_image = FALSE;
 
         for(j = 0; j < 3; j++) {
 
-            priv->table_foot->cell[i]->meta->graph[j] = rgb_graph[j];
-            priv->table_foot->cell[i]->meta->color[j] = rgb_cell[j];
+            priv->foot->cell[i]->meta->graph[j] = rgb_graph[j];
+            priv->foot->cell[i]->meta->color[j] = rgb_cell[j];
         }
     }
 
-    priv->table_x = cols;
-    priv->table_y = rows;
+    priv->x = cols;
+    priv->y = rows;
 
     gtk_custom_table_alloc(table, col_widths);
 

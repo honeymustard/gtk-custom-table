@@ -97,36 +97,32 @@ struct table_tree {
 /** structure for per instance private data */
 struct _GtkCustomTablePrivate {
 
-    gboolean table_is_sortable;     /**< is table sortable */
+    gboolean is_sortable;     /**< is table sortable */
 
-    int table_x;                    /**< table rows */
-    int table_y;                    /**< table cols */
-    int table_tree_index;           /**< index of table tree */
-    int table_sort_index;           /**< table sort index */
-    int table_sort_order;           /**< table sort order */
-    int table_has_header;           /**< does table have header */
-    int table_has_footer;           /**< does table have footer */
-    int table_has_primary;          /**< does table have a primary column */
-    int table_col_primary;          /**< primary table column */
-    int table_min_width;            /**< table minimum width */
-    int table_max_width;            /**< table maximum width.. never used.. */
-    int table_min_height;           /**< table minimum height.. never used.. */
-    int table_max_height;           /**< table maximum height */
-    int table_row_height;           /**< table row height */
+    int x;                    /**< table rows */
+    int y;                    /**< table cols */
+    int tree_index;           /**< index of table tree */
+    int sort_index;           /**< table sort index */
+    int sort_order;           /**< table sort order */
+    int has_header;           /**< does table have header */
+    int has_footer;           /**< does table have footer */
+    int has_primary;          /**< does table have a primary column */
+    int col_primary;          /**< primary table column */
+    int row_height;           /**< table row height */
 
-    int *table_column_widths;       /**< array of table column widths */
-    int *table_column_index;        /**< array */
-    int *table_column_hidden;       /**< array of hidden table columns */
-    int *table_column_widths_temp;  /**< temporary array for column widths */
-    int *table_column_offset_temp;  /**< temporary array for column offsets */
+    int *col_widths;          /**< array of table column widths */
+    int *col_index;           /**< array */
+    int *col_hidden;          /**< array of hidden table columns */
+    int *col_widths_temp;     /**< temporary array for column widths */
+    int *col_offset_temp;     /**< temporary array for column offsets */
 
-    TableTree *table_tree;          /**< current table search tree */
-    TableRows *table_head;          /**< current table header */
-    TableRows *table_foot;          /**< current table footer */
+    TableTree *tree;          /**< current table search tree */
+    TableRows *head;          /**< current table header */
+    TableRows *foot;          /**< current table footer */
 
-    TableCell **table_cell;         /**< current table cells */
-    TableCols **table_cols;         /**< current table columns */
-    TableRows **table_rows;         /**< current table rows */
+    TableCell **cell;         /**< current table cells */
+    TableCols **cols;         /**< current table columns */
+    TableRows **rows;         /**< current table rows */
 };
 
 

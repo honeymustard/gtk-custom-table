@@ -38,36 +38,36 @@ void gtk_custom_table_free_cells(GtkWidget *table) {
     int i = 0;
 
     /* free memory occupied by table cells */
-    for(i = 0; i < (priv->table_x * priv->table_y); i++) {
+    for(i = 0; i < (priv->x * priv->y); i++) {
 
         /* free cell text and image */
-        if(priv->table_cell[i]->text != NULL) {
-            free(priv->table_cell[i]->text);
+        if(priv->cell[i]->text != NULL) {
+            free(priv->cell[i]->text);
         }
 
-        free(priv->table_cell[i]->meta);
-        free(priv->table_cell[i]);
+        free(priv->cell[i]->meta);
+        free(priv->cell[i]);
     }
 
     /* free memory occupied by table rows */
-    for(i = 0; i < priv->table_y; i++) {
+    for(i = 0; i < priv->y; i++) {
 
-        free(priv->table_rows[i]->meta);
-        free(priv->table_rows[i]->cell);
-        free(priv->table_rows[i]);
+        free(priv->rows[i]->meta);
+        free(priv->rows[i]->cell);
+        free(priv->rows[i]);
     }
 
     /* free memory occupied by table cols */
-    for(i = 0; i < priv->table_x; i++) {
+    for(i = 0; i < priv->x; i++) {
 
-        free(priv->table_cols[i]->meta);
-        free(priv->table_cols[i]->cell);
-        free(priv->table_cols[i]);
+        free(priv->cols[i]->meta);
+        free(priv->cols[i]->cell);
+        free(priv->cols[i]);
     }
 
-    free(priv->table_cell);
-    free(priv->table_cols);
-    free(priv->table_rows);
+    free(priv->cell);
+    free(priv->cols);
+    free(priv->rows);
 }
 
 
@@ -86,38 +86,38 @@ void gtk_custom_table_free(GtkWidget *table) {
     gtk_custom_table_free_cells(table);
 
     /* free memory occupied by header/footer */
-    for(i = 0; i < priv->table_x; i++) {
+    for(i = 0; i < priv->x; i++) {
 
-        if(priv->table_head->cell[i]->text != NULL) {
-            free(priv->table_head->cell[i]->text);
+        if(priv->head->cell[i]->text != NULL) {
+            free(priv->head->cell[i]->text);
         }
 
-        free(priv->table_head->cell[i]->meta);
-        free(priv->table_head->cell[i]);
+        free(priv->head->cell[i]->meta);
+        free(priv->head->cell[i]);
 
-        if(priv->table_foot->cell[i]->text != NULL) {
-            free(priv->table_foot->cell[i]->text);
+        if(priv->foot->cell[i]->text != NULL) {
+            free(priv->foot->cell[i]->text);
         }
 
-        free(priv->table_foot->cell[i]->meta);
-        free(priv->table_foot->cell[i]);
+        free(priv->foot->cell[i]->meta);
+        free(priv->foot->cell[i]);
     }
 
-    free(priv->table_head->cell); 
-    free(priv->table_foot->cell); 
-    free(priv->table_head->meta); 
-    free(priv->table_foot->meta); 
-    free(priv->table_head);
-    free(priv->table_foot);
+    free(priv->head->cell); 
+    free(priv->foot->cell); 
+    free(priv->head->meta); 
+    free(priv->foot->meta); 
+    free(priv->head);
+    free(priv->foot);
 
     /* free misc memory */
-    free(priv->table_column_widths);
-    free(priv->table_column_index);
-    free(priv->table_column_hidden);
-    free(priv->table_column_widths_temp);
-    free(priv->table_column_offset_temp);
+    free(priv->col_widths);
+    free(priv->col_index);
+    free(priv->col_hidden);
+    free(priv->col_widths_temp);
+    free(priv->col_offset_temp);
 
     /* free memory occupied by primed column */
-    gtk_custom_table_tree_free(priv->table_tree);
+    gtk_custom_table_tree_free(priv->tree);
 }
 

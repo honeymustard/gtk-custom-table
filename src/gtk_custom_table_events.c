@@ -110,7 +110,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* make sure table has a header, and is sortable */
-    if(!priv->table_has_header || (priv->table_is_sortable == FALSE)) {
+    if(!priv->has_header || (priv->is_sortable == FALSE)) {
         return TRUE;
     }
 
@@ -119,14 +119,14 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
     GdkCursor *cur;
 
     /* determine if click occured on header */
-    if(event->y < priv->table_row_height) {
+    if(event->y < priv->row_height) {
 
-        for(i = 0; i < priv->table_x; i++) {
+        for(i = 0; i < priv->x; i++) {
 
-            if(event->x < priv->table_column_offset_temp[i+1]) {
+            if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
-                if(priv->table_column_index[i] == FALSE) {
+                if(priv->col_index[i] == FALSE) {
 
                     cur = gdk_cursor_new(GDK_HAND1);
                     gdk_window_set_cursor(gtk_widget_get_window(table), cur);
@@ -156,7 +156,7 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* make sure table has a header, and is sortable */
-    if(!priv->table_has_header || (priv->table_is_sortable == FALSE)) {
+    if(!priv->has_header || (priv->is_sortable == FALSE)) {
         return TRUE;
     }
 
@@ -172,14 +172,14 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
     int i = 0;
 
     /* determine if click occured on header */
-    if(event->y < priv->table_row_height) {
+    if(event->y < priv->row_height) {
 
-        for(i = 0; i < priv->table_x; i++) {
+        for(i = 0; i < priv->x; i++) {
 
-            if(event->x < priv->table_column_offset_temp[i+1]) {
+            if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
-                if(priv->table_column_index[i] == FALSE) {
+                if(priv->col_index[i] == FALSE) {
 
                     gtk_custom_table_sort(table, i, GTK_CUSTOM_TABLE_INVERT);
                     gtk_custom_table_refresh(table);
@@ -260,6 +260,12 @@ gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data) {
  * @return gboolean    returns true
  */
 gboolean gtk_custom_table_realize(GtkWidget *table, gpointer data) {
+
+    /* set table width and height */
+    int width = gtk_custom_table_get_width(table);
+    int height = gtk_custom_table_get_height(table);
+
+    gtk_widget_set_size_request(table, width, height);
 
     if(!GTK_IS_SCROLLABLE(gtk_widget_get_parent(table))) {
 

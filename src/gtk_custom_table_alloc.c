@@ -35,18 +35,8 @@ void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    int rows_h = priv->table_y;
-    int head_h = priv->table_has_header;
-    int foot_h = priv->table_has_footer;
-
-    priv->table_max_height = (rows_h + head_h + foot_h) * priv->table_row_height;
-
-    int width = priv->table_min_width > 0 ? priv->table_min_width : -1;
-
-    gtk_widget_set_size_request(table, width, priv->table_max_height);
-
-    int cols = priv->table_x;
-    int rows = priv->table_y;
+    int cols = priv->x;
+    int rows = priv->y;
 
     int i = 0;
     int j = 0;
@@ -54,17 +44,17 @@ void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
 
     int indices = cols * sizeof(int);
 
-    priv->table_column_widths = malloc(indices);
-    priv->table_column_index = malloc(indices);
-    priv->table_column_hidden = malloc(indices);
+    priv->col_widths = malloc(indices);
+    priv->col_index = malloc(indices);
+    priv->col_hidden = malloc(indices);
 
-    priv->table_column_widths_temp = malloc(indices);
-    priv->table_column_offset_temp = malloc(indices + sizeof(int));
+    priv->col_widths_temp = malloc(indices);
+    priv->col_offset_temp = malloc(indices + sizeof(int));
 
     /* setup cells, rows and columns */
-    priv->table_cols = malloc(sizeof(TableCols *) * cols); 
-    priv->table_rows = malloc(sizeof(TableRows *) * rows); 
-    priv->table_cell = malloc(sizeof(TableCell *) * (rows * cols)); 
+    priv->cols = malloc(sizeof(TableCols *) * cols); 
+    priv->rows = malloc(sizeof(TableRows *) * rows); 
+    priv->cell = malloc(sizeof(TableCell *) * (rows * cols)); 
 
     /* create a temporary default meta object */
     TableMeta *temp = malloc(sizeof(TableMeta));
@@ -82,38 +72,38 @@ void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
     for(i = 0; i < (rows * cols); i++) {
 
         /* create new table cell */
-        priv->table_cell[i] = malloc(sizeof(TableCell));
-        priv->table_cell[i]->text = NULL;
-        priv->table_cell[i]->meta = malloc(sizeof(TableMeta));
+        priv->cell[i] = malloc(sizeof(TableCell));
+        priv->cell[i]->text = NULL;
+        priv->cell[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->table_cell[i]->meta, temp, sizeof(TableMeta));
+        memcpy(priv->cell[i]->meta, temp, sizeof(TableMeta));
 
         for(k = 0; k < 3; k++) {
-            priv->table_cell[i]->meta->graph[k] = rgb_graph[k];
-            priv->table_cell[i]->meta->color[k] = rgb_cell[k];
+            priv->cell[i]->meta->graph[k] = rgb_graph[k];
+            priv->cell[i]->meta->color[k] = rgb_cell[k];
         }
     }
 
     for(i = 0; i < rows; i++) {
 
-        priv->table_rows[i] = malloc(sizeof(TableRows));
-        priv->table_rows[i]->meta = malloc(sizeof(TableMeta));
+        priv->rows[i] = malloc(sizeof(TableRows));
+        priv->rows[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->table_rows[i]->meta, temp, sizeof(TableMeta));
+        memcpy(priv->rows[i]->meta, temp, sizeof(TableMeta));
 
-        priv->table_rows[i]->row_genesis = i;
-        priv->table_rows[i]->row_current = 0;
+        priv->rows[i]->row_genesis = i;
+        priv->rows[i]->row_current = 0;
 
         for(k = 0; k < 3; k++) {
-            priv->table_rows[i]->meta->graph[k] = rgb_graph[k];
-            priv->table_rows[i]->meta->color[k] = rgb_cell[k];
+            priv->rows[i]->meta->graph[k] = rgb_graph[k];
+            priv->rows[i]->meta->color[k] = rgb_cell[k];
         }
 
-        priv->table_rows[i]->cell = malloc(sizeof(TableCell *) * cols);
-        priv->table_rows[i]->priv = priv;
+        priv->rows[i]->cell = malloc(sizeof(TableCell *) * cols);
+        priv->rows[i]->priv = priv;
 
         for(j = 0; j < cols; j++, cell++) {
-            priv->table_rows[i]->cell[j] = priv->table_cell[cell];
+            priv->rows[i]->cell[j] = priv->cell[cell];
         }
     }
 
@@ -121,33 +111,33 @@ void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
 
     for(i = 0; i < cols; i++) {
 
-        priv->table_cols[i] = malloc(sizeof(TableCols));
-        priv->table_cols[i]->meta = malloc(sizeof(TableMeta));
+        priv->cols[i] = malloc(sizeof(TableCols));
+        priv->cols[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->table_cols[i]->meta, temp, sizeof(TableMeta));
+        memcpy(priv->cols[i]->meta, temp, sizeof(TableMeta));
 
-        priv->table_cols[i]->meta->align = PANGO_ALIGN_RIGHT;
-        priv->table_cols[i]->meta->font = PANGO_DEFAULT_FONT;
+        priv->cols[i]->meta->align = PANGO_ALIGN_RIGHT;
+        priv->cols[i]->meta->font = PANGO_DEFAULT_FONT;
 
         for(k = 0; k < 3; k++) {
-            priv->table_cols[i]->meta->graph[k] = rgb_graph[k];
-            priv->table_cols[i]->meta->color[k] = rgb_cell[k];
+            priv->cols[i]->meta->graph[k] = rgb_graph[k];
+            priv->cols[i]->meta->color[k] = rgb_cell[k];
         }
 
-        priv->table_cols[i]->cell = malloc(sizeof(TableCell *) * rows);
+        priv->cols[i]->cell = malloc(sizeof(TableCell *) * rows);
 
         for(j = 0; j < rows; j++, cell++) {
-            priv->table_cols[i]->cell[j] = priv->table_cell[cell % priv->table_x];
+            priv->cols[i]->cell[j] = priv->cell[cell % priv->x];
         }
 
-        priv->table_column_widths[i] = col_widths[i];
-        priv->table_column_index[i] = FALSE;
-        priv->table_column_hidden[i] = FALSE;
-        priv->table_column_widths_temp[i] = 0;
-        priv->table_column_offset_temp[i] = 0;
+        priv->col_widths[i] = col_widths[i];
+        priv->col_index[i] = FALSE;
+        priv->col_hidden[i] = FALSE;
+        priv->col_widths_temp[i] = 0;
+        priv->col_offset_temp[i] = 0;
     }
 
-    priv->table_column_offset_temp[cols] = 0;
+    priv->col_offset_temp[cols] = 0;
 
     free(temp);
 }

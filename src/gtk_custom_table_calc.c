@@ -42,16 +42,16 @@ void gtk_custom_table_calc_widths(GtkWidget *table) {
     int offset = 0;
 
     /* calculate total fixed width and total */
-    for(i = 0; i < priv->table_x; i++) {
+    for(i = 0; i < priv->x; i++) {
 
         /* skip hidden columns */
-        if(priv->table_column_hidden[i] == TRUE) {
+        if(priv->col_hidden[i] == TRUE) {
             continue;
         }
 
         /* sum up specified width */
-        if(priv->table_column_widths[i] != -1) {
-            specified += priv->table_column_widths[i];
+        if(priv->col_widths[i] != -1) {
+            specified += priv->col_widths[i];
         }
         /* sum up cols with unlimited width */
         else {
@@ -59,35 +59,31 @@ void gtk_custom_table_calc_widths(GtkWidget *table) {
         }
     }
 
-    priv->table_min_width = specified;
+    /* calculate widths */
+    int max_width = gtk_widget_get_allocated_width(table);
+    int available = max_width - specified > 0 ? max_width - specified : 0;
     
     /* divvy up remainder of space to cells without widths */
-    for(i = 0; i < priv->table_x; i++) {
+    for(i = 0; i < priv->x; i++) {
 
         /* skip hidden columns */
-        if(priv->table_column_hidden[i] == TRUE) {
+        if(priv->col_hidden[i] == TRUE) {
             continue;
         }
 
-        if(priv->table_column_widths[i] == -1) {
-
-            int width = gtk_widget_get_allocated_width(table);
-            int temp = width - specified;
-
-            priv->table_column_widths_temp[i] = (temp >= 0 ? temp : 0) / unlimited;
+        if(priv->col_widths[i] == -1) {
+            priv->col_widths_temp[i] = available / unlimited;
         }
         else {
-            priv->table_column_widths_temp[i] = priv->table_column_widths[i];
+            priv->col_widths_temp[i] = priv->col_widths[i];
         }
 
         /* calculate offset of each column, for alignment */
-        priv->table_column_offset_temp[i] = offset;
-        offset += priv->table_column_widths_temp[i];
+        priv->col_offset_temp[i] = offset;
+        offset += priv->col_widths_temp[i];
     }
 
     /* set end of table offset */
-    priv->table_column_offset_temp[i] = offset - 1;
-
-    priv->table_max_width = offset;
+    priv->col_offset_temp[i] = offset - 1;
 }
 
