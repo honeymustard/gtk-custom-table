@@ -111,7 +111,7 @@ struct _GtkCustomTablePrivate {
     int row_height;           /**< table row height */
 
     int *col_widths;          /**< array of table column widths */
-    int *col_index;           /**< array */
+    int *col_index;           /**< array of table column which are indices */
     int *col_hidden;          /**< array of hidden table columns */
     int *col_widths_temp;     /**< temporary array for column widths */
     int *col_offset_temp;     /**< temporary array for column offsets */
