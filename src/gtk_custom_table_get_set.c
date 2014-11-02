@@ -40,7 +40,7 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* detect table overflow */
-    if(col >= priv->table_x) {
+    if(col >= priv->x) {
         g_error("table overflow");
     }
 
@@ -48,22 +48,16 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
 
     /* type is header */
     if(strcmp(type, "header") == 0) {
-        table_row = priv->table_head; 
-        priv->table_has_header = 1;
+        table_row = priv->head; 
+        priv->has_header = 1;
     }
     /* type is footer */
     else {
-        table_row = priv->table_foot; 
-        priv->table_has_footer = 1;
+        table_row = priv->foot; 
+        priv->has_footer = 1;
     }
     
-    int rows_h = priv->table_y;
-    int head_h = priv->table_has_header;
-    int foot_h = priv->table_has_footer;
-
-    priv->table_max_height = (rows_h + head_h + foot_h) * priv->table_row_height;
-
-    gtk_widget_set_size_request(table, -1, priv->table_max_height);
+    gtk_widget_set_size_request(table, -1, gtk_custom_table_get_height(table));
 
     /* free old text as needed */
     if(table_row->cell[col]->text != NULL) {
@@ -88,15 +82,15 @@ int gtk_custom_table_get_indexof(GtkWidget *table, char *text) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* check if table is primed */
-    if(!priv->table_has_primary) {
+    if(!priv->has_primary) {
         g_error("table does not have a primary index");
     }
 
-    gtk_custom_table_tree_get(table, priv->table_tree, text, 
-        priv->table_col_primary);
+    gtk_custom_table_tree_get(table, priv->tree, text, 
+        priv->col_primary);
 
-    int index = GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_tree_index;
-    priv->table_tree_index = -1;
+    int index = GTK_CUSTOM_TABLE_GET_PRIVATE(table)->tree_index;
+    priv->tree_index = -1;
 
     return index; 
 }
@@ -122,34 +116,34 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
     }
 
     /* detect table overflow, crash and burn */
-    if((col >= priv->table_x) || (row >= priv->table_y)) {
+    if((col >= priv->x) || (row >= priv->y)) {
         g_error("table overflow");
     }
 
     /* when adding text to the same cell twice, free memory */
-    if(priv->table_rows[row]->cell[col]->text != NULL) {
-        free(priv->table_rows[row]->cell[col]->text);
+    if(priv->rows[row]->cell[col]->text != NULL) {
+        free(priv->rows[row]->cell[col]->text);
     }
 
-    priv->table_rows[row]->cell[col]->text = malloc(strlen(text) + 1); 
-    strcpy(priv->table_rows[row]->cell[col]->text, text);
+    priv->rows[row]->cell[col]->text = malloc(strlen(text) + 1); 
+    strcpy(priv->rows[row]->cell[col]->text, text);
 
     /* add values in primary index column to binary tree */
-    if((col == priv->table_col_primary) && priv->table_has_primary) {
+    if((col == priv->col_primary) && priv->has_primary) {
 
         /* head node is null, take care of it */
-        if(priv->table_tree == NULL) {
+        if(priv->tree == NULL) {
 
-            priv->table_tree = malloc(sizeof(TableTree));
-            priv->table_tree->data = priv->table_rows[row];
-            priv->table_tree->left = NULL;
-            priv->table_tree->right = NULL;
+            priv->tree = malloc(sizeof(TableTree));
+            priv->tree->data = priv->rows[row];
+            priv->tree->left = NULL;
+            priv->tree->right = NULL;
         }
         /* add all following nodes as such.. */
         else {
 
-            gtk_custom_table_tree_add(priv->table_tree, 
-                priv->table_rows[row], col);
+            gtk_custom_table_tree_add(priv->tree, 
+                priv->rows[row], col);
         }
     }
 }
@@ -169,8 +163,8 @@ void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    priv->table_rows[row]->cell[col]->meta->bg_image = filename;
-    priv->table_rows[row]->cell[col]->meta->has_bg_image = TRUE;
+    priv->rows[row]->cell[col]->meta->bg_image = filename;
+    priv->rows[row]->cell[col]->meta->has_bg_image = TRUE;
 }
 
 
@@ -181,13 +175,12 @@ void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row,
  * @param value    turn on or off
  * @return void
  */
-void gtk_custom_table_set_column_graph(GtkWidget *table, int col, 
-    gboolean value) {
+void gtk_custom_table_set_col_graph(GtkWidget *table, int col, gboolean value) {
  
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    priv->table_cols[col]->meta->graphable = value;
+    priv->cols[col]->meta->graphable = value;
 }
 
 
@@ -207,10 +200,10 @@ void gtk_custom_table_set_graph_color_col(GtkWidget *table, int col,
     int i = 0;
 
     for(i = 0; i < 3; i++) {
-        priv->table_cols[col]->meta->graph[i] = rgb[i];
+        priv->cols[col]->meta->graph[i] = rgb[i];
     }
 
-    priv->table_cols[col]->meta->graphable = TRUE;
+    priv->cols[col]->meta->graphable = TRUE;
 }
 
 
@@ -231,10 +224,10 @@ void gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col,
     int i = 0;
 
     for(i = 0; i < 3; i++) {
-        priv->table_rows[row]->cell[col]->meta->graph[i] = rgb[i];
+        priv->rows[row]->cell[col]->meta->graph[i] = rgb[i];
     }
 
-    priv->table_rows[row]->cell[col]->meta->graphable = TRUE;
+    priv->rows[row]->cell[col]->meta->graphable = TRUE;
 }
 
 
@@ -254,10 +247,10 @@ void gtk_custom_table_set_row_color(GtkWidget *table, int row,
     int i = 0;
 
     for(i = 0; i < 3; i++) {
-        priv->table_rows[row]->meta->color[i] = rgb[i];
+        priv->rows[row]->meta->color[i] = rgb[i];
     }
 
-    priv->table_rows[row]->meta->has_bg_color = TRUE;
+    priv->rows[row]->meta->has_bg_color = TRUE;
 }
 
 
@@ -278,10 +271,10 @@ void gtk_custom_table_set_cell_color(GtkWidget *table, int col, int row,
     int i = 0;
 
     for(i = 0; i < 3; i++) {
-        priv->table_rows[row]->cell[col]->meta->color[i] = rgb[i];
+        priv->rows[row]->cell[col]->meta->color[i] = rgb[i];
     }
 
-    priv->table_rows[row]->cell[col]->meta->has_bg_color = TRUE;
+    priv->rows[row]->cell[col]->meta->has_bg_color = TRUE;
 }
 
 
@@ -299,26 +292,9 @@ void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    TableMeta *meta = priv->table_rows[row]->cell[col]->meta;
+    TableMeta *meta = priv->rows[row]->cell[col]->meta;
 
     meta->has_bg_color = value;
-}
-
-
-/**
- * @brief set the minimum width and height of a table
- * @param table     current table
- * @param width     minimun width of the table
- * @param height    minimum height of the table
- * @return void
- */
-void gtk_custom_table_set_min_size(GtkWidget *table, int width, int height) {
-
-    GtkCustomTablePrivate *priv;
-    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-
-    priv->table_min_width = width;
-    priv->table_min_height = height;
 }
 
 
@@ -336,37 +312,9 @@ void gtk_custom_table_set_cell_bg_image_enable(GtkWidget *table, int col, int ro
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    TableMeta *meta = priv->table_rows[row]->cell[col]->meta;
+    TableMeta *meta = priv->rows[row]->cell[col]->meta;
 
     meta->has_bg_image = value;
-}
-
-
-/**
- * @brief get a specific table row as a char * array of text values..
- * @param table        current table
- * @param index        row index
- * @param container    container which equals NULL..
- * @return void
- */
-void gtk_custom_table_get_row(GtkWidget *table, int index, char ***container) {
-    
-    GtkCustomTablePrivate *priv;
-    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-
-    if(index >= priv->table_y) {
-        g_error("can't get row, index out of bounds");    
-    }
-
-    *container = malloc(sizeof(char *) * priv->table_x);
-
-    int i = 0;
-
-    for(i = 0; i < priv->table_x; i++) {
-
-        (*container)[i] = malloc(strlen(priv->table_rows[index]->cell[i]->text) + 1);
-        strcpy((*container)[i], priv->table_rows[index]->cell[i]->text);
-    }
 }
 
 
@@ -382,11 +330,11 @@ char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    if(row >= priv->table_y || col >= priv->table_x) {
+    if(row >= priv->y || col >= priv->x) {
         g_error("can't get cell, coordinates were out of bounds");    
     }
 
-    return priv->table_rows[row]->cell[col]->text;
+    return priv->rows[row]->cell[col]->text;
 }
 
 
@@ -397,7 +345,7 @@ char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row) {
  */
 int gtk_custom_table_get_rows(GtkWidget *table) {
 
-    return GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_y;   
+    return GTK_CUSTOM_TABLE_GET_PRIVATE(table)->y;   
 }
 
 
@@ -408,7 +356,7 @@ int gtk_custom_table_get_rows(GtkWidget *table) {
  */
 int gtk_custom_table_get_cols(GtkWidget *table) {
 
-    return GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_x;
+    return GTK_CUSTOM_TABLE_GET_PRIVATE(table)->x;
 }
 
 
@@ -419,10 +367,10 @@ int gtk_custom_table_get_cols(GtkWidget *table) {
  * @param value    enable or disables prime
  * @return void
  */
-void gtk_custom_table_set_column_prime(GtkWidget *table, int col, gboolean value) {
+void gtk_custom_table_set_col_prime(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_has_primary = value;
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_col_primary = col;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->has_primary = value;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->col_primary = col;
 }
 
 
@@ -433,9 +381,9 @@ void gtk_custom_table_set_column_prime(GtkWidget *table, int col, gboolean value
  * @param value    enable or disables index
  * @return void
  */
-void gtk_custom_table_set_column_index(GtkWidget *table, int col, gboolean value) {
+void gtk_custom_table_set_col_index(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_column_index[col] = value;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->col_index[col] = value;
 }
 
 
@@ -446,9 +394,9 @@ void gtk_custom_table_set_column_index(GtkWidget *table, int col, gboolean value
  * @param value    enable or disables hidden column
  * @return void
  */
-void gtk_custom_table_set_column_shade(GtkWidget *table, int col, gboolean value) {
+void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_column_hidden[col] = value;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->col_hidden[col] = value;
 }
 
 
@@ -459,12 +407,12 @@ void gtk_custom_table_set_column_shade(GtkWidget *table, int col, gboolean value
  * @param format    text format to be used
  * @return void
  */
-void gtk_custom_table_set_column_format(GtkWidget *table, int col, 
+void gtk_custom_table_set_col_format(GtkWidget *table, int col, 
     TextFormat format) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_cols[col]->meta->has_format = TRUE; 
-    priv->table_cols[col]->meta->format = format;
+    priv->cols[col]->meta->has_format = TRUE; 
+    priv->cols[col]->meta->format = format;
 }
 
 
@@ -475,10 +423,10 @@ void gtk_custom_table_set_column_format(GtkWidget *table, int col,
  * @param align    alignment to use
  * @return void
  */
-void gtk_custom_table_set_column_alignment(GtkWidget *table, int col, 
+void gtk_custom_table_set_col_alignment(GtkWidget *table, int col, 
     PangoAlignment align) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_cols[col]->meta->align = align;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->cols[col]->meta->align = align;
 }
 
 
@@ -492,7 +440,7 @@ void gtk_custom_table_set_column_alignment(GtkWidget *table, int col,
 void gtk_custom_table_set_row_alignment(GtkWidget *table, int row, 
     PangoAlignment align) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_rows[row]->meta->align = align;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->rows[row]->meta->align = align;
 }
 
 
@@ -505,7 +453,7 @@ void gtk_custom_table_set_row_alignment(GtkWidget *table, int row,
 void gtk_custom_table_set_head_row_alignment(GtkWidget *table, 
     PangoAlignment align) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_head->meta->align = align;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->head->meta->align = align;
 }
 
 
@@ -518,7 +466,7 @@ void gtk_custom_table_set_head_row_alignment(GtkWidget *table,
 void gtk_custom_table_set_foot_row_alignment(GtkWidget *table, 
     PangoAlignment align) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_foot->meta->align = align;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->foot->meta->align = align;
 }
 
 
@@ -534,7 +482,7 @@ void gtk_custom_table_set_cell_alignment(GtkWidget *table, int col,
     int row, PangoAlignment align) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_rows[row]->cell[col]->meta->align = align;
+    priv->rows[row]->cell[col]->meta->align = align;
 }
 
 
@@ -549,7 +497,7 @@ void gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col,
     PangoAlignment align) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_head->cell[col]->meta->align = align;
+    priv->head->cell[col]->meta->align = align;
 }
 
 
@@ -564,7 +512,7 @@ void gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col,
     PangoAlignment align) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_foot->cell[col]->meta->align = align;
+    priv->foot->cell[col]->meta->align = align;
 }
 
 
@@ -576,7 +524,7 @@ void gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col,
  */
 void gtk_custom_table_set_sort_index(GtkWidget *table, int col) {
     
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_sort_index = col;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->sort_index = col;
 }
 
 
@@ -588,7 +536,7 @@ void gtk_custom_table_set_sort_index(GtkWidget *table, int col) {
  */
 void gtk_custom_table_set_sortable(GtkWidget *table, gboolean value) {
  
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->table_is_sortable = value;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->is_sortable = value;
 }
 
 
@@ -629,7 +577,7 @@ void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col,
     char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_head->cell[col]->meta->font = font;
+    priv->head->cell[col]->meta->font = font;
 }
 
 
@@ -644,7 +592,7 @@ void gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col,
     char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_foot->cell[col]->meta->font = font;
+    priv->foot->cell[col]->meta->font = font;
 }
 
 
@@ -657,7 +605,7 @@ void gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col,
 void gtk_custom_table_set_head_row_font(GtkWidget *table, char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_head->meta->font = font;
+    priv->head->meta->font = font;
 }
 
 
@@ -670,7 +618,7 @@ void gtk_custom_table_set_head_row_font(GtkWidget *table, char *font) {
 void gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_foot->meta->font = font;
+    priv->foot->meta->font = font;
 }
 
 
@@ -686,7 +634,7 @@ void gtk_custom_table_set_cell_font(GtkWidget *table, int col,
     int row, char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_rows[row]->cell[col]->meta->font = font;
+    priv->rows[row]->cell[col]->meta->font = font;
 }
 
 
@@ -697,11 +645,10 @@ void gtk_custom_table_set_cell_font(GtkWidget *table, int col,
  * @param font     font to use
  * @return void
  */
-void gtk_custom_table_set_row_font(GtkWidget *table, int row, 
-    char *font) {
+void gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_rows[row]->meta->font = font;
+    priv->rows[row]->meta->font = font;
 }
 
 
@@ -712,10 +659,43 @@ void gtk_custom_table_set_row_font(GtkWidget *table, int row,
  * @param font     font to use
  * @return void
  */
-void gtk_custom_table_set_column_font(GtkWidget *table, int col, 
-    char *font) {
+void gtk_custom_table_set_col_font(GtkWidget *table, int col, char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->table_cols[col]->meta->font = font;
+    priv->cols[col]->meta->font = font;
+}
+
+
+/**
+ * @brief get the current width of a table in pixels
+ * @param table    current table
+ * @return int     current width
+ */
+int gtk_custom_table_get_width(GtkWidget *table) {
+    
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    gtk_custom_table_calc_widths(table);
+
+    return priv->col_offset_temp[priv->x];
+}
+
+
+/**
+ * @brief get the current height of a table in pixels
+ * @param table    current table
+ * @return int     current height
+ */
+int gtk_custom_table_get_height(GtkWidget *table) {
+    
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    int rows = priv->y;
+    int head = priv->has_header;
+    int foot = priv->has_footer;
+
+    return (rows + head + foot) * priv->row_height;
 }
 

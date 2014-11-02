@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
 
     int widths[] = {
-        100, -1, -1, 100
+        100, 100, -1, 100
     };
 
     /* initiate widgets */
@@ -35,7 +35,10 @@ int main(int argc, char *argv[]) {
         gtk_custom_table_set_cell_text(table, 1, i, temp);
     }
 
-    /* set meta */
+    /* table meta */
+    gtk_custom_table_set_col_alignment(table, 1, PANGO_ALIGN_LEFT);
+
+    /* window meta */
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
         GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_viewport_set_shadow_type(GTK_VIEWPORT(viewport), GTK_SHADOW_NONE);
@@ -45,7 +48,7 @@ int main(int argc, char *argv[]) {
 
     /* show window */
     gtk_window_set_title(GTK_WINDOW(window), "Examples");
-    gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
+    gtk_window_set_default_size(GTK_WINDOW(window), 600, 600);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_widget_show_all(window);
 
