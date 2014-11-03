@@ -8,7 +8,7 @@
 * add some example screenshots
 
 **Non-Urgent fixes**
-* none
+* add g_error g_warning routines to getters and setters
 
 **Urget fixes**
 * none
