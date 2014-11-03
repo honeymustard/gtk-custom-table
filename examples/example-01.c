@@ -30,6 +30,8 @@ int main(int argc, char *argv[]) {
         gtk_custom_table_set_col_width(table, i, widths[i]);
     }
 
+    gtk_custom_table_set_row_height(table, 2, 60);
+
     /* set cell text */
     char temp[10];
 

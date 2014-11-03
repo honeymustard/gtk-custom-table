@@ -112,6 +112,7 @@ void gtk_custom_table_free(GtkWidget *table) {
 
     /* free misc memory */
     free(priv->col_offset_temp);
+    free(priv->row_offset_temp);
 
     /* free memory occupied by primed column */
     gtk_custom_table_tree_free(priv->tree);

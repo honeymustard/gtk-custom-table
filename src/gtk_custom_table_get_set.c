@@ -448,6 +448,37 @@ void gtk_custom_table_set_row_alignment(GtkWidget *table, int row,
 
 
 /**
+ * @brief set the row height for a specific row
+ * @param table     current table
+ * @param row       row for which to set height
+ * @param height    height in pixels
+ * @return void
+ */
+void gtk_custom_table_set_row_height(GtkWidget *table, int row, int height) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    
+    priv->rows[row]->height_orig = height;
+}
+
+
+/**
+ * @brief get the row height for a specific row
+ * @param table    current table
+ * @param row      row for which to get height
+ * @return int     returns height of row in pixels
+ */
+int gtk_custom_table_get_row_height(GtkWidget *table, int row) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    
+    return priv->rows[row]->height_temp;
+}
+
+
+/**
  * @brief set the text alignment for header row
  * @param table    current table
  * @param align    alignment to use
@@ -706,7 +737,7 @@ int gtk_custom_table_get_width(GtkWidget *table) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    gtk_custom_table_calc_widths(table);
+    gtk_custom_table_calc_cols(table);
 
     return priv->col_offset_temp[priv->x];
 }
@@ -722,10 +753,11 @@ int gtk_custom_table_get_height(GtkWidget *table) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    int rows = priv->y;
-    int head = priv->has_header;
-    int foot = priv->has_footer;
+    gtk_custom_table_calc_rows(table);
 
-    return (rows + head + foot) * priv->row_height;
+    int head = priv->has_header ? priv->head->height_temp : 0;
+    int foot = priv->has_footer ? priv->foot->height_temp : 0;
+
+    return head + priv->row_offset_temp[priv->y] + foot;
 }
 

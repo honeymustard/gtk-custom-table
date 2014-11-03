@@ -30,7 +30,7 @@
  * @param table    current table
  * @return void
  */
-void gtk_custom_table_calc_widths(GtkWidget *table) {
+void gtk_custom_table_calc_cols(GtkWidget *table) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
@@ -59,7 +59,7 @@ void gtk_custom_table_calc_widths(GtkWidget *table) {
         }
     }
 
-    /* calculate widths */
+    /* calculate width */
     int max_width = gtk_widget_get_allocated_width(table);
     int available = max_width - specified > 0 ? max_width - specified : 0;
     
@@ -85,5 +85,68 @@ void gtk_custom_table_calc_widths(GtkWidget *table) {
 
     /* set end of table offset */
     priv->col_offset_temp[i] = offset - 1;
+}
+
+
+/**
+ * @brief calculate current table row heights and offsets
+ * @param table    current table
+ * @return void
+ */
+void gtk_custom_table_calc_rows(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    int i = 0;
+
+    int unlimited = 0;
+    int specified = 0;
+    int offset = 0;
+
+    /* calculate total fixed height and total */
+    for(i = 0; i < priv->y; i++) {
+
+        /* skip hidden rows */
+        if(priv->rows[i]->hidden == TRUE) {
+            continue;
+        }
+
+        /* sum up specified height */
+        if(priv->rows[i]->height_orig != -1) {
+            specified += priv->rows[i]->height_orig;
+        }
+        /* sum up cols with unlimited width */
+        else {
+            unlimited += 1;
+        }
+    }
+
+    /* calculate height */
+    int max_height = gtk_widget_get_allocated_height(table);
+    int available = max_height - specified > 0 ? max_height - specified : 0;
+    
+    /* divvy up remainder of space to cells without widths */
+    for(i = 0; i < priv->y; i++) {
+
+        /* skip hidden rows */
+        if(priv->rows[i]->hidden == TRUE) {
+            continue;
+        }
+
+        if(priv->rows[i]->height_orig == -1) {
+            priv->rows[i]->height_temp = available / unlimited;
+        }
+        else {
+            priv->rows[i]->height_temp = priv->rows[i]->height_orig;
+        }
+
+        /* calculate offset of each row, for alignment */
+        priv->row_offset_temp[i] = offset;
+        offset += priv->rows[i]->height_temp;
+    }
+
+    /* set end of table offset */
+    priv->row_offset_temp[i] = offset - 1;
 }
 

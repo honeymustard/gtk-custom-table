@@ -119,7 +119,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
     GdkCursor *cur;
 
     /* determine if click occured on header */
-    if(event->y < priv->row_height) {
+    if(event->y < priv->head->height_temp) {
 
         for(i = 0; i < priv->x; i++) {
 
@@ -172,7 +172,7 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
     int i = 0;
 
     /* determine if click occured on header */
-    if(event->y < priv->row_height) {
+    if(event->y < priv->head->height_temp) {
 
         for(i = 0; i < priv->x; i++) {
 

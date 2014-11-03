@@ -37,7 +37,8 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* update table dimensions for redrawing table */
-    gtk_custom_table_calc_widths(table);
+    gtk_custom_table_calc_cols(table);
+    gtk_custom_table_calc_rows(table);
 
     /* paint rows based on current scroll adjustment */
     GtkAdjustment *adj = NULL;
@@ -46,20 +47,35 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     int scroll_top = gtk_adjustment_get_value(adj);
     int scroll_bot = scroll_top + (int)gtk_adjustment_get_page_size(adj);
 
-    int scroll_beg_row = (scroll_top / priv->row_height) - 1;
-    int scroll_end_row = (scroll_bot / priv->row_height) + 1;
-    
-    scroll_beg_row = scroll_beg_row < 0 ? 0 : scroll_beg_row;
-    scroll_end_row = scroll_end_row > priv->y ? priv->y : scroll_end_row;
+    int scroll_beg_row = 0;
+    int scroll_end_row = priv->y;
+
+    int i = 0;
+    int j = 0;
+
+    /* find first visible row */
+    for(i = 1; i <= priv->y; i++) {
+
+        if(priv->row_offset_temp[i] > scroll_top) {
+            scroll_beg_row = i - 1;
+            break;
+        }
+    }
+
+    /* find last visible row */
+    for(i = 1; i <= priv->y; i++) {
+
+        if(priv->row_offset_temp[i] >= scroll_bot) {
+            scroll_end_row = i;
+            break;
+        }
+    }
 
     #ifdef DEBUG
 
     printf("\npaint rows : (%d -> %d)\n", scroll_beg_row, scroll_end_row);
     
     #endif
-
-    int i = 0;
-    int j = 0;
 
     cairo_set_line_width(cr, 1);
 
@@ -84,7 +100,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 priv->col_offset_temp[i] + 0.5, 
                 1, 
                 priv->cols[i]->width_temp, 
-                priv->row_height - 1.5
+                priv->head->height_temp - 1.5
             );
 
             cairo_stroke_preserve(cr);
@@ -172,7 +188,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 (priv->cols[i]->width_temp - 20) * PANGO_SCALE);
 
             pango_layout_set_height(layout, 
-                priv->row_height * PANGO_SCALE);
+                priv->head->height_temp * PANGO_SCALE);
 
             pango_layout_set_ellipsize(layout, 
                 PANGO_ELLIPSIZE_END);
@@ -199,8 +215,15 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     TableMeta *meta_rows = NULL;
     TableMeta *meta_cols = NULL;
 
-    /* only draw those columns which will be visible on window surface */
+    int offset = priv->has_header ? priv->head->height_temp : 0;
+
+    /* only draw visible rows */
     for(i = scroll_beg_row; i < scroll_end_row; i++) {
+
+        /* skip hidden rows */
+        if(priv->rows[i]->hidden == TRUE) {
+            continue;
+        }
 
         /* get row meta data */
         meta_rows = priv->rows[i]->meta;
@@ -218,14 +241,11 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             
             /* DRAW CELL BACKGROUND COLOR */
 
-            int offset = ((i + priv->has_header) * 
-                priv->row_height);
-
             cairo_rectangle(cr, 
-                priv->col_offset_temp[j] + 0.5, 
-                offset > 0 ? offset : 1, 
-                priv->cols[j]->width_temp, 
-                priv->row_height
+                priv->col_offset_temp[j] + 0.5,
+                priv->row_offset_temp[i] + offset,
+                priv->cols[j]->width_temp,
+                priv->rows[i]->height_temp
             );
 
             cairo_set_source_rgb(cr, 
@@ -307,7 +327,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                     priv->col_offset_temp[j] + 4, 
                     offset + 4, 
                     graph_width > 0 ? graph_width : 1,
-                    priv->row_height - 8
+                    priv->rows[i]->height_temp - 8
                 );
 
                 cairo_set_source_rgb(cr, 
@@ -338,7 +358,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 /* align text */
                 cairo_move_to(cr, 
                     priv->col_offset_temp[j] + 10, 
-                    offset + 4
+                    priv->row_offset_temp[i] + offset + 4
                 );
 
                 char *text_temp = NULL;
@@ -429,7 +449,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                     (text_box > 0 ? text_box : 1) * PANGO_SCALE);
 
                 pango_layout_set_height(layout, 
-                    priv->row_height * PANGO_SCALE);
+                    priv->rows[i]->height_temp * PANGO_SCALE);
 
                 pango_layout_set_ellipsize(layout, 
                     PANGO_ELLIPSIZE_END);
@@ -445,11 +465,10 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
         }
     }
 
-
     /* DRAW FOOTER ROW */ 
     if(priv->has_footer && (scroll_end_row >= priv->y)) {
 
-        int height = priv->row_height * (priv->y + priv->has_header);
+        int height = priv->foot->height_temp * (priv->y + priv->has_header);
 
         for(i = 0; i < priv->x; i++) {
 
@@ -469,7 +488,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 priv->col_offset_temp[i] + 0.5, 
                 height, 
                 priv->cols[i]->width_temp, 
-                priv->row_height
+                priv->foot->height_temp
             );
 
             cairo_stroke_preserve(cr);
@@ -545,7 +564,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 (priv->cols[i]->width_temp - 20) * PANGO_SCALE);
 
             pango_layout_set_height(layout, 
-                priv->row_height * PANGO_SCALE);
+                priv->foot->height_temp * PANGO_SCALE);
 
             pango_layout_set_ellipsize(layout, 
                 PANGO_ELLIPSIZE_END);

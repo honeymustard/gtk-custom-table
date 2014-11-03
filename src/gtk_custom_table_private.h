@@ -29,6 +29,9 @@
 #include <unistd.h>
 
 
+#define GCT_COL_WIDTH 30 
+#define GCT_ROW_HEIGHT 25
+
 typedef struct _GtkCustomTableClass GtkCustomTableClass;
 typedef struct _GtkCustomTablePrivate GtkCustomTablePrivate;
 
@@ -85,6 +88,7 @@ struct table_rows {
 
     GtkCustomTablePrivate *priv; /**< private table hook */
 
+    gboolean hidden;  /**< is table row hidden */
     int height_orig;  /**< original row height */
     int height_temp;  /**< current calculated row height */
     int row_orig;     /**< original row number in sequence */
@@ -116,9 +120,9 @@ struct _GtkCustomTablePrivate {
     int sort_index;           /**< table sort index */
     int sort_order;           /**< table sort order */
     int col_primary;          /**< primary table column */
-    int row_height;           /**< table row height */
 
     int *col_offset_temp;     /**< temporary array for column offsets */
+    int *row_offset_temp;     /**< temporary array for row offsets */
 
     TableTree *tree;          /**< current table search tree */
     TableRows *head;          /**< current table header */
@@ -131,7 +135,8 @@ struct _GtkCustomTablePrivate {
 
 
 /* internal functions */
-void gtk_custom_table_calc_widths(GtkWidget *table);
+void gtk_custom_table_calc_cols(GtkWidget *table);
+void gtk_custom_table_calc_rows(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
 void gtk_custom_table_alloc(GtkWidget *table);
 void gtk_custom_table_free_cells(GtkWidget *table);

@@ -36,62 +36,51 @@ void gtk_custom_table_alloc(GtkWidget *table) {
 
     int cols = priv->x;
     int rows = priv->y;
-
-    int i = 0;
-    int j = 0;
-    int k = 0;
  
-    int indices = cols * sizeof(int);
-
-    priv->col_offset_temp = malloc(indices + sizeof(int));
+    priv->col_offset_temp = malloc((cols * sizeof(int)) + sizeof(int));
+    priv->row_offset_temp = malloc((rows * sizeof(int)) + sizeof(int));
 
     /* setup cells, rows and columns */
     priv->cols = malloc(sizeof(TableCols *) * cols); 
     priv->rows = malloc(sizeof(TableRows *) * rows); 
     priv->cell = malloc(sizeof(TableCell *) * (rows * cols)); 
 
-    /* create a temporary default meta object */
-    TableMeta *temp = malloc(sizeof(TableMeta));
-    temp->font = NULL;
-    temp->bg_image = NULL;
-    temp->align = PANGO_ALIGN_NONE;
-    temp->format = FORMAT_NONE;
-    temp->graphable = FALSE;
-    temp->has_format = FALSE;
-    temp->has_bg_color = FALSE;
-    temp->has_bg_image = FALSE;
+    /* create a temporary meta object */
+    TableMeta meta;
+    meta.font = NULL;
+    meta.bg_image = NULL;
+    meta.align = PANGO_ALIGN_NONE;
+    meta.format = FORMAT_NONE;
+    meta.graphable = FALSE;
+    meta.has_format = FALSE;
+    meta.has_bg_color = FALSE;
+    meta.has_bg_image = FALSE;
+
+    memcpy(&meta.graph, rgb_graph, sizeof(rgb_graph));
+    memcpy(&meta.color, rgb_cell, sizeof(rgb_cell));
+
+    int i = 0;
+    int j = 0;
 
     int cell = 0;
 
+    /* allocate all new cells */
     for(i = 0; i < (rows * cols); i++) {
 
-        /* create new table cell */
         priv->cell[i] = malloc(sizeof(TableCell));
         priv->cell[i]->text = NULL;
         priv->cell[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->cell[i]->meta, temp, sizeof(TableMeta));
-
-        for(k = 0; k < 3; k++) {
-            priv->cell[i]->meta->graph[k] = rgb_graph[k];
-            priv->cell[i]->meta->color[k] = rgb_cell[k];
-        }
+        memcpy(priv->cell[i]->meta, &meta, sizeof(TableMeta));
     }
 
+    /* allocate all new rows */
     for(i = 0; i < rows; i++) {
 
         priv->rows[i] = malloc(sizeof(TableRows));
         priv->rows[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->rows[i]->meta, temp, sizeof(TableMeta));
-
-        priv->rows[i]->row_orig = i;
-        priv->rows[i]->row_temp = 0;
-
-        for(k = 0; k < 3; k++) {
-            priv->rows[i]->meta->graph[k] = rgb_graph[k];
-            priv->rows[i]->meta->color[k] = rgb_cell[k];
-        }
+        memcpy(priv->rows[i]->meta, &meta, sizeof(TableMeta));
 
         priv->rows[i]->cell = malloc(sizeof(TableCell *) * cols);
         priv->rows[i]->priv = priv;
@@ -99,24 +88,25 @@ void gtk_custom_table_alloc(GtkWidget *table) {
         for(j = 0; j < cols; j++, cell++) {
             priv->rows[i]->cell[j] = priv->cell[cell];
         }
+
+        priv->rows[i]->height_orig = GCT_ROW_HEIGHT;
+        priv->rows[i]->height_temp = GCT_ROW_HEIGHT;
+        priv->rows[i]->row_orig = i;
+        priv->rows[i]->row_temp = 0;
     }
 
     cell = 0;
 
+    /* allocate all new columns */
     for(i = 0; i < cols; i++) {
 
         priv->cols[i] = malloc(sizeof(TableCols));
         priv->cols[i]->meta = malloc(sizeof(TableMeta));
 
-        memcpy(priv->cols[i]->meta, temp, sizeof(TableMeta));
+        memcpy(priv->cols[i]->meta, &meta, sizeof(TableMeta));
 
         priv->cols[i]->meta->align = PANGO_ALIGN_RIGHT;
         priv->cols[i]->meta->font = PANGO_DEFAULT_FONT;
-
-        for(k = 0; k < 3; k++) {
-            priv->cols[i]->meta->graph[k] = rgb_graph[k];
-            priv->cols[i]->meta->color[k] = rgb_cell[k];
-        }
 
         priv->cols[i]->cell = malloc(sizeof(TableCell *) * rows);
 
@@ -126,12 +116,10 @@ void gtk_custom_table_alloc(GtkWidget *table) {
 
         priv->cols[i]->index = FALSE;
         priv->cols[i]->hidden = FALSE;
-        priv->cols[i]->width_orig = 20;
+        priv->cols[i]->width_orig = GCT_COL_WIDTH;
         priv->cols[i]->width_temp = 0;
     }
 
     priv->col_offset_temp[cols] = 0;
-
-    free(temp);
 }
 

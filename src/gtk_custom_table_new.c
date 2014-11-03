@@ -43,95 +43,58 @@ GtkWidget * gtk_custom_table_new(int cols, int rows) {
     priv->has_primary = FALSE;
     priv->has_header = FALSE;
     priv->has_footer = FALSE;
-    priv->row_height = 25;
     priv->tree = NULL;
     priv->sort_index = 0;
     priv->sort_order = 0;
     priv->tree_index = -1;
     priv->col_primary = 0;
 
-    /* create header & footer */
+    /* create header and footer */
     priv->head = malloc(sizeof(TableRows));
     priv->foot = malloc(sizeof(TableRows));
-
+    priv->head->meta = malloc(sizeof(TableMeta));
+    priv->foot->meta = malloc(sizeof(TableMeta));
     priv->head->cell = malloc(sizeof(TableCell *) * cols); 
     priv->foot->cell = malloc(sizeof(TableCell *) * cols); 
 
+    /* make a default meta object */
+    TableMeta meta;
+    meta.font = NULL;
+    meta.bg_image = NULL;
+    meta.align = PANGO_ALIGN_NONE;
+    meta.format = FORMAT_NONE;
+    meta.graphable = FALSE;
+    meta.has_format = FALSE;
+    meta.has_bg_color = FALSE;
+    meta.has_bg_image = FALSE;
+
+    memcpy(&meta.graph, rgb_graph, sizeof(rgb_graph));
+    memcpy(&meta.color, rgb_cell, sizeof(rgb_cell));
+
+    /* set default row height */
+    priv->head->height_orig = GCT_ROW_HEIGHT;
+    priv->head->height_temp = GCT_ROW_HEIGHT;
+    priv->foot->height_orig = GCT_ROW_HEIGHT;
+    priv->foot->height_temp = GCT_ROW_HEIGHT;
+
+    memcpy(priv->head->meta, &meta, sizeof(TableMeta));
+    memcpy(priv->foot->meta, &meta, sizeof(TableMeta));
+
     int i = 0;
-    int j = 0;
 
-    priv->head->meta = malloc(sizeof(TableMeta));
-    priv->head->meta->font = NULL;
-    priv->head->meta->bg_image = NULL;
-    priv->head->meta->align = PANGO_ALIGN_NONE;
-    priv->head->meta->format = FORMAT_NONE;
-    priv->head->meta->graphable = FALSE;
-    priv->head->meta->has_format = FALSE;
-    priv->head->meta->has_bg_color = FALSE;
-    priv->head->meta->has_bg_image = FALSE;
-
-    for(i = 0; i < 3; i++) {
-
-        priv->head->meta->graph[i] = rgb_graph[i];
-        priv->head->meta->color[i] = rgb_cell[i];
-    }
-
-    priv->foot->meta = malloc(sizeof(TableMeta));
-    priv->foot->meta->font = NULL;
-    priv->foot->meta->bg_image = NULL;
-    priv->foot->meta->align = PANGO_ALIGN_NONE;
-    priv->foot->meta->format = FORMAT_NONE;
-    priv->foot->meta->graphable = FALSE;
-    priv->foot->meta->has_format = FALSE;
-    priv->foot->meta->has_bg_color = FALSE;
-    priv->foot->meta->has_bg_image = FALSE;
-
-    for(i = 0; i < 3; i++) {
-
-        priv->foot->meta->graph[i] = rgb_graph[i];
-        priv->foot->meta->color[i] = rgb_cell[i];
-    }
-
+    /* create header and footer cells cells */
     for(i = 0; i < cols; i++) {
 
-        /* create new table cell */
         priv->head->cell[i] = malloc(sizeof(TableCell));
         priv->head->cell[i]->text = NULL;
-
         priv->head->cell[i]->meta = malloc(sizeof(TableMeta));
-        priv->head->cell[i]->meta->font = NULL;
-        priv->head->cell[i]->meta->bg_image = NULL;
-        priv->head->cell[i]->meta->align = PANGO_ALIGN_NONE;
-        priv->head->cell[i]->meta->format = FORMAT_NONE;
-        priv->head->cell[i]->meta->graphable = FALSE;
-        priv->head->cell[i]->meta->has_format = FALSE;
-        priv->head->cell[i]->meta->has_bg_color = FALSE;
-        priv->head->cell[i]->meta->has_bg_image = FALSE;
-
-        for(j = 0; j < 3; j++) {
-
-            priv->head->cell[i]->meta->graph[j] = rgb_graph[j];
-            priv->head->cell[i]->meta->color[j] = rgb_cell[j];
-        }
 
         priv->foot->cell[i] = malloc(sizeof(TableCell));
         priv->foot->cell[i]->text = NULL;
-
         priv->foot->cell[i]->meta = malloc(sizeof(TableMeta));
-        priv->foot->cell[i]->meta->font = NULL;
-        priv->foot->cell[i]->meta->bg_image = NULL;
-        priv->foot->cell[i]->meta->align = PANGO_ALIGN_NONE;
-        priv->foot->cell[i]->meta->format = FORMAT_NONE;
-        priv->foot->cell[i]->meta->graphable = FALSE;
-        priv->foot->cell[i]->meta->format = FALSE;
-        priv->foot->cell[i]->meta->has_bg_color = FALSE;
-        priv->foot->cell[i]->meta->has_bg_image = FALSE;
 
-        for(j = 0; j < 3; j++) {
-
-            priv->foot->cell[i]->meta->graph[j] = rgb_graph[j];
-            priv->foot->cell[i]->meta->color[j] = rgb_cell[j];
-        }
+        memcpy(priv->head->cell[i]->meta, &meta, sizeof(TableMeta));
+        memcpy(priv->foot->cell[i]->meta, &meta, sizeof(TableMeta));
     }
 
     priv->x = cols;
