@@ -100,10 +100,12 @@ void  gtk_custom_table_set_cell_font(GtkWidget *table, int col, int row, char *f
 char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row);
 
 /* row functions */
+void  gtk_custom_table_set_row_height(GtkWidget *table, int row, int height);
 void  gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]);
 void  gtk_custom_table_set_row_alignment(GtkWidget *table, int row, PangoAlignment align);
 void  gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font);
 int   gtk_custom_table_get_rows(GtkWidget *table);
+int   gtk_custom_table_get_row_height(GtkWidget *table, int row);
 
 /* col functions */
 void  gtk_custom_table_set_col_width(GtkWidget *table, int col, int width);

@@ -80,8 +80,8 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
     /* use secondary sorting to break ties */
     if(result == 0) {
 
-        int x = row1->row_genesis;
-        int y = row2->row_genesis;
+        int x = row1->row_orig;
+        int y = row2->row_orig;
 
         result = sort ? x > y : y > x;
     }
@@ -120,7 +120,7 @@ void gtk_custom_table_sort(GtkWidget *table, int col, int orient) {
     /* reset row index, so that binary search can find them */
     for(i = 0; i < priv->y; i++) {
 
-        priv->rows[i]->row_current = i;
+        priv->rows[i]->row_temp = i;
     }
 }
 

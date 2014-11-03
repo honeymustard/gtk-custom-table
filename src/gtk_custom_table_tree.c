@@ -65,7 +65,7 @@ void gtk_custom_table_tree_get(GtkWidget *table, TableTree *tree,
     /* have we found the correct cell? */
     if(strcmp(value, (tree->data->cell[col])->text) == 0) {
 
-        priv->tree_index = tree->data->row_current;
+        priv->tree_index = tree->data->row_temp;
     }
     /* else, go left then right */
     else {

@@ -85,8 +85,11 @@ struct table_rows {
 
     GtkCustomTablePrivate *priv; /**< private table hook */
 
-    int row_current;  /**< current row */
-    int row_genesis;  /**< original row */
+    int height_orig;  /**< original row height */
+    int height_temp;  /**< current calculated row height */
+    int row_orig;     /**< original row number in sequence */
+    int row_temp;     /**< current row depending on sort order */
+
     TableMeta *meta;  /**< table rows meta-data */
     TableCell **cell; /**< table cells in this row */
 };
