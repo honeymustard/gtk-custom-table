@@ -29,10 +29,9 @@
  * @brief create a new custom table
  * @param cols          amount of table columns
  * @param rows          amount of table rows
- * @param col_widths    an array with the column widths
  * @return table        returns newly created table widget
  */
-GtkWidget * gtk_custom_table_new(int cols, int rows, int col_widths[]) {
+GtkWidget * gtk_custom_table_new(int cols, int rows) {
     
     GtkWidget *table = g_object_new(GTK_TYPE_CUSTOM_TABLE, NULL);
 
@@ -41,15 +40,15 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int col_widths[]) {
 
     /* variable defaults */
     priv->is_sortable = FALSE;
+    priv->has_primary = FALSE;
+    priv->has_header = FALSE;
+    priv->has_footer = FALSE;
     priv->row_height = 25;
-    priv->has_primary = 0;
-    priv->has_header = 0;
-    priv->has_footer = 0;
     priv->tree = NULL;
     priv->sort_index = 0;
     priv->sort_order = 0;
     priv->tree_index = -1;
-    priv->col_primary = 2;
+    priv->col_primary = 0;
 
     /* create header & footer */
     priv->head = malloc(sizeof(TableRows));
@@ -138,7 +137,7 @@ GtkWidget * gtk_custom_table_new(int cols, int rows, int col_widths[]) {
     priv->x = cols;
     priv->y = rows;
 
-    gtk_custom_table_alloc(table, col_widths);
+    gtk_custom_table_alloc(table);
 
     return table;
 }

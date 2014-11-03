@@ -111,10 +111,6 @@ void gtk_custom_table_free(GtkWidget *table) {
     free(priv->foot);
 
     /* free misc memory */
-    free(priv->col_widths);
-    free(priv->col_index);
-    free(priv->col_hidden);
-    free(priv->col_widths_temp);
     free(priv->col_offset_temp);
 
     /* free memory occupied by primed column */

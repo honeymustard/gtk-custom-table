@@ -26,11 +26,10 @@
 
 /** 
  * @brief create a new custom table and setup default variables
- * @param table         current table
- * @param col_widths    array of column widths
+ * @param table    current table
  * @return void
  */
-void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
+void gtk_custom_table_alloc(GtkWidget *table) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
@@ -41,14 +40,9 @@ void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
     int i = 0;
     int j = 0;
     int k = 0;
-
+ 
     int indices = cols * sizeof(int);
 
-    priv->col_widths = malloc(indices);
-    priv->col_index = malloc(indices);
-    priv->col_hidden = malloc(indices);
-
-    priv->col_widths_temp = malloc(indices);
     priv->col_offset_temp = malloc(indices + sizeof(int));
 
     /* setup cells, rows and columns */
@@ -130,11 +124,10 @@ void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]) {
             priv->cols[i]->cell[j] = priv->cell[cell % priv->x];
         }
 
-        priv->col_widths[i] = col_widths[i];
-        priv->col_index[i] = FALSE;
-        priv->col_hidden[i] = FALSE;
-        priv->col_widths_temp[i] = 0;
-        priv->col_offset_temp[i] = 0;
+        priv->cols[i]->index = FALSE;
+        priv->cols[i]->hidden = FALSE;
+        priv->cols[i]->width_orig = 20;
+        priv->cols[i]->width_temp = 0;
     }
 
     priv->col_offset_temp[cols] = 0;

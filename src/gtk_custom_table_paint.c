@@ -70,7 +70,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
         for(i = 0; i < priv->x; i++) {
 
-            if(priv->col_hidden[i] == TRUE) {
+            if(priv->cols[i]->hidden == TRUE) {
                 continue;
             }
 
@@ -83,7 +83,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             cairo_rectangle(cr, 
                 priv->col_offset_temp[i] + 0.5, 
                 1, 
-                priv->col_widths_temp[i], 
+                priv->cols[i]->width_temp, 
                 priv->row_height - 1.5
             );
 
@@ -169,7 +169,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 description);
 
             pango_layout_set_width(layout, 
-                (priv->col_widths_temp[i] - 20) * PANGO_SCALE);
+                (priv->cols[i]->width_temp - 20) * PANGO_SCALE);
 
             pango_layout_set_height(layout, 
                 priv->row_height * PANGO_SCALE);
@@ -208,7 +208,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
         for(j = 0; j < priv->x; j++) {
 
             /* skip hidden columns */
-            if(priv->col_hidden[j] == TRUE) {
+            if(priv->cols[j]->hidden == TRUE) {
                 continue;
             }
 
@@ -224,7 +224,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             cairo_rectangle(cr, 
                 priv->col_offset_temp[j] + 0.5, 
                 offset > 0 ? offset : 1, 
-                priv->col_widths_temp[j], 
+                priv->cols[j]->width_temp, 
                 priv->row_height
             );
 
@@ -299,7 +299,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                     priv->rows[i]->cell[j]->text)) {
 
                 /* calculate graph size */
-                graph_step = (priv->col_widths_temp[j] - 8) / 100.0;
+                graph_step = (priv->cols[j]->width_temp - 8) / 100.0;
                 graph_amount = atoi(priv->rows[i]->cell[j]->text);
                 graph_width = graph_amount * graph_step;
 
@@ -344,7 +344,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 char *text_temp = NULL;
 
                 /* column is an index, show numbering */
-                if(priv->col_index[j]) {
+                if(priv->cols[j]->index) {
 
                     char temp[10];
                     sprintf(temp, "%d", i + 1);
@@ -420,7 +420,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                     pango_layout_set_text(layout, text_temp, -1);
                 }
 
-                int text_box = priv->col_widths_temp[j] - 20;
+                int text_box = priv->cols[j]->width_temp - 20;
 
                 pango_layout_set_font_description(layout, 
                     description);
@@ -454,7 +454,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
         for(i = 0; i < priv->x; i++) {
 
             /* skip hidden columns */
-            if(priv->col_hidden[i] == TRUE) {
+            if(priv->cols[i]->hidden == TRUE) {
                 continue;
             }
                 
@@ -468,7 +468,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             cairo_rectangle(cr, 
                 priv->col_offset_temp[i] + 0.5, 
                 height, 
-                priv->col_widths_temp[i], 
+                priv->cols[i]->width_temp, 
                 priv->row_height
             );
 
@@ -542,7 +542,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 description);
 
             pango_layout_set_width(layout, 
-                (priv->col_widths_temp[i] - 20) * PANGO_SCALE);
+                (priv->cols[i]->width_temp - 20) * PANGO_SCALE);
 
             pango_layout_set_height(layout, 
                 priv->row_height * PANGO_SCALE);

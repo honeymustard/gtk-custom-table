@@ -91,14 +91,10 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
     int col_widths[t_cols];
 
     for(i = 0; i < t_cols; i++) {
-        col_widths[i] = priv->col_widths[i];
+        col_widths[i] = priv->cols[i]->width_orig;
     }
     
     /* free misc memory */
-    free(priv->col_widths);
-    free(priv->col_index);
-    free(priv->col_hidden);
-    free(priv->col_widths_temp);
     free(priv->col_offset_temp);
 
     /* free memory occupied by primed column */
@@ -108,7 +104,12 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
     priv->x = t_cols;
     priv->y = t_rows;
 
-    gtk_custom_table_alloc(table, col_widths);
+    gtk_custom_table_alloc(table);
+
+    /* reset column widths */
+    for(i = 0; i < t_cols; i++) {
+        gtk_custom_table_set_col_width(table, i, col_widths[i]);
+    }
 
     /* put saved meta-data back into table */
     for(i = 0; i < t_copy_rows; i++) {

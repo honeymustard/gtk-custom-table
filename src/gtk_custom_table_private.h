@@ -71,6 +71,11 @@ struct table_cell {
 /** structure for table cols */
 struct table_cols {
 
+    gboolean index;   /**< is table column an index */
+    gboolean hidden;  /**< is table column hidden */
+    int width_orig;   /**< original column width */
+    int width_temp;   /**< current calculated column width */
+
     TableMeta *meta;  /**< table columns meta-data */
     TableCell **cell; /**< cells in this table columns */
 };
@@ -98,22 +103,18 @@ struct table_tree {
 struct _GtkCustomTablePrivate {
 
     gboolean is_sortable;     /**< is table sortable */
+    gboolean has_header;      /**< does table have header */
+    gboolean has_footer;      /**< does table have footer */
+    gboolean has_primary;     /**< does table have a primary column */
 
     int x;                    /**< table rows */
     int y;                    /**< table cols */
     int tree_index;           /**< index of table tree */
     int sort_index;           /**< table sort index */
     int sort_order;           /**< table sort order */
-    int has_header;           /**< does table have header */
-    int has_footer;           /**< does table have footer */
-    int has_primary;          /**< does table have a primary column */
     int col_primary;          /**< primary table column */
     int row_height;           /**< table row height */
 
-    int *col_widths;          /**< array of table column widths */
-    int *col_index;           /**< array of table column which are indices */
-    int *col_hidden;          /**< array of hidden table columns */
-    int *col_widths_temp;     /**< temporary array for column widths */
     int *col_offset_temp;     /**< temporary array for column offsets */
 
     TableTree *tree;          /**< current table search tree */
@@ -129,7 +130,7 @@ struct _GtkCustomTablePrivate {
 /* internal functions */
 void gtk_custom_table_calc_widths(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
-void gtk_custom_table_alloc(GtkWidget *table, int col_widths[]);
+void gtk_custom_table_alloc(GtkWidget *table);
 void gtk_custom_table_free_cells(GtkWidget *table);
 
 /* internal binary tree functions */

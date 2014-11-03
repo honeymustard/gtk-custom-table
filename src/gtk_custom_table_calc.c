@@ -45,13 +45,13 @@ void gtk_custom_table_calc_widths(GtkWidget *table) {
     for(i = 0; i < priv->x; i++) {
 
         /* skip hidden columns */
-        if(priv->col_hidden[i] == TRUE) {
+        if(priv->cols[i]->hidden == TRUE) {
             continue;
         }
 
         /* sum up specified width */
-        if(priv->col_widths[i] != -1) {
-            specified += priv->col_widths[i];
+        if(priv->cols[i]->width_orig != -1) {
+            specified += priv->cols[i]->width_orig;
         }
         /* sum up cols with unlimited width */
         else {
@@ -67,20 +67,20 @@ void gtk_custom_table_calc_widths(GtkWidget *table) {
     for(i = 0; i < priv->x; i++) {
 
         /* skip hidden columns */
-        if(priv->col_hidden[i] == TRUE) {
+        if(priv->cols[i]->hidden == TRUE) {
             continue;
         }
 
-        if(priv->col_widths[i] == -1) {
-            priv->col_widths_temp[i] = available / unlimited;
+        if(priv->cols[i]->width_orig == -1) {
+            priv->cols[i]->width_temp = available / unlimited;
         }
         else {
-            priv->col_widths_temp[i] = priv->col_widths[i];
+            priv->cols[i]->width_temp = priv->cols[i]->width_orig;
         }
 
         /* calculate offset of each column, for alignment */
         priv->col_offset_temp[i] = offset;
-        offset += priv->col_widths_temp[i];
+        offset += priv->cols[i]->width_temp;
     }
 
     /* set end of table offset */

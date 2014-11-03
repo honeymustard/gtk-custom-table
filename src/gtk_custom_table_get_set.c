@@ -367,10 +367,13 @@ int gtk_custom_table_get_cols(GtkWidget *table) {
  * @param value    enable or disables prime
  * @return void
  */
-void gtk_custom_table_set_col_prime(GtkWidget *table, int col, gboolean value) {
+void gtk_custom_table_set_col_primary(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->has_primary = value;
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->col_primary = col;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->has_primary = value;
+    priv->col_primary = col;
 }
 
 
@@ -383,7 +386,7 @@ void gtk_custom_table_set_col_prime(GtkWidget *table, int col, gboolean value) {
  */
 void gtk_custom_table_set_col_index(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->col_index[col] = value;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->cols[col]->index = value;
 }
 
 
@@ -396,7 +399,7 @@ void gtk_custom_table_set_col_index(GtkWidget *table, int col, gboolean value) {
  */
 void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->col_hidden[col] = value;
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->cols[col]->hidden = value;
 }
 
 
@@ -663,6 +666,33 @@ void gtk_custom_table_set_col_font(GtkWidget *table, int col, char *font) {
 
     GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
     priv->cols[col]->meta->font = font;
+}
+
+
+/**
+ * @brief set the width of a column
+ * @param table    current table
+ * @param col      column for which to set the width
+ * @param width    width in pixels
+ * @return void
+ */
+void gtk_custom_table_set_col_width(GtkWidget *table, int col, int width) {
+
+    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    priv->cols[col]->width_orig = width;
+}
+
+
+/**
+ * @brief get the width of a column
+ * @param table    current table
+ * @param col      column for which to get the width
+ * @return int     returns column width in pixels
+ */
+int gtk_custom_table_get_col_width(GtkWidget *table, int col) {
+
+    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    return priv->cols[col]->width_temp;
 }
 
 

@@ -6,14 +6,10 @@ int main(int argc, char *argv[]) {
 
     gtk_init(&argc, &argv);
 
-    int widths[] = {
-        100, 100, -1, 100
-    };
-
     /* initiate widgets */
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    GtkWidget *table = gtk_custom_table_new(4, 80, widths);
+    GtkWidget *table = gtk_custom_table_new(4, 80);
     GtkWidget *scroll = gtk_scrolled_window_new(NULL, NULL);
     GtkWidget *viewport = gtk_viewport_new(NULL, NULL);
 
@@ -23,8 +19,18 @@ int main(int argc, char *argv[]) {
     gtk_box_pack_start(GTK_BOX(vbox), scroll, TRUE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);
 
-    /* set cell text */
     int i = 0;
+
+    /* set column widths */
+    int widths[] = {
+        100, 100, -1, 100
+    };
+
+    for(i = 0; i < 4; i++) {
+        gtk_custom_table_set_col_width(table, i, widths[i]);
+    }
+
+    /* set cell text */
     char temp[10];
 
     for(i = 0; i < gtk_custom_table_get_rows(table); i++) {

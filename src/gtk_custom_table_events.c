@@ -126,7 +126,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
             if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
-                if(priv->col_index[i] == FALSE) {
+                if(priv->cols[i]->index == FALSE) {
 
                     cur = gdk_cursor_new(GDK_HAND1);
                     gdk_window_set_cursor(gtk_widget_get_window(table), cur);
@@ -179,7 +179,7 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
             if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
-                if(priv->col_index[i] == FALSE) {
+                if(priv->cols[i]->index == FALSE) {
 
                     gtk_custom_table_sort(table, i, GTK_CUSTOM_TABLE_INVERT);
                     gtk_custom_table_refresh(table);
