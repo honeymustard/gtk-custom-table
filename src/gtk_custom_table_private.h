@@ -29,7 +29,7 @@
 #include <unistd.h>
 
 
-#define GCT_COL_WIDTH 30 
+#define GCT_COL_WIDTH 60 
 #define GCT_ROW_HEIGHT 25
 
 typedef struct _GtkCustomTableClass GtkCustomTableClass;
