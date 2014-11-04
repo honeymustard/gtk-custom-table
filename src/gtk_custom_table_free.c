@@ -26,16 +26,45 @@
 
 
 /**
- * @brief free all table cells and data from a specific table widget
+ * @brief free contents and structures from a specific table widget
  * @param table    table to be freed
  * @return void
  */
-void gtk_custom_table_free_cells(GtkWidget *table) {
+void gtk_custom_table_free(GtkWidget *table) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     int i = 0;
+
+    /* free memory occupied by header/footer */
+    for(i = 0; i < priv->x; i++) {
+
+        if(priv->head->cell[i]->text != NULL) {
+            free(priv->head->cell[i]->text);
+        }
+
+        free(priv->head->cell[i]->meta);
+        free(priv->head->cell[i]);
+
+        if(priv->foot->cell[i]->text != NULL) {
+            free(priv->foot->cell[i]->text);
+        }
+
+        free(priv->foot->cell[i]->meta);
+        free(priv->foot->cell[i]);
+    }
+
+    free(priv->head->cell); 
+    free(priv->foot->cell); 
+    free(priv->head->meta); 
+    free(priv->foot->meta); 
+    free(priv->head);
+    free(priv->foot);
+
+    /* free misc memory */
+    free(priv->col_offset_temp);
+    free(priv->row_offset_temp);
 
     /* free memory occupied by table cells */
     for(i = 0; i < (priv->x * priv->y); i++) {
@@ -68,53 +97,9 @@ void gtk_custom_table_free_cells(GtkWidget *table) {
     free(priv->cell);
     free(priv->cols);
     free(priv->rows);
-}
-
-
-/**
- * @brief free contents and structures from a specific table widget
- * @param table    table to be freed
- * @return void
- */
-void gtk_custom_table_free(GtkWidget *table) {
-
-    GtkCustomTablePrivate *priv;
-    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-
-    int i = 0;
-
-    gtk_custom_table_free_cells(table);
-
-    /* free memory occupied by header/footer */
-    for(i = 0; i < priv->x; i++) {
-
-        if(priv->head->cell[i]->text != NULL) {
-            free(priv->head->cell[i]->text);
-        }
-
-        free(priv->head->cell[i]->meta);
-        free(priv->head->cell[i]);
-
-        if(priv->foot->cell[i]->text != NULL) {
-            free(priv->foot->cell[i]->text);
-        }
-
-        free(priv->foot->cell[i]->meta);
-        free(priv->foot->cell[i]);
-    }
-
-    free(priv->head->cell); 
-    free(priv->foot->cell); 
-    free(priv->head->meta); 
-    free(priv->foot->meta); 
-    free(priv->head);
-    free(priv->foot);
-
-    /* free misc memory */
-    free(priv->col_offset_temp);
-    free(priv->row_offset_temp);
 
     /* free memory occupied by primed column */
     gtk_custom_table_tree_free(priv->tree);
+    priv->tree = NULL;
 }
 

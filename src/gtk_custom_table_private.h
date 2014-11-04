@@ -139,7 +139,6 @@ void gtk_custom_table_calc_cols(GtkWidget *table);
 void gtk_custom_table_calc_rows(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
 void gtk_custom_table_alloc(GtkWidget *table);
-void gtk_custom_table_free_cells(GtkWidget *table);
 
 /* internal binary tree functions */
 void gtk_custom_table_tree_free(TableTree *tree);

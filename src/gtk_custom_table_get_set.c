@@ -112,12 +112,12 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
 
     /* we can't allow this.. */
     if(text == NULL) {
-        g_error("add to cell, text was null!");
+        g_error("could not set cell text: text was null");
     }
 
     /* detect table overflow, crash and burn */
     if((col >= priv->x) || (row >= priv->y)) {
-        g_error("table overflow");
+        g_error("could not set cell text: invalid cell");
     }
 
     /* when adding text to the same cell twice, free memory */

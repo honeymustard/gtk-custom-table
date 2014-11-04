@@ -34,6 +34,10 @@
  */
 void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
 
+    if(cols <= 0 || rows <= 0) {
+        g_error("could not resize table: sizes must be greater than zero");
+    }
+
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
@@ -44,97 +48,111 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
     int t_copy_rows = t_rows > priv->y ? priv->y : t_rows;
     int t_copy_cell = t_copy_cols * t_copy_rows;
 
-    /* copy table meta-data */
-    TableMeta **table_cols = malloc(sizeof(TableMeta *) * t_copy_cols); 
-    TableMeta **table_rows = malloc(sizeof(TableMeta *) * t_copy_rows); 
-    TableMeta **table_cell = malloc(sizeof(TableMeta *) * t_copy_cell); 
+    /* copy all table data */
+    TableCell **table_cell = malloc(sizeof(TableCell *) * t_copy_cell); 
+    TableCols **table_cols = malloc(sizeof(TableCols *) * t_copy_cols);
+    TableRows **table_rows = malloc(sizeof(TableRows *) * t_copy_rows);
 
     int i = 0;
     int j = 0;
+    int k = 0;
 
     for(i = 0; i < t_copy_rows; i++) {
         
-        table_rows[i] = malloc(sizeof(TableMeta));
+        for(j = 0; j < t_copy_cols; j++) {
+
+            table_cell[k] = malloc(sizeof(TableCell));
+            memcpy(table_cell[k], priv->rows[i]->cell[j], sizeof(TableCell));
+
+            table_cell[k]->text = NULL;
+
+            if(priv->rows[i]->cell[j]->text != NULL) {
+
+                int length = strlen(priv->rows[i]->cell[j]->text) + 1;
+                table_cell[k]->text = malloc(length);
+                strncpy(table_cell[k]->text, 
+                    priv->rows[i]->cell[j]->text, length);
+            }
+
+            table_cell[k]->meta = malloc(sizeof(TableMeta));
+            memcpy(table_cell[k]->meta, priv->rows[i]->cell[j]->meta, 
+                sizeof(TableMeta));
+
+            k++;
+        }
+    }
+
+    for(i = 0; i < t_copy_rows; i++) {
         
-        memcpy(table_rows[i], priv->rows[i]->meta, sizeof(TableMeta));
+        table_rows[i] = malloc(sizeof(TableRows));
+        memcpy(table_rows[i], priv->rows[i], sizeof(TableRows));
+
+        table_rows[i]->meta = malloc(sizeof(TableMeta));
+        memcpy(table_rows[i]->meta, priv->rows[i]->meta, sizeof(TableMeta));
     }
 
     for(i = 0; i < t_copy_cols; i++) {
 
-        table_cols[i] = malloc(sizeof(TableMeta));
+        table_cols[i] = malloc(sizeof(TableCols));
+        memcpy(table_cols[i], priv->cols[i], sizeof(TableCols));
 
-        memcpy(table_cols[i], priv->cols[i]->meta, sizeof(TableMeta));
+        table_cols[i]->meta = malloc(sizeof(TableMeta));
+        memcpy(table_cols[i]->meta, priv->cols[i]->meta, sizeof(TableMeta));
     }
 
-    int cell = 0;
-
-    for(i = 0; i < t_copy_rows; i++) {
-        
-        for(j = 0; j < priv->x; j++) {
-
-            /* table might've shrunk */
-            if(j >= t_cols) {
-                continue;
-            }
-
-            table_cell[cell] = malloc(sizeof(TableMeta));
-
-            memcpy(table_cell[cell], priv->rows[i]->cell[j]->meta, 
-                sizeof(TableMeta));
-
-            cell++;
-        }
-    }
-
-    gtk_custom_table_free_cells(table);
-
-    int col_widths[t_cols];
-
-    for(i = 0; i < t_cols; i++) {
-        col_widths[i] = priv->cols[i]->width_orig;
-    }
-    
-    /* free misc memory */
-    free(priv->col_offset_temp);
-
-    /* free memory occupied by primed column */
-    gtk_custom_table_tree_free(priv->tree);
-    priv->tree = NULL;
+    /* free and allocate a new table */
+    gtk_custom_table_free(table);
 
     priv->x = t_cols;
     priv->y = t_rows;
 
     gtk_custom_table_alloc(table);
 
-    /* reset column widths */
-    for(i = 0; i < t_cols; i++) {
-        gtk_custom_table_set_col_width(table, i, col_widths[i]);
+    /* put saved data back into table */
+    for(i = 0; i < t_copy_cell; i++) {
+
+        if(table_cell[i]->text != NULL) {
+
+            int length = strlen(table_cell[i]->text) + 1;
+            strncpy(priv->cell[i]->text, table_cell[i]->text, length);
+        }
+
+        memcpy(priv->cell[i]->meta, table_cell[i]->meta, sizeof(TableMeta));
+
+        free(table_cell[i]->meta);
+        free(table_cell[i]);
     }
 
-    /* put saved meta-data back into table */
     for(i = 0; i < t_copy_rows; i++) {
         
-        memcpy(priv->rows[i]->meta, table_rows[i], sizeof(TableMeta));
+        priv->rows[i]->priv = table_rows[i]->priv;
+        priv->rows[i]->hidden = table_rows[i]->hidden;
+        priv->rows[i]->height_orig = table_rows[i]->height_orig;
+        priv->rows[i]->height_temp = table_rows[i]->height_temp;
+        priv->rows[i]->row_orig = table_rows[i]->row_orig;
+        priv->rows[i]->row_temp = table_rows[i]->row_temp;
 
+        memcpy(priv->rows[i]->meta, table_rows[i]->meta, sizeof(TableMeta));
+
+        free(table_rows[i]->meta);
         free(table_rows[i]);
     }
 
     for(i = 0; i < t_copy_cols; i++) {
 
-        memcpy(priv->cols[i]->meta, table_cols[i], sizeof(TableMeta));
+        priv->cols[i]->index = table_cols[i]->index;
+        priv->cols[i]->hidden = table_cols[i]->hidden;
+        priv->cols[i]->width_orig = table_cols[i]->width_orig;
+        priv->cols[i]->width_temp = table_cols[i]->width_temp;
 
+        memcpy(priv->cols[i]->meta, table_cols[i]->meta, sizeof(TableMeta));
+
+        free(table_cols[i]->meta);
         free(table_cols[i]);
     }
 
-    for(i = 0; i < t_copy_cell; i++) {
-
-        memcpy(priv->cell[i]->meta, table_cell[i], sizeof(TableMeta));
-
-        free(table_cell[i]);
-    }
-
+    free(table_cell);
     free(table_rows);
     free(table_cols);
-    free(table_cell);
 }
 

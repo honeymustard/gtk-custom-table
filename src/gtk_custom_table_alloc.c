@@ -59,8 +59,40 @@ void gtk_custom_table_alloc(GtkWidget *table) {
     memcpy(&meta.graph, rgb_graph, sizeof(rgb_graph));
     memcpy(&meta.color, rgb_cell, sizeof(rgb_cell));
 
+    /* create header and footer */
+    priv->head = malloc(sizeof(TableRows));
+    priv->foot = malloc(sizeof(TableRows));
+    priv->head->meta = malloc(sizeof(TableMeta));
+    priv->foot->meta = malloc(sizeof(TableMeta));
+    priv->head->cell = malloc(sizeof(TableCell *) * cols);
+    priv->foot->cell = malloc(sizeof(TableCell *) * cols);
+
+    /* set default row height */
+    priv->head->height_orig = GCT_ROW_HEIGHT;
+    priv->head->height_temp = 0;
+    priv->foot->height_orig = GCT_ROW_HEIGHT;
+    priv->foot->height_temp = 0;
+
+    memcpy(priv->head->meta, &meta, sizeof(TableMeta));
+    memcpy(priv->foot->meta, &meta, sizeof(TableMeta));
+
     int i = 0;
     int j = 0;
+
+    /* create header and footer cells cells */
+    for(i = 0; i < cols; i++) {
+
+        priv->head->cell[i] = malloc(sizeof(TableCell));
+        priv->head->cell[i]->text = NULL;
+        priv->head->cell[i]->meta = malloc(sizeof(TableMeta));
+
+        priv->foot->cell[i] = malloc(sizeof(TableCell));
+        priv->foot->cell[i]->text = NULL;
+        priv->foot->cell[i]->meta = malloc(sizeof(TableMeta));
+
+        memcpy(priv->head->cell[i]->meta, &meta, sizeof(TableMeta));
+        memcpy(priv->foot->cell[i]->meta, &meta, sizeof(TableMeta));
+    }
 
     int cell = 0;
 
@@ -89,8 +121,9 @@ void gtk_custom_table_alloc(GtkWidget *table) {
             priv->rows[i]->cell[j] = priv->cell[cell];
         }
 
+        priv->rows[i]->hidden = FALSE;
         priv->rows[i]->height_orig = GCT_ROW_HEIGHT;
-        priv->rows[i]->height_temp = GCT_ROW_HEIGHT;
+        priv->rows[i]->height_temp = 0;
         priv->rows[i]->row_orig = i;
         priv->rows[i]->row_temp = 0;
     }
