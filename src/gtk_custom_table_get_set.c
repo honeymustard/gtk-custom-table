@@ -232,14 +232,35 @@ void gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col,
 
 
 /**
- * @brief add a background-color to specific table row..
- * @param table    current working table
- * @param row      row
+ * @brief add a background color to a specific table column
+ * @param table    current table
+ * @param col      column to get a background color
  * @param rgb      array of colors for graph
  * @return void
  */
-void gtk_custom_table_set_row_color(GtkWidget *table, int row, 
-    double rgb[]) {
+void gtk_custom_table_set_col_color(GtkWidget *table, int col, double rgb[]) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    int i = 0;
+
+    for(i = 0; i < 3; i++) {
+        priv->cols[col]->meta->color[i] = rgb[i];
+    }
+
+    priv->cols[col]->meta->has_bg_color = TRUE;
+}
+
+
+/**
+ * @brief add a background color to a specific table row
+ * @param table    current table
+ * @param row      row to get a background color
+ * @param rgb      array of colors for graph
+ * @return void
+ */
+void gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
@@ -255,9 +276,9 @@ void gtk_custom_table_set_row_color(GtkWidget *table, int row,
 
 
 /**
- * @brief add a background-color to specific table cell..
- * @param table    current working table
- * @param col      column 
+ * @brief add a background color to a specific table cell
+ * @param table    current table
+ * @param col      column
  * @param row      row
  * @param rgb      array of colors for graph
  * @return void
@@ -394,12 +415,25 @@ void gtk_custom_table_set_col_index(GtkWidget *table, int col, gboolean value) {
  * @brief set a column to be hidden
  * @param table    current table
  * @param col      column to be hidden
- * @param value    enable or disables hidden column
+ * @param value    enable or disables a hidden column
  * @return void
  */
 void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
 
     GTK_CUSTOM_TABLE_GET_PRIVATE(table)->cols[col]->hidden = value;
+}
+
+
+/**
+ * @brief set a row to be hidden
+ * @param table    current table
+ * @param row      row to be hidden
+ * @param value    enable or disables a hidden row
+ * @return void
+ */
+void gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value) {
+
+    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->rows[row]->hidden = value;
 }
 
 
