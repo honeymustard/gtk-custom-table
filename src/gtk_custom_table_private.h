@@ -29,6 +29,8 @@
 #include <unistd.h>
 
 
+G_BEGIN_DECLS
+
 #define GCT_COL_WIDTH 60 
 #define GCT_ROW_HEIGHT 25
 
@@ -164,6 +166,8 @@ double rgb_border[3];
 double rgb_text[3];
 double rgb_graph[3];
 double rgb_cell[3];
+
+G_END_DECLS
 
 #endif
 

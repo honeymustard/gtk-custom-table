@@ -28,6 +28,9 @@
 #include <ctype.h>
 #include <unistd.h>
 
+
+G_BEGIN_DECLS
+
 /* important, required for casting */
 GType gtk_custom_table_get_type(void);
 
@@ -134,6 +137,8 @@ void  gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col, char *font)
 void  gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text);
 void  gtk_custom_table_set_foot_row_alignment(GtkWidget *table, PangoAlignment align);
 void  gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font);
+
+G_END_DECLS
 
 #endif
 
