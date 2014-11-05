@@ -30,7 +30,7 @@ A custom table widget implementation for Gtk+3 written in C.
 
 ## Copyright
 
-Gtk-Custom-Table is licensed under the GNU LGPL. See [LICENSE](https://github.com/honeymustard/gtk-custom-table/blob/master/LICENSE) for details.
+Gtk-Custom-Table is licensed under the GNU LGPL. See [LICENSE.LGPL](https://github.com/honeymustard/gtk-custom-table/blob/master/LICENSE.LGPL) for details.
 
 Copyright &copy; 2011-2014 Adrian Solumsmo.
 
