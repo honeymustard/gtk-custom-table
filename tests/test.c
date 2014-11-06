@@ -2,6 +2,25 @@
 #include "gtk_custom_table.h"
 
 
+double rgb_red[3] = {
+    1.0,
+    0.7,
+    0.7
+};
+
+double rgb_green[3] = {
+    0.7,
+    1.0,
+    0.7
+};
+
+double rgb_blue[3] = {
+    0.7,
+    0.7,
+    1.0
+};
+
+
 /**
  * @brief all tests which will occur after an event go here
  * @param data         a gpointer to a gtk_custom_table widget
@@ -63,9 +82,13 @@ int main(int argc, char *argv[]) {
     gtk_custom_table_resize(table, 3, 92);
     gtk_custom_table_resize(table, 4, 60);
 
-    gtk_custom_table_set_col_alignment(table, 0, GCT_ALIGN_NONE);
-    gtk_custom_table_set_col_alignment(table, 1, GCT_ALIGN_LEFT);
-    gtk_custom_table_set_col_alignment(table, 2, GCT_ALIGN_RIGHT);
+    gtk_custom_table_set_col_alignment(table, 0, PANGO_ALIGN_RIGHT);
+    gtk_custom_table_set_col_alignment(table, 1, PANGO_ALIGN_LEFT);
+    gtk_custom_table_set_col_alignment(table, 2, PANGO_ALIGN_RIGHT);
+
+    gtk_custom_table_set_col_color(table, 2, rgb_red);
+    gtk_custom_table_set_row_color(table, 3, rgb_green);
+    gtk_custom_table_set_cell_color(table, 2, 3, rgb_blue);
 
     /* set cell text */
     char temp[10];

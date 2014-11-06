@@ -2,19 +2,19 @@
 #include "gtk_custom_table.h"
 
 
-double col_red[3] = {
+double rgb_red[3] = {
     1.0,
     0.7,
     0.7
 };
 
-double col_green[3] = {
+double rgb_green[3] = {
     0.7,
     1.0,
     0.7
 };
 
-double col_blue[3] = {
+double rgb_blue[3] = {
     0.7,
     0.7,
     1.0
@@ -53,9 +53,9 @@ int main(int argc, char *argv[]) {
     gtk_custom_table_resize(table, 4, 60);
     gtk_custom_table_set_row_hide(table, 6, TRUE);
     gtk_custom_table_set_row_hide(table, 9, TRUE);
-    gtk_custom_table_set_col_color(table, 1, col_green);
-    gtk_custom_table_set_row_color(table, 3, col_red);
-    gtk_custom_table_set_cell_color(table, 1, 3, col_blue);
+    gtk_custom_table_set_col_color(table, 1, rgb_red);
+    gtk_custom_table_set_row_color(table, 3, rgb_green);
+    gtk_custom_table_set_cell_color(table, 1, 3, rgb_blue);
     gtk_custom_table_set_col_alignment(table, 1, PANGO_ALIGN_LEFT);
 
     /* set cell text */
