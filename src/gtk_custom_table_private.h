@@ -54,16 +54,18 @@ typedef struct table_tree TableTree;
 /** table row, column and cell meta data */
 struct table_meta {
 
-    char *font;             /**< current font */
-    char *bg_image;         /**< current background image */
-    double color[3];        /**< current background color */
-    double graph[3];        /**< current graph background color */
-    TextFormat format;      /**< current text format */
-    PangoAlignment align;   /**< current text alignment */
-    gboolean graphable;     /**< is current row, column, cell graphable */
-    gboolean has_format;    /**< does current row, column, cell have a text format */
-    gboolean has_bg_image;  /**< does current row, column, cell have a background image */
-    gboolean has_bg_color;  /**< does current row, column, cell have a background color */
+    char *font;                 /**< current font */
+    char *bg_image;             /**< current background image */
+    double color[3];            /**< current background color */
+    double graph[3];            /**< current graph background color */
+    GctTextFormat text_format;  /**< current text format */
+    PangoAlignment alignment;   /**< current text alignment */
+    gboolean has_graph;         /**< does meta have a graph */
+    gboolean has_font;          /**< does meta have a font */
+    gboolean has_alignment;     /**< does meta have an alignment */
+    gboolean has_text_format;   /**< does meta have a text format */
+    gboolean has_bg_image;      /**< does meta have a background image */
+    gboolean has_bg_color;      /**< does meta have a background color */
 };
 
 /** structure for table cells */
@@ -141,6 +143,10 @@ void gtk_custom_table_calc_cols(GtkWidget *table);
 void gtk_custom_table_calc_rows(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
 void gtk_custom_table_alloc(GtkWidget *table);
+
+/* internal string functions */
+int    gtk_custom_table_string_is_integer(char *string);
+gulong gtk_custom_table_string_parseint(char *string);
 
 /* internal binary tree functions */
 void gtk_custom_table_tree_free(TableTree *tree);

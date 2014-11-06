@@ -73,20 +73,22 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
     #ifdef DEBUG
 
-    printf("\npaint rows : (%d -> %d)\n", scroll_beg_row, scroll_end_row);
+    printf("\n paint rows : (%d -> %d)\n", scroll_beg_row, scroll_end_row);
     
     #endif
 
     cairo_set_line_width(cr, 1);
 
-    TableMeta *meta_temp = NULL;
+    PangoAlignment alignment = 0;
+    char *font = NULL;
+    double *graph = NULL;
 
     /* DRAW HEADER ROW */    
     if(priv->has_header && (scroll_beg_row == 0)) {
 
         for(i = 0; i < priv->x; i++) {
 
-            if(priv->cols[i]->hidden == TRUE) {
+            if(priv->cols[i]->hidden) {
                 continue;
             }
 
@@ -137,33 +139,31 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             );
 
             /* determine cell text alignment */
-            if(priv->head->cell[i]->meta->align != PANGO_ALIGN_NONE) {
+            if(priv->head->cell[i]->meta->has_alignment) {
 
-                meta_temp = priv->head->cell[i]->meta;
+                alignment = priv->head->cell[i]->meta->alignment;
             }
-            else if(priv->head->meta->align != PANGO_ALIGN_NONE) {
+            else if(priv->head->meta->has_alignment) {
 
-                meta_temp = priv->head->meta;
+                alignment = priv->head->meta->alignment;
             }
             else {
 
-                meta_temp = priv->cols[i]->meta;
+                alignment = PANGO_ALIGN_RIGHT;
             }
-
-            char *font_temp = NULL;
 
             /* determine cell font */
-            if(priv->head->cell[i]->meta->font != NULL) {
+            if(priv->head->cell[i]->meta->has_font) {
 
-                font_temp = priv->head->cell[i]->meta->font;
+                font = priv->head->cell[i]->meta->font;
             }
-            else if(priv->head->meta->font != NULL) {
+            else if(priv->head->meta->has_font) {
 
-                font_temp = priv->head->meta->font;
+                font = priv->head->meta->font;
             }
             else {
 
-                font_temp = priv->cols[i]->meta->font;
+                font = GCT_FONT_MONO;
             }
              
             /* BEGIN PANGO RENDERING */
@@ -172,7 +172,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             PangoFontDescription *description = NULL;
 
             layout = pango_cairo_create_layout(cr);
-            description = pango_font_description_from_string(font_temp);
+            description = pango_font_description_from_string(font);
 
             /* make sure text is not empty */
             if(priv->head->cell[i]->text != NULL) {
@@ -181,8 +181,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                     priv->head->cell[i]->text, -1);
             }
 
-            pango_layout_set_font_description(layout, 
-                description);
+            pango_layout_set_font_description(layout, description);
 
             pango_layout_set_width(layout, 
                 (priv->cols[i]->width_temp - 20) * PANGO_SCALE);
@@ -190,15 +189,11 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             pango_layout_set_height(layout, 
                 priv->head->height_temp * PANGO_SCALE);
 
-            pango_layout_set_ellipsize(layout, 
-                PANGO_ELLIPSIZE_END);
-
-            pango_layout_set_alignment(layout, 
-                meta_temp->align);
-
+            pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
+            pango_layout_set_alignment(layout, alignment);
             pango_cairo_show_layout(cr, layout);
-
             pango_font_description_free(description);
+
             g_object_unref(layout);
         }
     }
@@ -221,7 +216,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     for(i = scroll_beg_row; i < scroll_end_row; i++) {
 
         /* skip hidden rows */
-        if(priv->rows[i]->hidden == TRUE) {
+        if(priv->rows[i]->hidden) {
             continue;
         }
 
@@ -231,7 +226,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
         for(j = 0; j < priv->x; j++) {
 
             /* skip hidden columns */
-            if(priv->cols[j]->hidden == TRUE) {
+            if(priv->cols[j]->hidden) {
                 continue;
             }
 
@@ -299,24 +294,26 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
             /* FIND META WITH HIGHEST PRECEDENCE */
 
-            meta_temp = NULL;
+            if(meta_cell->has_graph) {
 
-            if(meta_cell->graphable) {
-
-                meta_temp = meta_cell;
+                graph = meta_cell->graph;
             }
-            else if(meta_rows->graphable) {
+            else if(meta_rows->has_graph) {
 
-                meta_temp = meta_rows;
+                graph = meta_rows->graph;
             }
-            else if(meta_cols->graphable) {
+            else if(meta_cols->has_graph) {
 
-                meta_temp = meta_cols;
+                graph = meta_cols->graph;
+            }
+            else {
+
+                graph = NULL;
             }
 
             /* DRAW CELL DATA AS GRAPH */
-            if(meta_temp != NULL && gtk_custom_table_string_is_integer(
-                    priv->rows[i]->cell[j]->text)) {
+            if(graph != NULL && gtk_custom_table_string_is_integer(
+                priv->rows[i]->cell[j]->text)) {
 
                 /* calculate graph size */
                 graph_step = (priv->cols[j]->width_temp - 8) / 100.0;
@@ -339,9 +336,9 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 cairo_stroke_preserve(cr);
 
                 cairo_set_source_rgb(cr, 
-                    meta_temp->graph[0], 
-                    meta_temp->graph[1], 
-                    meta_temp->graph[2]
+                    graph[0], 
+                    graph[1], 
+                    graph[2]
                 );
 
                 cairo_fill(cr);
@@ -376,41 +373,48 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 }
 
                 /* determine cell text alignment */
-                if(meta_cell->align != PANGO_ALIGN_NONE) {
+                if(meta_cell->has_alignment) {
 
-                    meta_temp = meta_cell;
+                    alignment = meta_cell->alignment;
                 }
-                else if(meta_rows->align != PANGO_ALIGN_NONE) {
+                else if(meta_rows->has_alignment) {
 
-                    meta_temp = meta_rows;
+                    alignment = meta_rows->alignment;
                 }
-                else if(meta_cols->align != PANGO_ALIGN_NONE) {
+                else if(meta_cols->has_alignment) {
 
-                    meta_temp = meta_cols;
-                }
-
-                char *font_temp = NULL;
-
-                /* determine cell font */
-                if(priv->rows[i]->cell[j]->meta->font != NULL) {
-
-                    font_temp = priv->rows[i]->cell[j]->meta->font;
-                }
-                else if(priv->rows[i]->meta->font != NULL) {
-
-                    font_temp = priv->rows[i]->meta->font;
+                    alignment = meta_cols->alignment;
                 }
                 else {
 
-                    font_temp = priv->cols[j]->meta->font;
+                    alignment = PANGO_ALIGN_RIGHT;
+                }
+
+                /* determine cell font */
+                if(priv->rows[i]->cell[j]->meta->has_font) {
+
+                    font = priv->rows[i]->cell[j]->meta->font;
+                }
+                else if(priv->rows[i]->meta->font) {
+
+                    font = priv->rows[i]->meta->font;
+                }
+                else if(priv->cols[j]->meta->has_font) {
+
+                    font = priv->cols[j]->meta->font;
+                }
+                else {
+                    
+                    font = GCT_FONT_MONO;
                 }
 
                 /* determine background image */
-                if(priv->rows[i]->cell[j]->meta->has_bg_image == TRUE) {
+                if(priv->rows[i]->cell[j]->meta->has_bg_image) {
 
                     char *bg_image = priv->rows[i]->cell[j]->meta->bg_image;
 
                     cairo_save(cr);
+
                     cairo_surface_t *sur;
                     sur = cairo_image_surface_create_from_png(bg_image);
 
@@ -432,7 +436,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 PangoFontDescription *description = NULL;
 
                 layout = pango_cairo_create_layout(cr);
-                description = pango_font_description_from_string(font_temp);
+                description = pango_font_description_from_string(font);
                
                 /* make sure text is not empty */
                 if(text_temp != NULL) {
@@ -442,8 +446,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
                 int text_box = priv->cols[j]->width_temp - 20;
 
-                pango_layout_set_font_description(layout, 
-                    description);
+                pango_layout_set_font_description(layout, description);
 
                 pango_layout_set_width(layout, 
                     (text_box > 0 ? text_box : 1) * PANGO_SCALE);
@@ -451,15 +454,11 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 pango_layout_set_height(layout, 
                     priv->rows[i]->height_temp * PANGO_SCALE);
 
-                pango_layout_set_ellipsize(layout, 
-                    PANGO_ELLIPSIZE_END);
-
-                pango_layout_set_alignment(layout, 
-                    meta_temp->align);
-
+                pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
+                pango_layout_set_alignment(layout, alignment);
                 pango_cairo_show_layout(cr, layout);
-
                 pango_font_description_free(description);
+
                 g_object_unref(layout);
             }
         }
@@ -473,7 +472,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
         for(i = 0; i < priv->x; i++) {
 
             /* skip hidden columns */
-            if(priv->cols[i]->hidden == TRUE) {
+            if(priv->cols[i]->hidden) {
                 continue;
             }
                 
@@ -513,33 +512,31 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             );
 
             /* determine cell text alignment */
-            if(priv->foot->cell[i]->meta->align != PANGO_ALIGN_NONE) {
+            if(priv->foot->cell[i]->meta->has_alignment) {
 
-                meta_temp = priv->foot->cell[i]->meta;
+                alignment = priv->foot->cell[i]->meta->alignment;
             }
-            else if(priv->foot->meta->align != PANGO_ALIGN_NONE) {
+            else if(priv->foot->meta->has_alignment) {
 
-                meta_temp = priv->foot->meta;
+                alignment = priv->foot->meta->alignment;
             }
             else {
 
-                meta_temp = priv->cols[i]->meta;
+                alignment = PANGO_ALIGN_RIGHT;
             }
             
-            char *font_temp = NULL;
-
             /* determine cell font */
-            if(priv->foot->cell[i]->meta->font != NULL) {
+            if(priv->foot->cell[i]->meta->has_font) {
 
-                font_temp = priv->foot->cell[i]->meta->font;
+                font = priv->foot->cell[i]->meta->font;
             }
-            else if(priv->foot->meta->font != NULL) {
+            else if(priv->foot->meta->has_font) {
 
-                font_temp = priv->foot->meta->font;
+                font = priv->foot->meta->font;
             }
             else {
 
-                font_temp = priv->cols[i]->meta->font;
+                font = GCT_FONT_MONO;
             }
             
             /* BEGIN PANGO RENDERING */
@@ -548,7 +545,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             PangoFontDescription *description = NULL;
 
             layout = pango_cairo_create_layout(cr);
-            description = pango_font_description_from_string(font_temp);
+            description = pango_font_description_from_string(font);
 
             /* make sure text is not empty */
             if(priv->foot->cell[i]->text != NULL) {
@@ -557,8 +554,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                     priv->foot->cell[i]->text, -1);
             }
 
-            pango_layout_set_font_description(layout, 
-                description);
+            pango_layout_set_font_description(layout, description);
 
             pango_layout_set_width(layout, 
                 (priv->cols[i]->width_temp - 20) * PANGO_SCALE);
@@ -566,15 +562,11 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             pango_layout_set_height(layout, 
                 priv->foot->height_temp * PANGO_SCALE);
 
-            pango_layout_set_ellipsize(layout, 
-                PANGO_ELLIPSIZE_END);
-
-            pango_layout_set_alignment(layout, 
-                meta_temp->align);
-
+            pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
+            pango_layout_set_alignment(layout, alignment);
             pango_cairo_show_layout(cr, layout);
-
             pango_font_description_free(description);
+
             g_object_unref(layout);
         }
     }

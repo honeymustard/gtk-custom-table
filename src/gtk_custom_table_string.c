@@ -48,11 +48,11 @@ int gtk_custom_table_string_is_integer(char *string) {
 
 
 /**
- * @brief sanitize a string and convert it to integer..
+ * @brief sanitize a string and convert it to integer
  * @param string            string to be converted
  * @return unsigned long    returns an integer
  */
-unsigned long gtk_custom_table_string_parseint(char *string) {
+gulong gtk_custom_table_string_parseint(char *string) {
 
     int i = 0;
     int b = 0;
@@ -69,75 +69,10 @@ unsigned long gtk_custom_table_string_parseint(char *string) {
 
     temp[b] = '\0';
 
-    unsigned long result = strtoul(temp, NULL, 10);
+    gulong result = strtoul(temp, NULL, 10);
 
     free(temp);
 
     return result;
-}
-
-
-/**
- * @brief strip alphanumeric chars from string..
- * @param string     string to be stripped
- * @return char *    returns the stripped string
- */
-char * gtk_custom_table_string_strip_alpha(char *string) {
-
-    int i = 0;
-    int b = 0;
-
-    char *temp = malloc(strlen(string) + 1);
-
-    for(i = 0; i < strlen(string); i++) {
-
-        if(string[i] >= 48 && string[i] <= 57) {
-
-            temp[b++] = string[i];
-        }
-    }
-
-    temp[b] = '\0';
-
-    return temp;
-}
-
-
-/**
- * @brief add thousand separators to integer string..
- * @param string     string to be converted
- * @return char *    returns the converted string
- */
-char * gtk_custom_table_string_thousand_separator(char *string) {
-
-    int i = 0;
-    int j = 0;
-    int b = 0;
-    int c = 0;
-
-    char *temp = malloc(strlen(string) * 2);
-
-    for(i = strlen(string) -1; i >= 0; i--, c++) {
-
-        if(c % 3 == 0 && b > 0) {
-
-            temp[b++] = '.';
-        }
-        
-        temp[b++] = string[i];
-    }
-
-    temp[b] = '\0';
-
-    int length = strlen(temp) - 1;
-
-    for(i = 0, j = length; i < j; i++, j--) {
-
-         c = temp[i];
-         temp[i] = temp[j];
-         temp[j] = c;
-    }
-
-    return temp;
 }
 

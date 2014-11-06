@@ -24,6 +24,7 @@
 
 /** @file */ 
 
+
 /** 
  * @brief create a new custom table and setup default variables
  * @param table    current table
@@ -49,10 +50,12 @@ void gtk_custom_table_alloc(GtkWidget *table) {
     TableMeta meta;
     meta.font = NULL;
     meta.bg_image = NULL;
-    meta.align = PANGO_ALIGN_NONE;
-    meta.format = FORMAT_NONE;
-    meta.graphable = FALSE;
-    meta.has_format = FALSE;
+    meta.alignment = PANGO_ALIGN_RIGHT;
+    meta.text_format = GCT_TEXT_NONE;
+    meta.has_graph = FALSE;
+    meta.has_font = FALSE;
+    meta.has_alignment = FALSE;
+    meta.has_text_format = FALSE;
     meta.has_bg_color = FALSE;
     meta.has_bg_image = FALSE;
 
@@ -137,9 +140,6 @@ void gtk_custom_table_alloc(GtkWidget *table) {
         priv->cols[i]->meta = malloc(sizeof(TableMeta));
 
         memcpy(priv->cols[i]->meta, &meta, sizeof(TableMeta));
-
-        priv->cols[i]->meta->align = PANGO_ALIGN_RIGHT;
-        priv->cols[i]->meta->font = PANGO_DEFAULT_FONT;
 
         priv->cols[i]->cell = malloc(sizeof(TableCell *) * rows);
 

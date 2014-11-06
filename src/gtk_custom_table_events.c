@@ -110,7 +110,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* make sure table has a header, and is sortable */
-    if(!priv->has_header || (priv->is_sortable == FALSE)) {
+    if(!priv->has_header || !priv->is_sortable) {
         return TRUE;
     }
 
@@ -126,7 +126,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
             if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
-                if(priv->cols[i]->index == FALSE) {
+                if(!priv->cols[i]->index) {
 
                     cur = gdk_cursor_new(GDK_HAND1);
                     gdk_window_set_cursor(gtk_widget_get_window(table), cur);
@@ -156,7 +156,7 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* make sure table has a header, and is sortable */
-    if(!priv->has_header || (priv->is_sortable == FALSE)) {
+    if(!priv->has_header || !priv->is_sortable) {
         return TRUE;
     }
 
@@ -179,9 +179,9 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
             if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
-                if(priv->cols[i]->index == FALSE) {
+                if(!priv->cols[i]->index) {
 
-                    gtk_custom_table_sort(table, i, GTK_CUSTOM_TABLE_INVERT);
+                    gtk_custom_table_sort(table, i, GCT_SORT_SWAP);
                     gtk_custom_table_refresh(table);
                 }
 

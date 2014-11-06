@@ -42,23 +42,28 @@ GType gtk_custom_table_get_type(void);
 #define GTK_CUSTOM_TABLE_GET_CLASS        (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_CUSTOM_TABLE, GtkCustomTableClass))
 #define GTK_CUSTOM_TABLE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GTK_TYPE_CUSTOM_TABLE, GtkCustomTablePrivate))
 
-/* table orientation definitions */
-#define GTK_CUSTOM_TABLE_ASC 0
-#define GTK_CUSTOM_TABLE_DESC 1
-#define GTK_CUSTOM_TABLE_INVERT -1
 
-#define PANGO_DEFAULT_FONT "Monospace 10"
-#define PANGO_CONTENT_FONT "sans 10"
-#define PANGO_ALIGN_NONE -1
+/* table fonts */
+#define GCT_FONT_MONO "Monospace 10"
+#define GCT_FONT_SANS "sans 10"
 
-/* text format definitions */
+/* table sort order constants */
+typedef enum {
+
+    GCT_SORT_ASC,
+    GCT_SORT_DESC,
+    GCT_SORT_SWAP
+
+} GctSortOrder;
+
+/* table text format constants */
 typedef enum { 
 
-    FORMAT_NONE, 
-    FORMAT_INTEGER_SIGNED, 
-    FORMAT_INTEGER_UNSIGNED
+    GCT_TEXT_NONE,
+    GCT_TEXT_SIGNED_INT,
+    GCT_TEXT_UNSIGNED_INT
 
-} TextFormat;
+} GctTextFormat;
 
 
 /** structure for per instance public data */
@@ -74,15 +79,9 @@ struct _GtkCustomTable {
 /* main functions */
 GtkWidget* gtk_custom_table_new(int cols, int rows);
 void  gtk_custom_table_refresh(GtkWidget *table);
-void  gtk_custom_table_sort(GtkWidget *table, int col, int orientation);
+void  gtk_custom_table_sort(GtkWidget *table, int col, GctSortOrder sort);
 void  gtk_custom_table_resize(GtkWidget *table, int cols, int rows);
 void  gtk_custom_table_free(GtkWidget *table);
-
-/* string functions */
-int   gtk_custom_table_string_is_integer(char *string);
-unsigned long gtk_custom_table_string_parseint(char *string);
-char* gtk_custom_table_string_thousand_separator(char *string);
-char* gtk_custom_table_string_strip_alpha(char *string);
 
 /* misc functions */
 int   gtk_custom_table_get_width(GtkWidget *table);
@@ -98,7 +97,7 @@ void  gtk_custom_table_set_cell_bg_image_enable(GtkWidget *table, int col, int r
 void  gtk_custom_table_set_cell_color(GtkWidget *table, int col, int row, double rgb[]);
 void  gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row, gboolean value);
 void  gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row, char *text);
-void  gtk_custom_table_set_cell_alignment(GtkWidget *table, int col, int row, PangoAlignment align);
+void  gtk_custom_table_set_cell_alignment(GtkWidget *table, int col, int row, PangoAlignment alignment);
 void  gtk_custom_table_set_cell_font(GtkWidget *table, int col, int row, char *font);
 char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row);
 
@@ -106,7 +105,7 @@ char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row);
 void  gtk_custom_table_set_row_height(GtkWidget *table, int row, int height);
 void  gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value);
 void  gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]);
-void  gtk_custom_table_set_row_alignment(GtkWidget *table, int row, PangoAlignment align);
+void  gtk_custom_table_set_row_alignment(GtkWidget *table, int row, PangoAlignment alignment);
 void  gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font);
 int   gtk_custom_table_get_rows(GtkWidget *table);
 int   gtk_custom_table_get_row_height(GtkWidget *table, int row);
@@ -116,26 +115,26 @@ void  gtk_custom_table_set_col_width(GtkWidget *table, int col, int width);
 void  gtk_custom_table_set_col_index(GtkWidget *table, int col, gboolean value);
 void  gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value);
 void  gtk_custom_table_set_col_color(GtkWidget *table, int col, double rgb[]);
-void  gtk_custom_table_set_col_alignment(GtkWidget *table, int col, PangoAlignment align);
+void  gtk_custom_table_set_col_alignment(GtkWidget *table, int col, PangoAlignment alignment);
 void  gtk_custom_table_set_col_font(GtkWidget *table, int col, char *font);
 void  gtk_custom_table_set_col_primary(GtkWidget *table, int col, gboolean value);
 void  gtk_custom_table_set_col_graph(GtkWidget *table, int col, gboolean value);
-void  gtk_custom_table_set_col_format(GtkWidget *table, int col, TextFormat format);
+void  gtk_custom_table_set_col_format(GtkWidget *table, int col, GctTextFormat format);
 int   gtk_custom_table_get_cols(GtkWidget *table);
 int   gtk_custom_table_get_col_width(GtkWidget *table, int col);
 
 /* header functions */
-void  gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col, PangoAlignment align);
+void  gtk_custom_table_set_head_row_alignment(GtkWidget *table, PangoAlignment alignment);
+void  gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col, PangoAlignment alignment);
 void  gtk_custom_table_set_head_cell_font(GtkWidget *table, int col, char *font);
 void  gtk_custom_table_set_head_text(GtkWidget *table, int col, char *text);
-void  gtk_custom_table_set_head_row_alignment(GtkWidget *table, PangoAlignment align);
 void  gtk_custom_table_set_head_row_font(GtkWidget *table, char *font);
 
 /* footer functions */
-void  gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col, PangoAlignment align);
+void  gtk_custom_table_set_foot_row_alignment(GtkWidget *table, PangoAlignment alignment);
+void  gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col, PangoAlignment alignment);
 void  gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col, char *font);
 void  gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text);
-void  gtk_custom_table_set_foot_row_alignment(GtkWidget *table, PangoAlignment align);
 void  gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font);
 
 G_END_DECLS

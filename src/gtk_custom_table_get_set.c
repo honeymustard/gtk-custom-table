@@ -169,10 +169,10 @@ void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row,
 
 
 /**
- * @brief mark a column as graphable.. i.e. integers will show up as graph..
+ * @brief mark a column as a graph. integers will show up as graphs
  * @param table    current table
- * @param col      column 
- * @param value    turn on or off
+ * @param col      column for which to enable or disable graph
+ * @param value    enable or disable graph
  * @return void
  */
 void gtk_custom_table_set_col_graph(GtkWidget *table, int col, gboolean value) {
@@ -180,7 +180,7 @@ void gtk_custom_table_set_col_graph(GtkWidget *table, int col, gboolean value) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    priv->cols[col]->meta->graphable = value;
+    priv->cols[col]->meta->has_graph = value;
 }
 
 
@@ -191,7 +191,7 @@ void gtk_custom_table_set_col_graph(GtkWidget *table, int col, gboolean value) {
  * @param rgb      array of colors for graph
  * @return void
  */
-void gtk_custom_table_set_graph_color_col(GtkWidget *table, int col,  
+void gtk_custom_table_set_graph_color_col(GtkWidget *table, int col, 
     double rgb[]) {
 
     GtkCustomTablePrivate *priv;
@@ -203,7 +203,7 @@ void gtk_custom_table_set_graph_color_col(GtkWidget *table, int col,
         priv->cols[col]->meta->graph[i] = rgb[i];
     }
 
-    priv->cols[col]->meta->graphable = TRUE;
+    priv->cols[col]->meta->has_graph = TRUE;
 }
 
 
@@ -227,7 +227,7 @@ void gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col,
         priv->rows[row]->cell[col]->meta->graph[i] = rgb[i];
     }
 
-    priv->rows[row]->cell[col]->meta->graphable = TRUE;
+    priv->rows[row]->cell[col]->meta->has_graph = TRUE;
 }
 
 
@@ -235,7 +235,7 @@ void gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col,
  * @brief add a background color to a specific table column
  * @param table    current table
  * @param col      column to get a background color
- * @param rgb      array of colors for graph
+ * @param rgb      array of colors for column background
  * @return void
  */
 void gtk_custom_table_set_col_color(GtkWidget *table, int col, double rgb[]) {
@@ -257,7 +257,7 @@ void gtk_custom_table_set_col_color(GtkWidget *table, int col, double rgb[]) {
  * @brief add a background color to a specific table row
  * @param table    current table
  * @param row      row to get a background color
- * @param rgb      array of colors for graph
+ * @param rgb      array of colors for row background
  * @return void
  */
 void gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]) {
@@ -280,7 +280,7 @@ void gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]) {
  * @param table    current table
  * @param col      column
  * @param row      row
- * @param rgb      array of colors for graph
+ * @param rgb      array of colors for cell background
  * @return void
  */
 void gtk_custom_table_set_cell_color(GtkWidget *table, int col, int row, 
@@ -445,39 +445,49 @@ void gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value) {
  * @return void
  */
 void gtk_custom_table_set_col_format(GtkWidget *table, int col, 
-    TextFormat format) {
+    GctTextFormat format) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->cols[col]->meta->has_format = TRUE; 
-    priv->cols[col]->meta->format = format;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->cols[col]->meta->has_text_format = TRUE; 
+    priv->cols[col]->meta->text_format = format;
 }
 
 
 /**
  * @brief set the text alignment for a column
- * @param table    current table
- * @param col      column to get an alignment
- * @param align    alignment to use
+ * @param table        current table
+ * @param col          column to get an alignment
+ * @param alignment    alignment to use
  * @return void
  */
 void gtk_custom_table_set_col_alignment(GtkWidget *table, int col, 
-    PangoAlignment align) {
+    PangoAlignment alignment) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->cols[col]->meta->align = align;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->cols[col]->meta->has_alignment = TRUE;
+    priv->cols[col]->meta->alignment = alignment;
 }
 
 
 /**
  * @brief set the text alignment for a row
- * @param table    current table
- * @param row      row to get an alignment
- * @param align    alignment to use
+ * @param table        current table
+ * @param row          row to get an alignment
+ * @param alignment    alignment to use
  * @return void
  */
 void gtk_custom_table_set_row_alignment(GtkWidget *table, int row, 
-    PangoAlignment align) {
+    PangoAlignment alignment) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->rows[row]->meta->align = align;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->rows[row]->meta->has_alignment = TRUE;
+    priv->rows[row]->meta->alignment = alignment;
 }
 
 
@@ -514,73 +524,90 @@ int gtk_custom_table_get_row_height(GtkWidget *table, int row) {
 
 /**
  * @brief set the text alignment for header row
- * @param table    current table
- * @param align    alignment to use
+ * @param table        current table
+ * @param alignment    alignment to use
  * @return void
  */
 void gtk_custom_table_set_head_row_alignment(GtkWidget *table, 
-    PangoAlignment align) {
+    PangoAlignment alignment) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->head->meta->align = align;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->head->meta->has_alignment = TRUE;
+    priv->head->meta->alignment = alignment;
 }
 
 
 /**
  * @brief set the text alignment for footer row
- * @param table    current table
- * @param align    alignment to use
+ * @param table        current table
+ * @param alignment    alignment to use
  * @return void
  */
 void gtk_custom_table_set_foot_row_alignment(GtkWidget *table, 
-    PangoAlignment align) {
+    PangoAlignment alignment) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->foot->meta->align = align;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->foot->meta->has_alignment = TRUE;
+    priv->foot->meta->alignment = alignment;
 }
 
 
 /**
  * @brief set the text alignment for a specific cell
- * @param table    current table
- * @param col      cell column
- * @param row      cell row
- * @param align    alignment to use
+ * @param table        current table
+ * @param col          cell column
+ * @param row          cell row
+ * @param alignment    alignment to use
  * @return void
  */
 void gtk_custom_table_set_cell_alignment(GtkWidget *table, int col, 
-    int row, PangoAlignment align) {
+    int row, PangoAlignment alignment) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->rows[row]->cell[col]->meta->align = align;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->rows[row]->cell[col]->meta->has_alignment = TRUE;
+    priv->rows[row]->cell[col]->meta->alignment = alignment;
 }
 
 
 /**
  * @brief set the text alignment for a specific header cell
- * @param table    current table
- * @param col      cell column
- * @param align    alignment to use
+ * @param table        current table
+ * @param col          cell column
+ * @param alignment    alignment to use
  * @return void
  */
 void gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col, 
-    PangoAlignment align) {
+    PangoAlignment alignment) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->head->cell[col]->meta->align = align;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->head->cell[col]->meta->has_alignment = TRUE;
+    priv->head->cell[col]->meta->alignment = alignment;
 }
 
 
 /**
  * @brief set the text alignment for a specific footer cell
- * @param table    current table
- * @param col      cell column
- * @param align    alignment to use
+ * @param table        current table
+ * @param col          cell column
+ * @param alignment    alignment to use
  * @return void
  */
 void gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col, 
-    PangoAlignment align) {
+    PangoAlignment alignment) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    priv->foot->cell[col]->meta->align = align;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->foot->cell[col]->meta->has_alignment = TRUE;
+    priv->foot->cell[col]->meta->alignment = alignment;
 }
 
 
@@ -591,8 +618,11 @@ void gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col,
  * @return void
  */
 void gtk_custom_table_set_sort_index(GtkWidget *table, int col) {
-    
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->sort_index = col;
+ 
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->sort_index = col;
 }
 
 
@@ -604,7 +634,10 @@ void gtk_custom_table_set_sort_index(GtkWidget *table, int col) {
  */
 void gtk_custom_table_set_sortable(GtkWidget *table, gboolean value) {
  
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->is_sortable = value;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->is_sortable = value;
 }
 
 
@@ -644,7 +677,10 @@ void gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text) {
 void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col, 
     char *font) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->head->cell[col]->meta->has_font = TRUE;
     priv->head->cell[col]->meta->font = font;
 }
 
@@ -659,7 +695,10 @@ void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col,
 void gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col, 
     char *font) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->foot->cell[col]->meta->has_font = TRUE;
     priv->foot->cell[col]->meta->font = font;
 }
 
@@ -672,7 +711,10 @@ void gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col,
  */
 void gtk_custom_table_set_head_row_font(GtkWidget *table, char *font) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->head->meta->has_font = TRUE;
     priv->head->meta->font = font;
 }
 
@@ -685,7 +727,10 @@ void gtk_custom_table_set_head_row_font(GtkWidget *table, char *font) {
  */
 void gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->foot->meta->has_font = TRUE;
     priv->foot->meta->font = font;
 }
 
@@ -701,7 +746,10 @@ void gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font) {
 void gtk_custom_table_set_cell_font(GtkWidget *table, int col, 
     int row, char *font) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->rows[row]->cell[col]->meta->has_font = TRUE;
     priv->rows[row]->cell[col]->meta->font = font;
 }
 
@@ -715,7 +763,10 @@ void gtk_custom_table_set_cell_font(GtkWidget *table, int col,
  */
 void gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->rows[row]->meta->has_font = TRUE;
     priv->rows[row]->meta->font = font;
 }
 
@@ -729,7 +780,10 @@ void gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font) {
  */
 void gtk_custom_table_set_col_font(GtkWidget *table, int col, char *font) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->cols[col]->meta->has_font = TRUE;
     priv->cols[col]->meta->font = font;
 }
 
@@ -743,7 +797,9 @@ void gtk_custom_table_set_col_font(GtkWidget *table, int col, char *font) {
  */
 void gtk_custom_table_set_col_width(GtkWidget *table, int col, int width) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
     priv->cols[col]->width_orig = width;
 }
 
@@ -756,7 +812,9 @@ void gtk_custom_table_set_col_width(GtkWidget *table, int col, int width) {
  */
 int gtk_custom_table_get_col_width(GtkWidget *table, int col) {
 
-    GtkCustomTablePrivate *priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
     return priv->cols[col]->width_temp;
 }
 

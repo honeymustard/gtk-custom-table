@@ -39,17 +39,17 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
     TableRows *row2 = *(((TableRows **)cmp2));
 
     int col = row1->priv->sort_index;
-    int sort = row1->priv->sort_order != GTK_CUSTOM_TABLE_ASC;
+    int sort = row1->priv->sort_order != GCT_SORT_ASC;
 
     int result = 0;
 
     /* check to see if column has a sorting format */
-    if(row1->priv->cols[col]->meta->has_format) {
+    if(row1->priv->cols[col]->meta->has_text_format) {
 
-        int format = row1->priv->cols[col]->meta->format;
+        int format = row1->priv->cols[col]->meta->text_format;
 
         /* compare large integers with optional junk */
-        if(format == FORMAT_INTEGER_UNSIGNED) {
+        if(format == GCT_TEXT_UNSIGNED_INT) {
 
             unsigned long x = 0;
             unsigned long y = 0;
@@ -60,7 +60,7 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
             result = sort ? (y < x) ? -1 : (y > x) : (x < y) ? -1 : (x > y);
         }
         /* compare large integers with optional +/- signs */
-        else if(format == FORMAT_INTEGER_SIGNED) {
+        else if(format == GCT_TEXT_SIGNED_INT) {
 
             int x = atoll(row1->cell[col]->text);
             int y = atoll(row2->cell[col]->text);
@@ -92,24 +92,24 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
 
 /**
  * @brief sort an existing table using qsort..
- * @param table     current table widget
- * @param col       sort table by contents of table[col]
- * @param orient    sort orientation, desc, asc or inverse
+ * @param table    current table widget
+ * @param col      sort table by contents of table[col]
+ * @param sort     sort orientation. desc, asc or swap
  * @return void
  */
-void gtk_custom_table_sort(GtkWidget *table, int col, int orient) {
+void gtk_custom_table_sort(GtkWidget *table, int col, GctSortOrder sort) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* only sort if table is sortable */
-    if(priv->is_sortable == FALSE) {
+    if(!priv->is_sortable) {
         return; 
     }
 
     /* set next table sort order */
     priv->sort_index = col;
-    priv->sort_order = orient == -1 ? !priv->sort_order : orient;
+    priv->sort_order = sort == GCT_SORT_SWAP ? !priv->sort_order : sort;
 
     /* perform qsort on table cells array */
     qsort((void *)priv->rows, priv->y, sizeof(TableRows *), 

@@ -45,7 +45,7 @@ GtkWidget * gtk_custom_table_new(int cols, int rows) {
     priv->has_footer = FALSE;
     priv->tree = NULL;
     priv->sort_index = 0;
-    priv->sort_order = 0;
+    priv->sort_order = GCT_SORT_ASC;
     priv->tree_index = -1;
     priv->col_primary = 0;
 
