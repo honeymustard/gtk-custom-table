@@ -44,7 +44,7 @@ GType gtk_custom_table_get_type(void);
 
 
 /* table fonts */
-#define GCT_FONT_MONO "Monospace 10"
+#define GCT_FONT_MONO "monospace 10"
 #define GCT_FONT_SANS "sans 10"
 
 /* table sort order constants */
@@ -66,14 +66,12 @@ typedef enum {
 } GctTextFormat;
 
 
-/** structure for per instance public data */
-typedef struct _GtkCustomTable GtkCustomTable;
-
 /** custom table structure */
-struct _GtkCustomTable {
+typedef struct _GtkCustomTable {
 
     GtkDrawingArea parent; /**< parent widget */
-};
+
+} GtkCustomTable;
 
 
 /* main functions */
