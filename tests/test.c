@@ -34,17 +34,12 @@ gboolean console_debug(gpointer data) {
 
     int cols = gtk_custom_table_get_cols(table);
     int rows = gtk_custom_table_get_rows(table);
-    int width = gtk_custom_table_get_width(table);
-    int height = gtk_custom_table_get_height(table);
-
     int col0 = gtk_custom_table_get_col_width(table, 0);
     int col1 = gtk_custom_table_get_col_width(table, 1);
     int col3 = gtk_custom_table_get_col_width(table, 3);
 
     printf("\n GtkCustomTable debugging:\n");
 
-    printf(" width       : %4d\n",    width);
-    printf(" height      : %4d\n",    height);
     printf(" cols        : %4d %s\n", cols, code[cols == 4]);
     printf(" rows        : %4d %s\n", rows, code[rows == 60]);
     printf(" col0 width  : %4d %s\n", col0, code[col0 == 93]);
@@ -77,6 +72,8 @@ int main(int argc, char *argv[]) {
     gtk_custom_table_set_row_height(table, 7, 29);
     gtk_custom_table_set_row_height(table, 9, 30);
 
+    gtk_custom_table_set_row_hide(table, 2, TRUE);
+
     gtk_custom_table_resize(table, 4, 60);
     gtk_custom_table_resize(table, 6, 90);
     gtk_custom_table_resize(table, 3, 92);
@@ -84,7 +81,7 @@ int main(int argc, char *argv[]) {
 
     gtk_custom_table_set_col_alignment(table, 0, PANGO_ALIGN_RIGHT);
     gtk_custom_table_set_col_alignment(table, 1, PANGO_ALIGN_LEFT);
-    gtk_custom_table_set_col_alignment(table, 2, PANGO_ALIGN_RIGHT);
+    gtk_custom_table_set_col_alignment(table, 2, PANGO_ALIGN_CENTER);
 
     gtk_custom_table_set_col_color(table, 2, rgb_red);
     gtk_custom_table_set_row_color(table, 3, rgb_green);
@@ -95,6 +92,12 @@ int main(int argc, char *argv[]) {
 
     int i = 0;
     int j = 0;
+
+    for(i = 0; i < gtk_custom_table_get_cols(table); i++) {
+
+        sprintf(temp, "(0,%d)", i);
+        gtk_custom_table_set_head_text(table, i, temp);
+    }
 
     for(i = 0; i < gtk_custom_table_get_rows(table); i++) {
 
