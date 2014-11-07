@@ -38,8 +38,8 @@ void gtk_custom_table_alloc(GtkWidget *table) {
     int cols = priv->x;
     int rows = priv->y;
  
-    priv->col_offset_temp = malloc((cols * sizeof(int)) + sizeof(int));
-    priv->row_offset_temp = malloc((rows * sizeof(int)) + sizeof(int));
+    priv->col_offset_temp = calloc(cols + 1, sizeof(int));
+    priv->row_offset_temp = calloc(rows + 1, sizeof(int));
 
     /* setup cells, rows and columns */
     priv->cols = malloc(sizeof(TableCols *) * cols); 
@@ -72,9 +72,9 @@ void gtk_custom_table_alloc(GtkWidget *table) {
 
     /* set default row height */
     priv->head->height_orig = GCT_ROW_HEIGHT;
-    priv->head->height_temp = 0;
+    priv->head->height_temp = GCT_ROW_HEIGHT;
     priv->foot->height_orig = GCT_ROW_HEIGHT;
-    priv->foot->height_temp = 0;
+    priv->foot->height_temp = GCT_ROW_HEIGHT;
 
     memcpy(priv->head->meta, &meta, sizeof(TableMeta));
     memcpy(priv->foot->meta, &meta, sizeof(TableMeta));
@@ -126,7 +126,7 @@ void gtk_custom_table_alloc(GtkWidget *table) {
 
         priv->rows[i]->hidden = FALSE;
         priv->rows[i]->height_orig = GCT_ROW_HEIGHT;
-        priv->rows[i]->height_temp = 0;
+        priv->rows[i]->height_temp = GCT_ROW_HEIGHT;
         priv->rows[i]->row_orig = i;
         priv->rows[i]->row_temp = 0;
     }
