@@ -433,7 +433,12 @@ void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
  */
 void gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->rows[row]->hidden = value;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    priv->rows[row]->hidden = value;
+
+    gtk_widget_set_size_request(table, -1, gtk_custom_table_get_height(table));
 }
 
 

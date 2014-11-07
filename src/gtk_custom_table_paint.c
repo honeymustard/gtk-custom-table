@@ -36,44 +36,14 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    /* update table dimensions for redrawing table */
+    /* update table dimensions */
     gtk_custom_table_calc_cols(table);
     gtk_custom_table_calc_rows(table);
-
-    /* paint rows based on current scroll adjustment */
-    GtkAdjustment *adj = NULL;
-    adj = gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(gtk_widget_get_parent(table)));
-
-    int scroll_top = gtk_adjustment_get_value(adj);
-    int scroll_bot = scroll_top + (int)gtk_adjustment_get_page_size(adj);
-
-    int scroll_beg_row = 0;
-    int scroll_end_row = priv->y;
-
-    int i = 0;
-    int j = 0;
-
-    /* find first visible row */
-    for(i = 1; i <= priv->y; i++) {
-
-        if(priv->row_offset_temp[i] > scroll_top) {
-            scroll_beg_row = i - 1;
-            break;
-        }
-    }
-
-    /* find last visible row */
-    for(i = 1; i <= priv->y; i++) {
-
-        if(priv->row_offset_temp[i] >= scroll_bot) {
-            scroll_end_row = i;
-            break;
-        }
-    }
+    gtk_custom_table_calc_clip(table);
 
     #ifdef DEBUG
 
-    printf("\n paint rows : (%d -> %d)\n", scroll_beg_row, scroll_end_row);
+    printf("\n paint rows : (%d -> %d)\n", priv->clip_upper, priv->clip_lower);
     
     #endif
 
@@ -83,8 +53,12 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     char *font = NULL;
     double *graph = NULL;
 
-    /* DRAW HEADER ROW */    
-    if(priv->has_header && (scroll_beg_row == 0)) {
+    int i = 0;
+    int j = 0;
+
+    /* DRAW HEADER ROW */
+
+    if(priv->has_header && (priv->clip_upper == 0)) {
 
         for(i = 0; i < priv->x; i++) {
 
@@ -92,16 +66,16 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 continue;
             }
 
-            cairo_set_source_rgb(cr, 
-                rgb_border[0], 
-                rgb_border[1], 
+            cairo_set_source_rgb(cr,
+                rgb_border[0],
+                rgb_border[1],
                 rgb_border[2]
             );
 
-            cairo_rectangle(cr, 
-                priv->col_offset_temp[i] + 0.5, 
-                1, 
-                priv->cols[i]->width_temp, 
+            cairo_rectangle(cr,
+                priv->col_offset_temp[i] + 0.5,
+                1,
+                priv->cols[i]->width_temp,
                 priv->head->height_temp - 1.5
             );
 
@@ -110,25 +84,27 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             /* column selected background color */
             if(priv->sort_index == i) {
 
-                cairo_set_source_rgb(cr, 
-                    rgb_header_bold[0], 
-                    rgb_header_bold[1], 
-                    rgb_header_bold[2]);
+                cairo_set_source_rgb(cr,
+                    rgb_bold[0],
+                    rgb_bold[1],
+                    rgb_bold[2]
+                );
             }
             /* the default background color */
             else {
 
-                cairo_set_source_rgb(cr, 
-                    rgb_header[0], 
-                    rgb_header[1], 
-                    rgb_header[2]);
+                cairo_set_source_rgb(cr,
+                    rgb_header[0],
+                    rgb_header[1],
+                    rgb_header[2]
+                );
             }
 
             cairo_fill(cr); 
 
-            cairo_set_source_rgb(cr, 
-                rgb_text[0], 
-                rgb_text[1], 
+            cairo_set_source_rgb(cr,
+                rgb_text[0],
+                rgb_text[1],
                 rgb_text[2]
             );
 
@@ -213,7 +189,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     int offset = priv->has_header ? priv->head->height_temp : 0;
 
     /* only draw visible rows */
-    for(i = scroll_beg_row; i < scroll_end_row; i++) {
+    for(i = priv->clip_upper; i < priv->clip_lower; i++) {
 
         /* skip hidden rows */
         if(priv->rows[i]->hidden) {
@@ -244,8 +220,8 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             );
 
             cairo_set_source_rgb(cr, 
-                rgb_border[0], 
-                rgb_border[1], 
+                rgb_border[0],
+                rgb_border[1],
                 rgb_border[2]
             );
 
@@ -254,39 +230,39 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             /* draw cell background-color */
             if(meta_cell != NULL && meta_cell->has_bg_color) {
 
-                cairo_set_source_rgb(cr, 
-                    meta_cell->color[0], 
-                    meta_cell->color[1], 
+                cairo_set_source_rgb(cr,
+                    meta_cell->color[0],
+                    meta_cell->color[1],
                     meta_cell->color[2]
                 );
             }
             /* draw row background-color */
             else if(meta_rows != NULL && meta_rows->has_bg_color) {
 
-                cairo_set_source_rgb(cr, 
-                    meta_rows->color[0], 
-                    meta_rows->color[1], 
+                cairo_set_source_rgb(cr,
+                    meta_rows->color[0],
+                    meta_rows->color[1],
                     meta_rows->color[2]
                 );
             }
             /* draw col background-color */
             else if(meta_cols != NULL && meta_cols->has_bg_color) {
 
-                cairo_set_source_rgb(cr, 
-                    meta_cols->color[0], 
-                    meta_cols->color[1], 
+                cairo_set_source_rgb(cr,
+                    meta_cols->color[0],
+                    meta_cols->color[1],
                     meta_cols->color[2]
                 );
             }
             /* draw default background-color */
             else {
 
-                int modulus = i % 2;
+                double *stripe = i % 2 == 0 ? rgb_white : rgb_gray;
 
-                cairo_set_source_rgb(cr, 
-                    checkers[modulus][0], 
-                    checkers[modulus][modulus], 
-                    checkers[modulus][2]
+                cairo_set_source_rgb(cr,
+                    stripe[0],
+                    stripe[1],
+                    stripe[2]
                 );
             }
 
@@ -328,16 +304,16 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 );
 
                 cairo_set_source_rgb(cr, 
-                    rgb_border[0], 
-                    rgb_border[1], 
+                    rgb_border[0],
+                    rgb_border[1],
                     rgb_border[2]
                 );
 
                 cairo_stroke_preserve(cr);
 
                 cairo_set_source_rgb(cr, 
-                    graph[0], 
-                    graph[1], 
+                    graph[0],
+                    graph[1],
                     graph[2]
                 );
 
@@ -347,8 +323,8 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             else {
 
                 cairo_set_source_rgb(cr, 
-                    rgb_text[0], 
-                    rgb_text[1], 
+                    rgb_text[0],
+                    rgb_text[1],
                     rgb_text[2]
                 );
 
@@ -415,14 +391,16 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
                     cairo_save(cr);
 
-                    cairo_surface_t *sur;
-                    sur = cairo_image_surface_create_from_png(bg_image);
+                    cairo_surface_t *surface;
+                    surface = cairo_image_surface_create_from_png(bg_image);
 
-                    if(cairo_surface_status(sur) == CAIRO_STATUS_SUCCESS) {
+                    if(cairo_surface_status(surface) == CAIRO_STATUS_SUCCESS) {
 
-                        cairo_set_source_surface(cr, sur, 
-                            priv->col_offset_temp[j] + 10, 
-                            offset + 5);
+                        cairo_set_source_surface(cr,
+                            surface,
+                            priv->col_offset_temp[j] + 10,
+                            offset + 5
+                        );
 
                         cairo_paint(cr);
                     }
@@ -465,7 +443,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     }
 
     /* DRAW FOOTER ROW */ 
-    if(priv->has_footer && (scroll_end_row >= priv->y)) {
+    if(priv->has_footer && (priv->clip_lower >= priv->y)) {
 
         int height = priv->foot->height_temp * (priv->y + priv->has_header);
 
@@ -477,37 +455,37 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             }
                 
             cairo_set_source_rgb(cr, 
-                rgb_border[0], 
-                rgb_border[1], 
+                rgb_border[0],
+                rgb_border[1],
                 rgb_border[2]
             );
 
             /* draw footer background color */
-            cairo_rectangle(cr, 
-                priv->col_offset_temp[i] + 0.5, 
-                height, 
-                priv->cols[i]->width_temp, 
+            cairo_rectangle(cr,
+                priv->col_offset_temp[i] + 0.5,
+                height,
+                priv->cols[i]->width_temp,
                 priv->foot->height_temp
             );
 
             cairo_stroke_preserve(cr);
 
             cairo_set_source_rgb(cr, 
-                rgb_footer[0], 
-                rgb_footer[1], 
+                rgb_footer[0],
+                rgb_footer[1],
                 rgb_footer[2]
             );
 
             cairo_fill(cr); 
 
             cairo_set_source_rgb(cr, 
-                rgb_text[0], 
-                rgb_text[1], 
+                rgb_text[0],
+                rgb_text[1],
                 rgb_text[2]
             );
 
-            cairo_move_to(cr, 
-                priv->col_offset_temp[i] + 10, 
+            cairo_move_to(cr,
+                priv->col_offset_temp[i] + 10,
                 height + 4
             );
 

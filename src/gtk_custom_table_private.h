@@ -124,6 +124,8 @@ struct _GtkCustomTablePrivate {
     int sort_index;           /**< table sort index */
     int sort_order;           /**< table sort order */
     int col_primary;          /**< primary table column */
+    int clip_upper;           /**< first visible table row */
+    int clip_lower;           /**< last visible table row */
 
     int *col_offset_temp;     /**< temporary array for column offsets */
     int *row_offset_temp;     /**< temporary array for row offsets */
@@ -138,22 +140,23 @@ struct _GtkCustomTablePrivate {
 };
 
 
-/* internal functions */
+/* main functions */
 void gtk_custom_table_calc_cols(GtkWidget *table);
 void gtk_custom_table_calc_rows(GtkWidget *table);
+void gtk_custom_table_calc_clip(GtkWidget *table);
 void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr);
 void gtk_custom_table_alloc(GtkWidget *table);
 
-/* internal string functions */
+/* string functions */
 int    gtk_custom_table_string_is_integer(char *string);
 gulong gtk_custom_table_string_parseint(char *string);
 
-/* internal binary tree functions */
+/* binary tree functions */
 void gtk_custom_table_tree_free(TableTree *tree);
 void gtk_custom_table_tree_get(GtkWidget *table, TableTree *tree, char *value, int col);
 void gtk_custom_table_tree_add(TableTree *tree, TableRows *data, int primary);
 
-/* internal event functions */
+/* event functions */
 gboolean gtk_custom_table_key_released(GtkWidget *table, GdkEventKey *event);
 gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event);
 gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event);
@@ -163,11 +166,12 @@ gboolean gtk_custom_table_destroy(GtkWidget *table, GdkEvent *event);
 gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event);
 gboolean gtk_custom_table_config(GtkWidget *table, GdkEvent *event);
 
-/* internal default colors */
-double checkers[2][3];
+/* default colors */
+double rgb_white[3];
+double rgb_gray[3];
 double rgb_header[3];
 double rgb_footer[3];
-double rgb_header_bold[3];
+double rgb_bold[3];
 double rgb_border[3];
 double rgb_text[3];
 double rgb_graph[3];

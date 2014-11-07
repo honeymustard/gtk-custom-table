@@ -40,17 +40,26 @@ GtkWidget * gtk_custom_table_new(int cols, int rows) {
 
     /* variable defaults */
     priv->is_sortable = FALSE;
-    priv->has_primary = FALSE;
     priv->has_header = FALSE;
     priv->has_footer = FALSE;
-    priv->tree = NULL;
-    priv->sort_index = 0;
-    priv->sort_order = GCT_SORT_ASC;
-    priv->tree_index = -1;
-    priv->col_primary = 0;
+    priv->has_primary = FALSE;
 
     priv->x = cols;
     priv->y = rows;
+    priv->tree_index = -1;
+    priv->sort_index = 0;
+    priv->sort_order = GCT_SORT_ASC;
+    priv->col_primary = 0;
+    priv->clip_upper = 0;
+    priv->clip_lower = 0;
+
+    priv->tree = NULL;
+    priv->head = NULL;
+    priv->foot = NULL;
+
+    priv->cell = NULL;
+    priv->cols = NULL;
+    priv->rows = NULL;
 
     gtk_custom_table_alloc(table);
 

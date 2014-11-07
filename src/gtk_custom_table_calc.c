@@ -45,7 +45,7 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
     for(i = 0; i < priv->x; i++) {
 
         /* skip hidden columns */
-        if(priv->cols[i]->hidden == TRUE) {
+        if(priv->cols[i]->hidden) {
             continue;
         }
 
@@ -67,7 +67,7 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
     for(i = 0; i < priv->x; i++) {
 
         /* skip hidden columns */
-        if(priv->cols[i]->hidden == TRUE) {
+        if(priv->cols[i]->hidden) {
             continue;
         }
 
@@ -108,7 +108,7 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
     for(i = 0; i < priv->y; i++) {
 
         /* skip hidden rows */
-        if(priv->rows[i]->hidden == TRUE) {
+        if(priv->rows[i]->hidden) {
             continue;
         }
 
@@ -130,7 +130,7 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
     for(i = 0; i < priv->y; i++) {
 
         /* skip hidden rows */
-        if(priv->rows[i]->hidden == TRUE) {
+        if(priv->rows[i]->hidden) {
             continue;
         }
 
@@ -148,5 +148,56 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
 
     /* set end of table offset */
     priv->row_offset_temp[i] = offset - 1;
+}
+
+
+/**
+ * @brief calculate first and last visible row of a table
+ * @param table    current table
+ * @return void
+ */
+void gtk_custom_table_calc_clip(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    GtkScrollable *parent = GTK_SCROLLABLE(gtk_widget_get_parent(table));
+    GtkAdjustment *adjust = gtk_scrollable_get_vadjustment(parent);
+
+    int top = gtk_adjustment_get_value(adjust);
+    int bot = top + (int)gtk_adjustment_get_page_size(adjust);
+
+    priv->clip_upper = 0;
+    priv->clip_lower = priv->y;
+
+    int i = 0;
+
+    /* find first visible row */
+    for(i = 1; i <= priv->y; i++) {
+
+        if(priv->rows[i-1]->hidden) {
+            continue;
+        }
+
+        if(priv->row_offset_temp[i] > top) {
+
+            priv->clip_upper = i - 1;
+            break;
+        }
+    }
+
+    /* find last visible row */
+    for(i = 1; i <= priv->y; i++) {
+
+        if(priv->rows[i-1]->hidden) {
+            continue;
+        }
+
+        if(priv->row_offset_temp[i] >= bot) {
+
+            priv->clip_lower = i - 1;
+            break;
+        }
+    }
 }
 
