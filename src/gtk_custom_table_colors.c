@@ -25,10 +25,18 @@
 /** @file */
 
 
-/** zebra stripes for rows */
-double checkers[2][3] = {
-    {1.00, 1.00, 1.00}, 
-    {0.90, 0.90, 0.95}, 
+/** default odd row color */
+double rgb_white[3] = {
+    1.00,
+    1.00,
+    1.00
+}; 
+
+/** default even row color */
+double rgb_gray[3] = {
+    0.90,
+    0.90,
+    0.95
 };
 
 /** default header row color */
@@ -46,7 +54,7 @@ double rgb_footer[3] = {
 };
 
 /** default bold header row color */
-double rgb_header_bold[3] = {
+double rgb_bold[3] = {
     0.90, 
     0.90, 
     0.90, 
