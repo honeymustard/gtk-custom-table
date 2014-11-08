@@ -37,14 +37,21 @@ gboolean console_debug(gpointer data) {
     int col0 = gtk_custom_table_get_col_width(table, 0);
     int col1 = gtk_custom_table_get_col_width(table, 1);
     int col3 = gtk_custom_table_get_col_width(table, 3);
+    int col4 = gtk_custom_table_get_col_width(table, 4);
+
+    int row2 = gtk_custom_table_get_row_height(table, 2);
+    int row9 = gtk_custom_table_get_row_height(table, 9);
 
     printf("\n GtkCustomTable debugging:\n");
 
-    printf(" cols        : %4d %s\n", cols, code[cols == 4]);
-    printf(" rows        : %4d %s\n", rows, code[rows == 60]);
-    printf(" col0 width  : %4d %s\n", col0, code[col0 == 93]);
-    printf(" col1 width  : %4d %s\n", col1, code[col1 == 101]);
-    printf(" col3 width  : %4d %s\n", col3, code[col3 == 89]);
+    printf(" cols         : %4d %s\n", cols, code[cols == 5]);
+    printf(" rows         : %4d %s\n", rows, code[rows == 60]);
+    printf(" col0 width   : %4d %s\n", col0, code[col0 == 93]);
+    printf(" col1 width   : %4d %s\n", col1, code[col1 == 101]);
+    printf(" col3 width   : %4d %s\n", col3, code[col3 == 89]);
+    printf(" col4 width   : %4d %s\n", col4, code[col4 == 0]);
+    printf(" row2 height  : %4d %s\n", row2, code[row2 == 0]);
+    printf(" row9 height  : %4d %s\n", row9, code[row9 == 30]);
 
     return TRUE;
 }
@@ -57,15 +64,23 @@ int main(int argc, char *argv[]) {
     /* initiate widgets */
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-    GtkWidget *table = gtk_custom_table_new(4, 80);
+    GtkWidget *table = gtk_custom_table_new(5, 80);
     GtkWidget *scroll = gtk_scrolled_window_new(NULL, NULL);
     GtkWidget *viewport = gtk_viewport_new(NULL, NULL);
+
+    gtk_custom_table_resize(table, 4, 60);
+    gtk_custom_table_resize(table, 6, 90);
+    gtk_custom_table_resize(table, 3, 92);
+    gtk_custom_table_resize(table, 5, 60);
 
     /* set column widths */
     gtk_custom_table_set_col_width(table, 0, 93);
     gtk_custom_table_set_col_width(table, 1, 101);
     gtk_custom_table_set_col_width(table, 2, -1);
     gtk_custom_table_set_col_width(table, 3, 89);
+    gtk_custom_table_set_col_width(table, 4, 70);
+
+    gtk_custom_table_set_col_hide(table, 4, TRUE);
 
     gtk_custom_table_set_row_height(table, 1, 31);
     gtk_custom_table_set_row_height(table, 2, 60);
@@ -73,11 +88,6 @@ int main(int argc, char *argv[]) {
     gtk_custom_table_set_row_height(table, 9, 30);
 
     gtk_custom_table_set_row_hide(table, 2, TRUE);
-
-    gtk_custom_table_resize(table, 4, 60);
-    gtk_custom_table_resize(table, 6, 90);
-    gtk_custom_table_resize(table, 3, 92);
-    gtk_custom_table_resize(table, 4, 60);
 
     gtk_custom_table_set_col_alignment(table, 0, PANGO_ALIGN_RIGHT);
     gtk_custom_table_set_col_alignment(table, 1, PANGO_ALIGN_LEFT);
