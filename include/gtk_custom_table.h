@@ -86,8 +86,6 @@ int   gtk_custom_table_get_width(GtkWidget *table);
 int   gtk_custom_table_get_height(GtkWidget *table);
 int   gtk_custom_table_get_indexof(GtkWidget *table, char *value);
 void  gtk_custom_table_set_sortable(GtkWidget *table, gboolean truth);
-void  gtk_custom_table_set_graph_color_col(GtkWidget *table, int col, double rgb[]);
-void  gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col, int row, double rgb[]);
 
 /* cell functions */
 void  gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row, char *filename);
@@ -97,6 +95,8 @@ void  gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row,
 void  gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row, char *text);
 void  gtk_custom_table_set_cell_alignment(GtkWidget *table, int col, int row, PangoAlignment alignment);
 void  gtk_custom_table_set_cell_font(GtkWidget *table, int col, int row, char *font);
+void  gtk_custom_table_set_cell_graph(GtkWidget *table, int col, int row, double rgb[]);
+void  gtk_custom_table_set_cell_graph_enable(GtkWidget *table, int col, int row);
 char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row);
 
 /* row functions */
@@ -116,7 +116,8 @@ void  gtk_custom_table_set_col_color(GtkWidget *table, int col, double rgb[]);
 void  gtk_custom_table_set_col_alignment(GtkWidget *table, int col, PangoAlignment alignment);
 void  gtk_custom_table_set_col_font(GtkWidget *table, int col, char *font);
 void  gtk_custom_table_set_col_primary(GtkWidget *table, int col, gboolean value);
-void  gtk_custom_table_set_col_graph(GtkWidget *table, int col, gboolean value);
+void  gtk_custom_table_set_col_graph(GtkWidget *table, int col, double rgb[]);
+void  gtk_custom_table_set_col_graph_enable(GtkWidget *table, int col, gboolean value);
 void  gtk_custom_table_set_col_format(GtkWidget *table, int col, GctTextFormat format);
 int   gtk_custom_table_get_cols(GtkWidget *table);
 int   gtk_custom_table_get_col_width(GtkWidget *table, int col);

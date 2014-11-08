@@ -34,30 +34,29 @@
  * @return void
  */
 void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col, 
-        char *text, char *type) {
+    char *text, char *type) {
     
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-
-    /* detect table overflow */
-    if(col >= priv->x) {
-        g_error("table overflow");
-    }
 
     TableRows *table_row;
 
     /* type is header */
     if(strcmp(type, "header") == 0) {
-        table_row = priv->head; 
+
+        table_row = priv->head;
         priv->has_header = 1;
     }
     /* type is footer */
     else {
-        table_row = priv->foot; 
+        table_row = priv->foot;
         priv->has_footer = 1;
     }
-    
-    gtk_widget_set_size_request(table, -1, gtk_custom_table_get_height(table));
+
+    int size_x = gtk_custom_table_get_width(table);
+    int size_y = gtk_custom_table_get_height(table);
+
+    gtk_widget_set_size_request(table, size_x, size_y);
 
     /* free old text as needed */
     if(table_row->cell[col]->text != NULL) {
@@ -65,14 +64,14 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
     }
 
     /* malloc and copy new text to cell */
-    table_row->cell[col]->text = malloc(strlen(text) + 1);      
+    table_row->cell[col]->text = malloc(strlen(text) + 1);
     strcpy(table_row->cell[col]->text, text);
 }
 
 
 /**
- * @brief get the index of a string of text in a table.. 
- * @param table    table widget in which to search..
+ * @brief get the index of a string of text in a table
+ * @param table    table widget in which to search
  * @param text     text to be searched for
  * @return int     returns index on success, else -1
  */
@@ -81,15 +80,17 @@ int gtk_custom_table_get_indexof(GtkWidget *table, char *text) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    /* check if table is primed */
-    if(!priv->has_primary) {
-        g_error("table does not have a primary index");
+    if(text == NULL) {
+        g_error("could not get indexof text: text was null");
     }
 
-    gtk_custom_table_tree_get(table, priv->tree, text, 
-        priv->col_primary);
+    if(!priv->has_primary) {
+        g_error("could not get indexof text: no primary index has been set");
+    }
 
-    int index = GTK_CUSTOM_TABLE_GET_PRIVATE(table)->tree_index;
+    gtk_custom_table_tree_get(table, priv->tree, text, priv->col_primary);
+
+    int index = priv->tree_index;
     priv->tree_index = -1;
 
     return index; 
@@ -110,14 +111,12 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    /* we can't allow this.. */
     if(text == NULL) {
         g_error("could not set cell text: text was null");
     }
 
-    /* detect table overflow, crash and burn */
-    if((col >= priv->x) || (row >= priv->y)) {
-        g_error("could not set cell text: invalid cell");
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell text: coords were out of bounds");
     }
 
     /* when adding text to the same cell twice, free memory */
@@ -131,7 +130,7 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
     /* add values in primary index column to binary tree */
     if((col == priv->col_primary) && priv->has_primary) {
 
-        /* head node is null, take care of it */
+        /* head node is null */
         if(priv->tree == NULL) {
 
             priv->tree = malloc(sizeof(TableTree));
@@ -139,18 +138,17 @@ void gtk_custom_table_set_cell_text(GtkWidget *table, int col, int row,
             priv->tree->left = NULL;
             priv->tree->right = NULL;
         }
-        /* add all following nodes as such.. */
+        /* add all following nodes as such */
         else {
 
-            gtk_custom_table_tree_add(priv->tree, 
-                priv->rows[row], col);
+            gtk_custom_table_tree_add(priv->tree, priv->rows[row], col);
         }
     }
 }
 
 
 /**
- * @brief set background-image to specific cell..
+ * @brief set background image to a specific cell
  * @param table       current table
  * @param col         column 
  * @param row         row
@@ -163,69 +161,97 @@ void gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell bg image: coords were out of bounds");
+    }   
+
     priv->rows[row]->cell[col]->meta->bg_image = filename;
     priv->rows[row]->cell[col]->meta->has_bg_image = TRUE;
 }
 
 
 /**
- * @brief mark a column as a graph. integers will show up as graphs
+ * @brief enable or disable graphing for a column
  * @param table    current table
  * @param col      column for which to enable or disable graph
  * @param value    enable or disable graph
  * @return void
  */
-void gtk_custom_table_set_col_graph(GtkWidget *table, int col, gboolean value) {
+void gtk_custom_table_set_col_graph_enable(GtkWidget *table, int col, gboolean value) {
  
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col graph enable: col was out of bounds");
+    }
 
     priv->cols[col]->meta->has_graph = value;
 }
 
 
 /**
- * @brief add foreground-color to a all graphs in a column..
+ * @brief enable or disable graphing for a cell
+ * @param table    current working table
+ * @param col      column
+ * @param row      row
+ * @param rgb      array of colors for graph
+ * @return void
+ */
+void gtk_custom_table_set_cell_graph_enable(GtkWidget *table, int col, int row) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell graph color: coords were out of bounds");
+    }
+
+    priv->rows[row]->cell[col]->meta->has_graph = TRUE;
+}
+
+
+/**
+ * @brief add a graph to all cells in a column
  * @param table    current working table
  * @param col      column 
  * @param rgb      array of colors for graph
  * @return void
  */
-void gtk_custom_table_set_graph_color_col(GtkWidget *table, int col, 
-    double rgb[]) {
+void gtk_custom_table_set_col_graph(GtkWidget *table, int col, double rgb[]) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    int i = 0;
-
-    for(i = 0; i < 3; i++) {
-        priv->cols[col]->meta->graph[i] = rgb[i];
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col graph color: col was out of bounds");
     }
+
+    memcpy(priv->cols[col]->meta->graph, rgb, sizeof(double) * 3);
 
     priv->cols[col]->meta->has_graph = TRUE;
 }
 
 
 /**
- * @brief add foreground-color to a graph in a specific cell..
+ * @brief add a graph to a specific cell
  * @param table    current working table
  * @param col      column 
  * @param row      row
  * @param rgb      array of colors for graph
  * @return void
  */
-void gtk_custom_table_set_graph_color_cell(GtkWidget *table, int col,  
-    int row, double rgb[]) {
+void gtk_custom_table_set_cell_graph(GtkWidget *table, int col, int row, 
+    double rgb[]) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    int i = 0;
-
-    for(i = 0; i < 3; i++) {
-        priv->rows[row]->cell[col]->meta->graph[i] = rgb[i];
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell graph color: coords were out of bounds");
     }
+    
+    memcpy(priv->rows[row]->cell[col]->meta->graph, rgb, sizeof(double) * 3);
 
     priv->rows[row]->cell[col]->meta->has_graph = TRUE;
 }
@@ -243,11 +269,11 @@ void gtk_custom_table_set_col_color(GtkWidget *table, int col, double rgb[]) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    int i = 0;
-
-    for(i = 0; i < 3; i++) {
-        priv->cols[col]->meta->color[i] = rgb[i];
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col color: col was out of bounds");
     }
+    
+    memcpy(priv->cols[col]->meta->color, rgb, sizeof(double) * 3);
 
     priv->cols[col]->meta->has_bg_color = TRUE;
 }
@@ -265,11 +291,11 @@ void gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    int i = 0;
-
-    for(i = 0; i < 3; i++) {
-        priv->rows[row]->meta->color[i] = rgb[i];
+    if(row < 0 || row >= priv->y) {
+        g_error("could not set row color: row was out of bounds");
     }
+    
+    memcpy(priv->rows[row]->meta->color, rgb, sizeof(double) * 3);
 
     priv->rows[row]->meta->has_bg_color = TRUE;
 }
@@ -288,12 +314,12 @@ void gtk_custom_table_set_cell_color(GtkWidget *table, int col, int row,
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    
-    int i = 0;
 
-    for(i = 0; i < 3; i++) {
-        priv->rows[row]->cell[col]->meta->color[i] = rgb[i];
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell color: coords were out of bounds");
     }
+    
+    memcpy(priv->rows[row]->cell[col]->meta->color, rgb, sizeof(double) * 3);
 
     priv->rows[row]->cell[col]->meta->has_bg_color = TRUE;
 }
@@ -313,9 +339,11 @@ void gtk_custom_table_set_cell_color_enable(GtkWidget *table, int col, int row,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    TableMeta *meta = priv->rows[row]->cell[col]->meta;
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell color enable: coords were out of bounds");
+    }
 
-    meta->has_bg_color = value;
+    priv->rows[row]->cell[col]->meta->has_bg_color = value;
 }
 
 
@@ -333,9 +361,11 @@ void gtk_custom_table_set_cell_bg_image_enable(GtkWidget *table, int col, int ro
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    TableMeta *meta = priv->rows[row]->cell[col]->meta;
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell bg image enable: coords were out of bounds");
+    }
 
-    meta->has_bg_image = value;
+    priv->rows[row]->cell[col]->meta->has_bg_image = value;
 }
 
 
@@ -351,8 +381,8 @@ char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    if(row >= priv->y || col >= priv->x) {
-        g_error("can't get cell, coordinates were out of bounds");    
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not get cell text: coords were out of bounds");    
     }
 
     return priv->rows[row]->cell[col]->text;
@@ -366,7 +396,10 @@ char* gtk_custom_table_get_cell_text(GtkWidget *table, int col, int row) {
  */
 int gtk_custom_table_get_rows(GtkWidget *table) {
 
-    return GTK_CUSTOM_TABLE_GET_PRIVATE(table)->y;   
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->y;   
 }
 
 
@@ -377,7 +410,10 @@ int gtk_custom_table_get_rows(GtkWidget *table) {
  */
 int gtk_custom_table_get_cols(GtkWidget *table) {
 
-    return GTK_CUSTOM_TABLE_GET_PRIVATE(table)->x;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->x;
 }
 
 
@@ -393,6 +429,10 @@ void gtk_custom_table_set_col_primary(GtkWidget *table, int col, gboolean value)
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set primary col: col was out of bounds");
+    }
+
     priv->has_primary = value;
     priv->col_primary = col;
 }
@@ -407,7 +447,14 @@ void gtk_custom_table_set_col_primary(GtkWidget *table, int col, gboolean value)
  */
 void gtk_custom_table_set_col_index(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->cols[col]->index = value;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col index: col was out of bounds");
+    }
+
+    priv->cols[col]->index = value;
 }
 
 
@@ -420,7 +467,19 @@ void gtk_custom_table_set_col_index(GtkWidget *table, int col, gboolean value) {
  */
 void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
 
-    GTK_CUSTOM_TABLE_GET_PRIVATE(table)->cols[col]->hidden = value;
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col as hidden: col was out of bounds");
+    }
+
+    priv->cols[col]->hidden = value;
+
+    int size_x = gtk_custom_table_get_width(table);
+    int size_y = gtk_custom_table_get_height(table);
+
+    gtk_widget_set_size_request(table, size_x, size_y);
 }
 
 
@@ -436,9 +495,16 @@ void gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(row < 0 || row >= priv->y) {
+        g_error("could not set row as hidden: row was out of bounds");
+    }
+
     priv->rows[row]->hidden = value;
 
-    gtk_widget_set_size_request(table, -1, gtk_custom_table_get_height(table));
+    int size_x = gtk_custom_table_get_width(table);
+    int size_y = gtk_custom_table_get_height(table);
+
+    gtk_widget_set_size_request(table, size_x, size_y);
 }
 
 
@@ -454,6 +520,10 @@ void gtk_custom_table_set_col_format(GtkWidget *table, int col,
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col format: col was out of bounds");
+    }
 
     priv->cols[col]->meta->has_text_format = TRUE; 
     priv->cols[col]->meta->text_format = format;
@@ -473,6 +543,10 @@ void gtk_custom_table_set_col_alignment(GtkWidget *table, int col,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col alignment: col was out of bounds");
+    }
+
     priv->cols[col]->meta->has_alignment = TRUE;
     priv->cols[col]->meta->alignment = alignment;
 }
@@ -491,6 +565,10 @@ void gtk_custom_table_set_row_alignment(GtkWidget *table, int row,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(row < 0 || row >= priv->y) {
+        g_error("could not set row alignment: row was out of bounds");
+    }
+
     priv->rows[row]->meta->has_alignment = TRUE;
     priv->rows[row]->meta->alignment = alignment;
 }
@@ -507,7 +585,15 @@ void gtk_custom_table_set_row_height(GtkWidget *table, int row, int height) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
-    
+
+    if(height < -1) {
+        g_error("could not set row height: height was less than -1");
+    }
+
+    if(row < 0 || row >= priv->y) {
+        g_error("could not set row height: row was out of bounds");
+    }
+
     priv->rows[row]->height_orig = height;
 }
 
@@ -522,8 +608,12 @@ int gtk_custom_table_get_row_height(GtkWidget *table, int row) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(row < 0 || row >= priv->y) {
+        g_error("could not get row height: row was out of bounds");
+    }
     
-    return priv->rows[row]->height_temp;
+    return priv->rows[row]->hidden ? 0 : priv->rows[row]->height_temp;
 }
 
 
@@ -569,11 +659,15 @@ void gtk_custom_table_set_foot_row_alignment(GtkWidget *table,
  * @param alignment    alignment to use
  * @return void
  */
-void gtk_custom_table_set_cell_alignment(GtkWidget *table, int col, 
-    int row, PangoAlignment alignment) {
+void gtk_custom_table_set_cell_alignment(GtkWidget *table, int col, int row, 
+    PangoAlignment alignment) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell alignment: coords were out of bounds");
+    }
 
     priv->rows[row]->cell[col]->meta->has_alignment = TRUE;
     priv->rows[row]->cell[col]->meta->alignment = alignment;
@@ -593,6 +687,10 @@ void gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set head cell alignment: col was out of bounds");
+    }
+
     priv->head->cell[col]->meta->has_alignment = TRUE;
     priv->head->cell[col]->meta->alignment = alignment;
 }
@@ -611,6 +709,10 @@ void gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set foot cell alignment: col was out of bounds");
+    }
+
     priv->foot->cell[col]->meta->has_alignment = TRUE;
     priv->foot->cell[col]->meta->alignment = alignment;
 }
@@ -626,6 +728,10 @@ void gtk_custom_table_set_sort_index(GtkWidget *table, int col) {
  
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set sort index: col was out of bounds");
+    }
 
     priv->sort_index = col;
 }
@@ -655,6 +761,17 @@ void gtk_custom_table_set_sortable(GtkWidget *table, gboolean value) {
  */
 void gtk_custom_table_set_head_text(GtkWidget *table, int col, char *text) {
 
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(text == NULL) {
+        g_error("could not set head cell text: text was null");
+    }
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set head cell text: col was out of bounds");
+    }
+
     gtk_custom_table_set_head_foot_text(table, col, text, "header");
 }
 
@@ -667,7 +784,18 @@ void gtk_custom_table_set_head_text(GtkWidget *table, int col, char *text) {
  * @return void
  */
 void gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text) {
-    
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(text == NULL) {
+        g_error("could not set foot cell text: text was null");
+    }
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set foot cell text: col was out of bounds");
+    }
+
     gtk_custom_table_set_head_foot_text(table, col, text, "footer");
 }
 
@@ -684,6 +812,14 @@ void gtk_custom_table_set_head_cell_font(GtkWidget *table, int col,
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(font == NULL) {
+        g_error("could not set head cell font: font was null");
+    }
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set head cell font: col was out of bounds");
+    }
 
     priv->head->cell[col]->meta->has_font = TRUE;
     priv->head->cell[col]->meta->font = font;
@@ -703,6 +839,14 @@ void gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col,
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(font == NULL) {
+        g_error("could not set foot cell font: font was null");
+    }
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set foot cell font: col was out of bounds");
+    }
+
     priv->foot->cell[col]->meta->has_font = TRUE;
     priv->foot->cell[col]->meta->font = font;
 }
@@ -718,6 +862,10 @@ void gtk_custom_table_set_head_row_font(GtkWidget *table, char *font) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(font == NULL) {
+        g_error("could not set head row font: font was null");
+    }
 
     priv->head->meta->has_font = TRUE;
     priv->head->meta->font = font;
@@ -735,6 +883,10 @@ void gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(font == NULL) {
+        g_error("could not set foot row font: font was null");
+    }
+
     priv->foot->meta->has_font = TRUE;
     priv->foot->meta->font = font;
 }
@@ -748,11 +900,19 @@ void gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font) {
  * @param font     font to use
  * @return void
  */
-void gtk_custom_table_set_cell_font(GtkWidget *table, int col, 
-    int row, char *font) {
+void gtk_custom_table_set_cell_font(GtkWidget *table, int col, int row, 
+    char *font) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(font == NULL) {
+        g_error("could not set cell font: font was null");
+    }
+
+    if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
+        g_error("could not set cell font: coords were out of bounds");
+    }
 
     priv->rows[row]->cell[col]->meta->has_font = TRUE;
     priv->rows[row]->cell[col]->meta->font = font;
@@ -771,6 +931,14 @@ void gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(font == NULL) {
+        g_error("could not set row font: font was null");
+    }
+
+    if(row < 0 || row >= priv->y) {
+        g_error("could not set row font: row was out of bounds");
+    }
+
     priv->rows[row]->meta->has_font = TRUE;
     priv->rows[row]->meta->font = font;
 }
@@ -787,6 +955,14 @@ void gtk_custom_table_set_col_font(GtkWidget *table, int col, char *font) {
 
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(font == NULL) {
+        g_error("could not set col font: font was null");
+    }
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col font: col was out of bounds");
+    }
 
     priv->cols[col]->meta->has_font = TRUE;
     priv->cols[col]->meta->font = font;
@@ -805,6 +981,14 @@ void gtk_custom_table_set_col_width(GtkWidget *table, int col, int width) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
+    if(width < -1) {
+        g_error("could not set col width: width was less than -1");
+    }
+
+    if(col < 0 || col >= priv->x) {
+        g_error("could not set col width: col was out of bounds");
+    }
+
     priv->cols[col]->width_orig = width;
 }
 
@@ -820,7 +1004,11 @@ int gtk_custom_table_get_col_width(GtkWidget *table, int col) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    return priv->cols[col]->width_temp;
+    if(col < 0 || col >= priv->x) {
+        g_error("could not get col width: col was out of bounds");
+    }
+
+    return priv->cols[col]->hidden ? 0 : priv->cols[col]->width_temp;
 }
 
 

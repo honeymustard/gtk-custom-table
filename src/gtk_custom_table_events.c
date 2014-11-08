@@ -262,10 +262,10 @@ gboolean gtk_custom_table_draw(GtkWidget *table, cairo_t *cr, gpointer data) {
 gboolean gtk_custom_table_realize(GtkWidget *table, gpointer data) {
 
     /* set table width and height */
-    int width = gtk_custom_table_get_width(table);
-    int height = gtk_custom_table_get_height(table);
+    int size_x = gtk_custom_table_get_width(table);
+    int size_y = gtk_custom_table_get_height(table);
 
-    gtk_widget_set_size_request(table, width, height);
+    gtk_widget_set_size_request(table, size_x, size_y);
 
     if(!GTK_IS_SCROLLABLE(gtk_widget_get_parent(table))) {
 
