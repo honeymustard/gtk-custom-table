@@ -81,6 +81,8 @@ void  gtk_custom_table_sort(GtkWidget *table, int col, GctSortOrder sort);
 void  gtk_custom_table_resize(GtkWidget *table, int cols, int rows);
 void  gtk_custom_table_free(GtkWidget *table);
 
+/* boolean functions */
+
 /* misc functions */
 int   gtk_custom_table_get_width(GtkWidget *table);
 int   gtk_custom_table_get_height(GtkWidget *table);
@@ -105,6 +107,8 @@ void  gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value);
 void  gtk_custom_table_set_row_color(GtkWidget *table, int row, double rgb[]);
 void  gtk_custom_table_set_row_alignment(GtkWidget *table, int row, PangoAlignment alignment);
 void  gtk_custom_table_set_row_font(GtkWidget *table, int row, char *font);
+void  gtk_custom_table_set_row_graph(GtkWidget *table, int row, double rgb[]);
+void  gtk_custom_table_set_row_graph_enable(GtkWidget *table, int row, gboolean value);
 int   gtk_custom_table_get_rows(GtkWidget *table);
 int   gtk_custom_table_get_row_height(GtkWidget *table, int row);
 

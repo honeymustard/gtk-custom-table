@@ -191,6 +191,26 @@ void gtk_custom_table_set_col_graph_enable(GtkWidget *table, int col, gboolean v
 
 
 /**
+ * @brief enable or disable graphing for a row
+ * @param table    current table
+ * @param row      row for which to enable or disable graph
+ * @param value    enable or disable graph
+ * @return void
+ */
+void gtk_custom_table_set_row_graph_enable(GtkWidget *table, int row, gboolean value) {
+ 
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(row < 0 || row >= priv->y) {
+        g_error("could not set row graph enable: row was out of bounds");
+    }
+
+    priv->rows[row]->meta->has_graph = value;
+}
+
+
+/**
  * @brief enable or disable graphing for a cell
  * @param table    current working table
  * @param col      column
@@ -224,12 +244,34 @@ void gtk_custom_table_set_col_graph(GtkWidget *table, int col, double rgb[]) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     if(col < 0 || col >= priv->x) {
-        g_error("could not set col graph color: col was out of bounds");
+        g_error("could not set col graph: col was out of bounds");
     }
 
     memcpy(priv->cols[col]->meta->graph, rgb, sizeof(double) * 3);
 
     priv->cols[col]->meta->has_graph = TRUE;
+}
+
+
+/**
+ * @brief add a graph to all cells in a row
+ * @param table    current working table
+ * @param row      row
+ * @param rgb      array of colors for graph
+ * @return void
+ */
+void gtk_custom_table_set_row_graph(GtkWidget *table, int row, double rgb[]) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(row < 0 || row >= priv->y) {
+        g_error("could not set row graph: row was out of bounds");
+    }
+
+    memcpy(priv->rows[row]->meta->graph, rgb, sizeof(double) * 3);
+
+    priv->rows[row]->meta->has_graph = TRUE;
 }
 
 
@@ -248,7 +290,7 @@ void gtk_custom_table_set_cell_graph(GtkWidget *table, int col, int row,
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     if(row < 0 || col < 0 || row >= priv->y || col >= priv->x) {
-        g_error("could not set cell graph color: coords were out of bounds");
+        g_error("could not set cell graph: coords were out of bounds");
     }
     
     memcpy(priv->rows[row]->cell[col]->meta->graph, rgb, sizeof(double) * 3);
