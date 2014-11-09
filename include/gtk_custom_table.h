@@ -84,10 +84,12 @@ void  gtk_custom_table_free(GtkWidget *table);
 /* boolean functions */
 
 /* misc functions */
+void  gtk_custom_table_set_sortable(GtkWidget *table, gboolean truth);
 int   gtk_custom_table_get_width(GtkWidget *table);
 int   gtk_custom_table_get_height(GtkWidget *table);
 int   gtk_custom_table_get_indexof(GtkWidget *table, char *value);
-void  gtk_custom_table_set_sortable(GtkWidget *table, gboolean truth);
+int   gtk_custom_table_get_hidden_cols(GtkWidget *table);
+int   gtk_custom_table_get_hidden_rows(GtkWidget *table);
 
 /* cell functions */
 void  gtk_custom_table_set_cell_bg_image(GtkWidget *table, int col, int row, char *filename);
@@ -128,17 +130,21 @@ int   gtk_custom_table_get_col_width(GtkWidget *table, int col);
 
 /* header functions */
 void  gtk_custom_table_set_head_row_alignment(GtkWidget *table, PangoAlignment alignment);
+void  gtk_custom_table_set_head_row_font(GtkWidget *table, char *font);
+void  gtk_custom_table_set_head_row_height(GtkWidget *table, int height);
 void  gtk_custom_table_set_head_cell_alignment(GtkWidget *table, int col, PangoAlignment alignment);
 void  gtk_custom_table_set_head_cell_font(GtkWidget *table, int col, char *font);
 void  gtk_custom_table_set_head_text(GtkWidget *table, int col, char *text);
-void  gtk_custom_table_set_head_row_font(GtkWidget *table, char *font);
+int   gtk_custom_table_get_head_row_height(GtkWidget *table);
 
 /* footer functions */
 void  gtk_custom_table_set_foot_row_alignment(GtkWidget *table, PangoAlignment alignment);
+void  gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font);
+void  gtk_custom_table_set_foot_row_height(GtkWidget *table, int height);
 void  gtk_custom_table_set_foot_cell_alignment(GtkWidget *table, int col, PangoAlignment alignment);
 void  gtk_custom_table_set_foot_cell_font(GtkWidget *table, int col, char *font);
 void  gtk_custom_table_set_foot_text(GtkWidget *table, int col, char *text);
-void  gtk_custom_table_set_foot_row_font(GtkWidget *table, char *font);
+int   gtk_custom_table_get_foot_row_height(GtkWidget *table);
 
 G_END_DECLS
 

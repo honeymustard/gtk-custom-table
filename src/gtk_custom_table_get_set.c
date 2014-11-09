@@ -26,7 +26,7 @@
 
 
 /**
- * @brief add text to a table's footer or header, based on type..
+ * @brief add text to a table's footer or header, based on type
  * @param table    current table
  * @param col      column index
  * @param text     text to be added
@@ -460,6 +460,34 @@ int gtk_custom_table_get_cols(GtkWidget *table) {
 
 
 /**
+ * @brief get the number of hidden columns
+ * @param table    current table
+ * @return int     returns number of hidden columns
+ */
+int gtk_custom_table_get_hidden_cols(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->hidden_cols;
+}
+
+
+/**
+ * @brief get the number of hidden rows
+ * @param table    current table
+ * @return int     returns number of hidden rows
+ */
+int gtk_custom_table_get_hidden_rows(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->hidden_rows;
+}
+
+
+/**
  * @brief set the primary column of a table
  * @param table    current table
  * @param col      column to set as prime
@@ -516,6 +544,8 @@ void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
         g_error("could not set col as hidden: col was out of bounds");
     }
 
+    priv->hidden_cols = value ? ++priv->hidden_cols : --priv->hidden_cols;
+
     priv->cols[col]->hidden = value;
 
     int size_x = gtk_custom_table_get_width(table);
@@ -540,6 +570,8 @@ void gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value) {
     if(row < 0 || row >= priv->y) {
         g_error("could not set row as hidden: row was out of bounds");
     }
+
+    priv->hidden_rows = value ? ++priv->hidden_rows : --priv->hidden_rows;
 
     priv->rows[row]->hidden = value;
 
@@ -641,6 +673,44 @@ void gtk_custom_table_set_row_height(GtkWidget *table, int row, int height) {
 
 
 /**
+ * @brief set the row height for the header row
+ * @param table     current table
+ * @param height    height in pixels
+ * @return void
+ */
+void gtk_custom_table_set_head_row_height(GtkWidget *table, int height) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(height < -1) {
+        g_error("could not set head row height: height was less than -1");
+    }
+
+    priv->head->height_orig = height;
+}
+
+
+/**
+ * @brief set the row height for the footer row
+ * @param table     current table
+ * @param height    height in pixels
+ * @return void
+ */
+void gtk_custom_table_set_foot_row_height(GtkWidget *table, int height) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    if(height < -1) {
+        g_error("could not set foot row height: height was less than -1");
+    }
+
+    priv->foot->height_orig = height;
+}
+
+
+/**
  * @brief get the row height for a specific row
  * @param table    current table
  * @param row      row for which to get height
@@ -655,7 +725,35 @@ int gtk_custom_table_get_row_height(GtkWidget *table, int row) {
         g_error("could not get row height: row was out of bounds");
     }
     
-    return priv->rows[row]->hidden ? 0 : priv->rows[row]->height_temp;
+    return priv->rows[row]->height_temp;
+}
+
+
+/**
+ * @brief get the row height for the header row
+ * @param table    current table
+ * @return int     returns height of header in pixels
+ */
+int gtk_custom_table_get_head_row_height(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->head->height_temp;
+}
+
+
+/**
+ * @brief get the row height for the footer row
+ * @param table    current table
+ * @return int     returns height of footer in pixels
+ */
+int gtk_custom_table_get_foot_row_height(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->foot->height_temp;
 }
 
 
@@ -1050,7 +1148,7 @@ int gtk_custom_table_get_col_width(GtkWidget *table, int col) {
         g_error("could not get col width: col was out of bounds");
     }
 
-    return priv->cols[col]->hidden ? 0 : priv->cols[col]->width_temp;
+    return priv->cols[col]->width_temp;
 }
 
 

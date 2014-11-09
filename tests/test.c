@@ -49,8 +49,8 @@ gboolean console_debug(gpointer data) {
     printf(" col0 width   : %4d %s\n", col0, code[col0 == 93]);
     printf(" col1 width   : %4d %s\n", col1, code[col1 == 101]);
     printf(" col3 width   : %4d %s\n", col3, code[col3 == 89]);
-    printf(" col4 width   : %4d %s\n", col4, code[col4 == 0]);
-    printf(" row2 height  : %4d %s\n", row2, code[row2 == 0]);
+    printf(" col4 width   : %4d %s\n", col4, code[col4 == 70]);
+    printf(" row2 height  : %4d %s\n", row2, code[row2 == 60]);
     printf(" row9 height  : %4d %s\n", row9, code[row9 == 30]);
 
     return TRUE;
