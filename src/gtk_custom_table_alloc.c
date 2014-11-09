@@ -150,7 +150,7 @@ void gtk_custom_table_alloc(GtkWidget *table) {
         priv->cols[i]->index = FALSE;
         priv->cols[i]->hidden = FALSE;
         priv->cols[i]->width_orig = GCT_COL_WIDTH;
-        priv->cols[i]->width_temp = 0;
+        priv->cols[i]->width_temp = GCT_COL_WIDTH;
     }
 
     priv->col_offset_temp[cols] = 0;

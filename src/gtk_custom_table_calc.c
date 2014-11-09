@@ -69,7 +69,9 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
         /* skip hidden columns */
         if(priv->cols[i]->hidden) {
 
+            priv->cols[i]->width_temp = priv->cols[i]->width_orig;
             priv->col_offset_temp[i] = offset;
+
             continue;
         }
 
@@ -79,6 +81,8 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
         else {
             priv->cols[i]->width_temp = priv->cols[i]->width_orig;
         }
+
+        printf("col %d width %d\n", i, priv->cols[i]->width_temp);
 
         /* calculate offset of each column, for alignment */
         priv->col_offset_temp[i] = offset;
@@ -134,7 +138,9 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
         /* skip hidden rows */
         if(priv->rows[i]->hidden) {
 
+            priv->rows[i]->height_temp = priv->rows[i]->height_orig;
             priv->row_offset_temp[i] = offset;
+
             continue;
         }
 
