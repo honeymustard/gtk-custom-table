@@ -6,9 +6,11 @@
 
 **Improvements**
 * add some example screenshots
+* add getters for hidden rows and columns to api
+* add a getter for each setter in api
+* add boolean question functions to api
 
 **Non-Urgent fixes**
-* add gtk_custom_table_get_hidden_cols/rows() to api
 * fix header and footer and make tests
 
 **Urget fixes**
