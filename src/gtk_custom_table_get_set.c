@@ -544,7 +544,7 @@ void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
         g_error("could not set col as hidden: col was out of bounds");
     }
 
-    priv->hidden_cols = value ? ++priv->hidden_cols : --priv->hidden_cols;
+    priv->hidden_cols = value ? priv->hidden_cols + 1: priv->hidden_cols - 1;
 
     priv->cols[col]->hidden = value;
 
@@ -571,7 +571,7 @@ void gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value) {
         g_error("could not set row as hidden: row was out of bounds");
     }
 
-    priv->hidden_rows = value ? ++priv->hidden_rows : --priv->hidden_rows;
+    priv->hidden_rows = value ? priv->hidden_rows + 1: priv->hidden_rows - 1;
 
     priv->rows[row]->hidden = value;
 
