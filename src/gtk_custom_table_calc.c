@@ -68,6 +68,8 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
 
         /* skip hidden columns */
         if(priv->cols[i]->hidden) {
+
+            priv->col_offset_temp[i] = offset;
             continue;
         }
 
@@ -84,7 +86,7 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
     }
 
     /* set end of table offset */
-    priv->col_offset_temp[i] = offset - 1;
+    priv->col_offset_temp[i] = offset;
 }
 
 
@@ -131,6 +133,8 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
 
         /* skip hidden rows */
         if(priv->rows[i]->hidden) {
+
+            priv->row_offset_temp[i] = offset;
             continue;
         }
 
@@ -147,7 +151,7 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
     }
 
     /* set end of table offset */
-    priv->row_offset_temp[i] = offset - 1;
+    priv->row_offset_temp[i] = offset;
 }
 
 

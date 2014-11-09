@@ -58,7 +58,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
     /* DRAW HEADER ROW */
 
-    if(priv->has_header && (priv->clip_upper == 0)) {
+    if(priv->has_header && priv->clip_upper == 0) {
 
         for(i = 0; i < priv->x; i++) {
 

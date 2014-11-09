@@ -123,6 +123,10 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
 
         for(i = 0; i < priv->x; i++) {
 
+            if(priv->cols[i]->hidden) {
+                continue;
+            }
+
             if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
@@ -145,7 +149,7 @@ gboolean gtk_custom_table_clicked(GtkWidget *table, GdkEventMotion *event) {
 
 
 /**
- * @brief custom table mouse-button-released handler.. for clicking headers..
+ * @brief custom table mouse button released handler
  * @param table        current table
  * @param event        button event
  * @return gboolean    gboolean
@@ -176,6 +180,10 @@ gboolean gtk_custom_table_mouse_released(GtkWidget *table, GdkEventButton *event
 
         for(i = 0; i < priv->x; i++) {
 
+            if(priv->cols[i]->hidden) {
+                continue;
+            }
+
             if(event->x < priv->col_offset_temp[i+1]) {
 
                 /* make sure column is not an index column */
@@ -204,8 +212,8 @@ gboolean gtk_custom_table_scroll(GtkWidget *table, GdkEventScroll *event) {
 
     gtk_widget_grab_focus(table);
 
-    GtkAdjustment *adj = NULL;
-    adj = gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(gtk_widget_get_parent(table)));
+    GtkScrollable *scroll = GTK_SCROLLABLE(gtk_widget_get_parent(table));
+    GtkAdjustment *adj = gtk_scrollable_get_vadjustment(scroll);
 
     int step = 200;
     int value = gtk_adjustment_get_value(adj);

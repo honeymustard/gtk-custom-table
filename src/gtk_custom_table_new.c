@@ -39,7 +39,7 @@ GtkWidget * gtk_custom_table_new(int cols, int rows) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     /* variable defaults */
-    priv->is_sortable = FALSE;
+    priv->is_sortable = TRUE;
     priv->has_header = FALSE;
     priv->has_footer = FALSE;
     priv->has_primary = FALSE;
