@@ -21,8 +21,9 @@
 LIBRARY = gtk-custom-table
 LINKNIX = lib$(LIBRARY).so
 LINKWIN = lib$(LIBRARY).dll
+LINKLIB = lib$(LIBRARY).a
 VERSION = 1.0.0
-DELFILE = $(LINKNIX) $(LINKWIN) $(OBJECTS) $(DDFILES)
+DELFILE = $(LINKNIX) $(LINKWIN) $(LINKLIB) $(OBJECTS) $(DDFILES)
 CFLAGS  = -c -Wall -Wno-unused-local-typedefs -MMD -MP -Isrc -Ilib -Iinclude
 LDFLAGS = -shared -Wl,--as-needed
 CC      = gcc
@@ -102,7 +103,9 @@ mingw32-debug: CFLAGS += -g -DDEBUG
 mingw32-debug: windows
 
 # MinGW make..
-windows: LDFLAGS += -Wl,-no-undefined,--enable-runtime-pseudo-reloc
+windows: LDFLAGS += -Wl,-no-undefined
+windows: LDFLAGS += -Wl,--enable-runtime-pseudo-reloc
+windows: LDFLAGS += -Wl,--out-implib,$(LINKLIB)
 windows: GTK3 = $(shell pkg-config.exe --libs --cflags gtk+-win32-3.0)
 windows: PACKAGES = $(GTK3)
 windows: CFLAGS += $(PACKAGES)
