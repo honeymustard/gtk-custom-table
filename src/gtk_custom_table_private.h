@@ -31,7 +31,7 @@
 
 G_BEGIN_DECLS
 
-#define GCT_COL_WIDTH 60 
+#define GCT_COL_WIDTH 60
 #define GCT_ROW_HEIGHT 25
 
 typedef struct _GtkCustomTableClass GtkCustomTableClass;

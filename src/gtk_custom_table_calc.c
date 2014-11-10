@@ -79,20 +79,22 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
     /* divvy up remainder of space to cells without widths */
     for(i = 0; i < priv->x; i++) {
 
+        int orig = priv->cols[i]->width_orig;
+
         /* skip hidden columns */
         if(priv->cols[i]->hidden) {
 
-            priv->cols[i]->width_temp = priv->cols[i]->width_orig;
+            priv->cols[i]->width_temp = orig;
             priv->col_offset_temp[i] = offset;
 
             continue;
         }
 
-        if(priv->cols[i]->width_orig == -1) {
+        if(orig == -1) {
             priv->cols[i]->width_temp = available / unlimited;
         }
         else {
-            priv->cols[i]->width_temp = priv->cols[i]->width_orig;
+            priv->cols[i]->width_temp = orig;
         }
 
         /* calculate offset of each column, for alignment */
@@ -157,20 +159,22 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
     /* divvy up remainder of space to cells without widths */
     for(i = 0; i < priv->y; i++) {
 
+        int orig = priv->rows[i]->height_orig;
+
         /* skip hidden rows */
         if(priv->rows[i]->hidden) {
 
-            priv->rows[i]->height_temp = priv->rows[i]->height_orig;
+            priv->rows[i]->height_temp = orig;
             priv->row_offset_temp[i] = offset;
 
             continue;
         }
 
-        if(priv->rows[i]->height_orig == -1) {
+        if(orig == -1) {
             priv->rows[i]->height_temp = available / unlimited;
         }
         else {
-            priv->rows[i]->height_temp = priv->rows[i]->height_orig;
+            priv->rows[i]->height_temp = orig;
         }
 
         /* calculate offset of each row, for alignment */
