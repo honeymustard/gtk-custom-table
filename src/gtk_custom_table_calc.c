@@ -92,7 +92,10 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
         }
 
         if(orig == -1) {
-            priv->cols[i]->width_temp = available / unlimited;
+
+            int width = available / unlimited;
+
+            priv->cols[i]->width_temp = width <= 0 ? GCT_COL_WIDTH : width;
         }
         else {
             priv->cols[i]->width_temp = orig;
