@@ -42,6 +42,9 @@ gboolean console_debug(gpointer data) {
     int row2 = gtk_custom_table_get_row_height(table, 2);
     int row9 = gtk_custom_table_get_row_height(table, 9);
 
+    int hidden_cols = gtk_custom_table_get_hidden_cols(table);
+    int hidden_rows = gtk_custom_table_get_hidden_rows(table);
+
     printf("\n GtkCustomTable debugging:\n");
 
     printf(" cols         : %4d %s\n", cols, code[cols == 5]);
@@ -52,6 +55,8 @@ gboolean console_debug(gpointer data) {
     printf(" col4 width   : %4d %s\n", col4, code[col4 == 70]);
     printf(" row2 height  : %4d %s\n", row2, code[row2 == 60]);
     printf(" row9 height  : %4d %s\n", row9, code[row9 == 30]);
+    printf(" hidden cols  : %4d %s\n", hidden_cols, code[hidden_cols == 1]);
+    printf(" hidden rows  : %4d %s\n", hidden_rows, code[hidden_rows == 1]);
 
     return TRUE;
 }
@@ -105,15 +110,17 @@ int main(int argc, char *argv[]) {
 
     for(i = 0; i < gtk_custom_table_get_cols(table); i++) {
 
-        sprintf(temp, "(0,%d)", i);
+        sprintf(temp, "( h,%2d)", i);
         gtk_custom_table_set_head_text(table, i, temp);
+        sprintf(temp, "( f,%2d)", i);
+        gtk_custom_table_set_foot_text(table, i, temp);
     }
 
     for(i = 0; i < gtk_custom_table_get_rows(table); i++) {
 
         for(j = 0; j < gtk_custom_table_get_cols(table); j++) {
 
-            sprintf(temp, "(%d,%d)", i, j);
+            sprintf(temp, "(%2d,%2d)", i, j);
             gtk_custom_table_set_cell_text(table, j, i, temp);
         }
     }
