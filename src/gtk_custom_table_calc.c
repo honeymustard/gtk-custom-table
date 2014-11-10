@@ -34,6 +34,7 @@ void gtk_custom_table_calc_size(GtkWidget *table) {
     int size_x = gtk_custom_table_get_width(table);
     int size_y = gtk_custom_table_get_height(table);
 
+    printf("size request: %d x %d\n", size_x, size_y);
     gtk_widget_set_size_request(table, size_x, size_y);
 }
 
@@ -124,14 +125,20 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
     int offset = 0;
 
     int header = priv->head->height_orig;
+    int footer = priv->foot->height_orig;
 
     if(priv->has_header) {
 
-        unlimited = header < 0 ? 1 : 0;
-        specified = header > 0 ? header : 0;
         offset = header;
 
+        specified += header > 0 ? header : 0;
         priv->head->height_temp = priv->head->height_orig;
+    }
+
+    if(priv->has_footer) {
+
+        specified += footer > 0 ? footer : 0;
+        priv->foot->height_temp = priv->foot->height_orig;
     }
 
     /* calculate total fixed height and total */
@@ -171,9 +178,13 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
         }
 
         if(orig == -1) {
-            priv->rows[i]->height_temp = available / unlimited;
+
+            int height = available / unlimited;
+
+            priv->rows[i]->height_temp = height <= 0 ? GCT_ROW_HEIGHT : height;
         }
         else {
+
             priv->rows[i]->height_temp = orig;
         }
 

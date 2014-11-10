@@ -40,23 +40,35 @@ gboolean console_debug(gpointer data) {
     int col4 = gtk_custom_table_get_col_width(table, 4);
 
     int row2 = gtk_custom_table_get_row_height(table, 2);
+    int row8 = gtk_custom_table_get_row_height(table, 8);
     int row9 = gtk_custom_table_get_row_height(table, 9);
 
     int hidden_cols = gtk_custom_table_get_hidden_cols(table);
     int hidden_rows = gtk_custom_table_get_hidden_rows(table);
 
+    gboolean has_header = gtk_custom_table_has_header(table);
+    gboolean has_footer = gtk_custom_table_has_footer(table);
+
+    int head_row = gtk_custom_table_get_head_row_height(table);
+    int foot_row = gtk_custom_table_get_foot_row_height(table);
+
     printf("\n GtkCustomTable debugging:\n");
 
-    printf(" cols         : %4d %s\n", cols, code[cols == 5]);
-    printf(" rows         : %4d %s\n", rows, code[rows == 60]);
-    printf(" col0 width   : %4d %s\n", col0, code[col0 == 93]);
-    printf(" col1 width   : %4d %s\n", col1, code[col1 == 101]);
-    printf(" col3 width   : %4d %s\n", col3, code[col3 == 89]);
-    printf(" col4 width   : %4d %s\n", col4, code[col4 == 70]);
-    printf(" row2 height  : %4d %s\n", row2, code[row2 == 60]);
-    printf(" row9 height  : %4d %s\n", row9, code[row9 == 30]);
-    printf(" hidden cols  : %4d %s\n", hidden_cols, code[hidden_cols == 1]);
-    printf(" hidden rows  : %4d %s\n", hidden_rows, code[hidden_rows == 1]);
+    printf(" cols          : %4d %s\n", cols, code[cols == 5]);
+    printf(" rows          : %4d %s\n", rows, code[rows == 60]);
+    printf(" col0 width    : %4d %s\n", col0, code[col0 == 93]);
+    printf(" col1 width    : %4d %s\n", col1, code[col1 == 101]);
+    printf(" col3 width    : %4d %s\n", col3, code[col3 == 89]);
+    printf(" col4 width    : %4d %s\n", col4, code[col4 == 70]);
+    printf(" row2 height   : %4d %s\n", row2, code[row2 == 60]);
+    printf(" row8 height   : %4d %s\n", row8, code[row8 == 25]);
+    printf(" row9 height   : %4d %s\n", row9, code[row9 == 30]);
+    printf(" hidden cols   : %4d %s\n", hidden_cols, code[hidden_cols == 1]);
+    printf(" hidden rows   : %4d %s\n", hidden_rows, code[hidden_rows == 1]);
+    printf(" has header    : %4d %s\n", has_header, code[has_header == TRUE]);
+    printf(" has footer    : %4d %s\n", has_footer, code[has_footer == TRUE]);
+    printf(" header height : %4d %s\n", head_row, code[head_row == 30]);
+    printf(" footer height : %4d %s\n", foot_row, code[foot_row == 33]);
 
     return TRUE;
 }
@@ -90,7 +102,11 @@ int main(int argc, char *argv[]) {
     gtk_custom_table_set_row_height(table, 1, 31);
     gtk_custom_table_set_row_height(table, 2, 60);
     gtk_custom_table_set_row_height(table, 7, 29);
+    gtk_custom_table_set_row_height(table, 8, -1);
     gtk_custom_table_set_row_height(table, 9, 30);
+
+    gtk_custom_table_set_head_row_height(table, 30);
+    gtk_custom_table_set_foot_row_height(table, 33);
 
     gtk_custom_table_set_row_hide(table, 2, TRUE);
 

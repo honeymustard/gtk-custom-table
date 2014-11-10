@@ -10,7 +10,7 @@
 * add boolean question functions to api
 
 **Non-Urgent fixes**
-* fix header and footer and make tests
+* none
 
 **Urget fixes**
 * none
