@@ -73,12 +73,12 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
     if(strcmp(type, "header") == 0) {
 
         table_row = priv->head;
-        priv->has_header = 1;
+        priv->has_header = TRUE;
     }
     /* type is footer */
     else {
         table_row = priv->foot;
-        priv->has_footer = 1;
+        priv->has_footer = TRUE;
     }
 
     gtk_custom_table_calc_size(table);
@@ -704,8 +704,8 @@ void gtk_custom_table_set_head_row_height(GtkWidget *table, int height) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    if(height < -1) {
-        g_error("could not set head row height: height was less than -1");
+    if(height < 0) {
+        g_error("could not set head row height: height was less than 0");
     }
 
     priv->head->height_orig = height;
@@ -725,8 +725,8 @@ void gtk_custom_table_set_foot_row_height(GtkWidget *table, int height) {
     GtkCustomTablePrivate *priv;
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
-    if(height < -1) {
-        g_error("could not set foot row height: height was less than -1");
+    if(height < 0) {
+        g_error("could not set foot row height: height was less than 0");
     }
 
     priv->foot->height_orig = height;
