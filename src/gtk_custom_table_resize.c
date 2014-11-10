@@ -155,10 +155,6 @@ void gtk_custom_table_resize(GtkWidget *table, int cols, int rows) {
     free(table_rows);
     free(table_cols);
 
-    /* update width and height */
-    int width = gtk_custom_table_get_width(table);
-    int height = gtk_custom_table_get_height(table);
-
-    gtk_widget_set_size_request(table, width, height);
+    gtk_custom_table_calc_size(table);
 }
 

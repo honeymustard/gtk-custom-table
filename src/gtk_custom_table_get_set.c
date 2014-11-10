@@ -26,6 +26,34 @@
 
 
 /**
+ * @brief check if current table has a header
+ * @param table        current table
+ * @return gboolean    returns true if header is enabled, else false
+ */
+gboolean gtk_custom_table_has_header(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->has_header;
+}
+
+
+/**
+ * @brief check if current table has a footer
+ * @param table        current table
+ * @return gboolean    returns true if footer is enabled, else false
+ */
+gboolean gtk_custom_table_has_footer(GtkWidget *table) {
+
+    GtkCustomTablePrivate *priv;
+    priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
+
+    return priv->has_footer;
+}
+
+
+/**
  * @brief add text to a table's footer or header, based on type
  * @param table    current table
  * @param col      column index
@@ -53,10 +81,7 @@ void gtk_custom_table_set_head_foot_text(GtkWidget *table, int col,
         priv->has_footer = 1;
     }
 
-    int size_x = gtk_custom_table_get_width(table);
-    int size_y = gtk_custom_table_get_height(table);
-
-    gtk_widget_set_size_request(table, size_x, size_y);
+    gtk_custom_table_calc_size(table);
 
     /* free old text as needed */
     if(table_row->cell[col]->text != NULL) {
@@ -548,10 +573,7 @@ void gtk_custom_table_set_col_hide(GtkWidget *table, int col, gboolean value) {
 
     priv->cols[col]->hidden = value;
 
-    int size_x = gtk_custom_table_get_width(table);
-    int size_y = gtk_custom_table_get_height(table);
-
-    gtk_widget_set_size_request(table, size_x, size_y);
+    gtk_custom_table_calc_size(table);
 }
 
 
@@ -575,10 +597,7 @@ void gtk_custom_table_set_row_hide(GtkWidget *table, int row, gboolean value) {
 
     priv->rows[row]->hidden = value;
 
-    int size_x = gtk_custom_table_get_width(table);
-    int size_y = gtk_custom_table_get_height(table);
-
-    gtk_widget_set_size_request(table, size_x, size_y);
+    gtk_custom_table_calc_size(table);
 }
 
 
@@ -669,6 +688,8 @@ void gtk_custom_table_set_row_height(GtkWidget *table, int row, int height) {
     }
 
     priv->rows[row]->height_orig = height;
+
+    gtk_custom_table_calc_size(table);
 }
 
 
@@ -688,6 +709,8 @@ void gtk_custom_table_set_head_row_height(GtkWidget *table, int height) {
     }
 
     priv->head->height_orig = height;
+
+    gtk_custom_table_calc_size(table);
 }
 
 
@@ -707,6 +730,8 @@ void gtk_custom_table_set_foot_row_height(GtkWidget *table, int height) {
     }
 
     priv->foot->height_orig = height;
+
+    gtk_custom_table_calc_size(table);
 }
 
 
@@ -1130,6 +1155,8 @@ void gtk_custom_table_set_col_width(GtkWidget *table, int col, int width) {
     }
 
     priv->cols[col]->width_orig = width;
+
+    gtk_custom_table_calc_size(table);
 }
 
 
@@ -1180,9 +1207,8 @@ int gtk_custom_table_get_height(GtkWidget *table) {
 
     gtk_custom_table_calc_rows(table);
 
-    int head = priv->has_header ? priv->head->height_temp : 0;
     int foot = priv->has_footer ? priv->foot->height_temp : 0;
 
-    return head + priv->row_offset_temp[priv->y] + foot;
+    return priv->row_offset_temp[priv->y] + foot;
 }
 

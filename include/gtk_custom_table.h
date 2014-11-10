@@ -82,6 +82,8 @@ void  gtk_custom_table_resize(GtkWidget *table, int cols, int rows);
 void  gtk_custom_table_free(GtkWidget *table);
 
 /* boolean functions */
+int   gtk_custom_table_has_header(GtkWidget *table);
+int   gtk_custom_table_has_footer(GtkWidget *table);
 
 /* misc functions */
 void  gtk_custom_table_set_sortable(GtkWidget *table, gboolean truth);
