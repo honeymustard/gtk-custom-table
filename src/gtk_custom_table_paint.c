@@ -44,6 +44,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     #ifdef DEBUG
 
     printf("\n paint rows : (%d -> %d)\n", priv->clip_upper, priv->clip_lower);
+    printf("\n paint cols : (%d -> %d)\n", priv->clip_left, priv->clip_right);
     
     #endif
 
@@ -60,7 +61,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
     if(priv->has_header && priv->clip_upper == 0) {
 
-        for(i = 0; i < priv->x; i++) {
+        for(i = priv->clip_left; i < priv->clip_right; i++) {
 
             if(priv->cols[i]->hidden) {
                 continue;
@@ -197,7 +198,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
         /* get row meta data */
         meta_rows = priv->rows[i]->meta;
 
-        for(j = 0; j < priv->x; j++) {
+        for(j = priv->clip_left; j < priv->clip_right; j++) {
 
             /* skip hidden columns */
             if(priv->cols[j]->hidden) {
@@ -443,7 +444,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     /* DRAW FOOTER ROW */ 
     if(priv->has_footer && priv->clip_lower == priv->y) {
 
-        for(i = 0; i < priv->x; i++) {
+        for(i = priv->clip_left; i < priv->clip_right; i++) {
 
             /* skip hidden columns */
             if(priv->cols[i]->hidden) {

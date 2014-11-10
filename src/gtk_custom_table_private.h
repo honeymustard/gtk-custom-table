@@ -126,6 +126,8 @@ struct _GtkCustomTablePrivate {
     int col_primary;             /**< primary table column */
     int clip_upper;              /**< first visible table row */
     int clip_lower;              /**< last visible table row */
+    int clip_left;               /**< first visible table column */
+    int clip_right;              /**< last visible table column */
     int hidden_cols;             /**< number of hidden columns */
     int hidden_rows;             /**< number of hidden rows */
 

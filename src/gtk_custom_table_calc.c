@@ -212,13 +212,20 @@ void gtk_custom_table_calc_clip(GtkWidget *table) {
     priv = GTK_CUSTOM_TABLE_GET_PRIVATE(table);
 
     GtkScrollable *parent = GTK_SCROLLABLE(gtk_widget_get_parent(table));
-    GtkAdjustment *adjust = gtk_scrollable_get_vadjustment(parent);
 
-    int top = gtk_adjustment_get_value(adjust);
-    int bot = top + (int)gtk_adjustment_get_page_size(adjust);
+    GtkAdjustment *v_adjust = gtk_scrollable_get_vadjustment(parent);
+    GtkAdjustment *h_adjust = gtk_scrollable_get_hadjustment(parent);
+
+    int v_beg = gtk_adjustment_get_value(v_adjust);
+    int v_end = v_beg + (int)gtk_adjustment_get_page_size(v_adjust);
+
+    int h_beg = gtk_adjustment_get_value(h_adjust);
+    int h_end = h_beg + (int)gtk_adjustment_get_page_size(h_adjust);
 
     priv->clip_upper = 0;
     priv->clip_lower = priv->y;
+    priv->clip_left = 0;
+    priv->clip_right = priv->x;
 
     int i = 0;
 
@@ -229,7 +236,7 @@ void gtk_custom_table_calc_clip(GtkWidget *table) {
             continue;
         }
 
-        if(priv->row_offset_temp[i+1] > top) {
+        if(priv->row_offset_temp[i+1] > v_beg) {
 
             priv->clip_upper = i;
             break;
@@ -243,9 +250,37 @@ void gtk_custom_table_calc_clip(GtkWidget *table) {
             continue;
         }
 
-        if(priv->row_offset_temp[i+1] >= bot) {
+        if(priv->row_offset_temp[i+1] >= v_end) {
 
             priv->clip_lower = i + 1;
+            break;
+        }
+    }
+
+    /* find first visible column */
+    for(i = 0; i < priv->x; i++) {
+
+        if(priv->cols[i]->hidden) {
+            continue;
+        }
+
+        if(priv->col_offset_temp[i+1] > h_beg) {
+
+            priv->clip_left = i;
+            break;
+        }
+    }
+
+    /* find last visible column */
+    for(i = 0; i < priv->x; i++) {
+
+        if(priv->cols[i]->hidden) {
+            continue;
+        }
+
+        if(priv->col_offset_temp[i+1] >= h_end) {
+
+            priv->clip_right = i + 1;
             break;
         }
     }

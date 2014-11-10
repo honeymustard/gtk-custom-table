@@ -52,6 +52,8 @@ GtkWidget * gtk_custom_table_new(int cols, int rows) {
     priv->col_primary = 0;
     priv->clip_upper = 0;
     priv->clip_lower = 0;
+    priv->clip_left = 0;
+    priv->clip_right = 0;
     priv->hidden_cols = 0;
     priv->hidden_rows = 0;
 
