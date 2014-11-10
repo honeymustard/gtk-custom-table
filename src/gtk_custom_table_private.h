@@ -143,6 +143,7 @@ struct _GtkCustomTablePrivate {
 
 
 /* main functions */
+void gtk_custom_table_calc_size(GtkWidget *table);
 void gtk_custom_table_calc_cols(GtkWidget *table);
 void gtk_custom_table_calc_rows(GtkWidget *table);
 void gtk_custom_table_calc_clip(GtkWidget *table);

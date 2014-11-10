@@ -26,6 +26,19 @@
 
 
 /**
+ * @brief calculate and update table size
+ * @return void
+ */
+void gtk_custom_table_calc_size(GtkWidget *table) {
+
+    int size_x = gtk_custom_table_get_width(table);
+    int size_y = gtk_custom_table_get_height(table);
+
+    gtk_widget_set_size_request(table, size_x, size_y);
+}
+
+
+/**
  * @brief calculate current table column widths and offsets
  * @param table    current table
  * @return void
@@ -82,8 +95,6 @@ void gtk_custom_table_calc_cols(GtkWidget *table) {
             priv->cols[i]->width_temp = priv->cols[i]->width_orig;
         }
 
-        printf("col %d width %d\n", i, priv->cols[i]->width_temp);
-
         /* calculate offset of each column, for alignment */
         priv->col_offset_temp[i] = offset;
         offset += priv->cols[i]->width_temp;
@@ -109,6 +120,17 @@ void gtk_custom_table_calc_rows(GtkWidget *table) {
     int unlimited = 0;
     int specified = 0;
     int offset = 0;
+
+    int header = priv->head->height_orig;
+
+    if(priv->has_header) {
+
+        unlimited = header < 0 ? 1 : 0;
+        specified = header > 0 ? header : 0;
+        offset = header;
+
+        priv->head->height_temp = priv->head->height_orig;
+    }
 
     /* calculate total fixed height and total */
     for(i = 0; i < priv->y; i++) {
@@ -183,29 +205,29 @@ void gtk_custom_table_calc_clip(GtkWidget *table) {
     int i = 0;
 
     /* find first visible row */
-    for(i = 1; i <= priv->y; i++) {
+    for(i = 0; i < priv->y; i++) {
 
-        if(priv->rows[i-1]->hidden) {
+        if(priv->rows[i]->hidden) {
             continue;
         }
 
-        if(priv->row_offset_temp[i] > top) {
+        if(priv->row_offset_temp[i+1] > top) {
 
-            priv->clip_upper = i - 1;
+            priv->clip_upper = i;
             break;
         }
     }
 
     /* find last visible row */
-    for(i = 1; i <= priv->y; i++) {
+    for(i = 0; i < priv->y; i++) {
 
-        if(priv->rows[i-1]->hidden) {
+        if(priv->rows[i]->hidden) {
             continue;
         }
 
-        if(priv->row_offset_temp[i] >= bot) {
+        if(priv->row_offset_temp[i+1] >= bot) {
 
-            priv->clip_lower = i - 1;
+            priv->clip_lower = i + 1;
             break;
         }
     }

@@ -186,8 +186,6 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     TableMeta *meta_rows = NULL;
     TableMeta *meta_cols = NULL;
 
-    int offset = priv->has_header ? priv->head->height_temp : 0;
-
     /* only draw visible rows */
     for(i = priv->clip_upper; i < priv->clip_lower; i++) {
 
@@ -214,7 +212,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
             cairo_rectangle(cr, 
                 priv->col_offset_temp[j] + 0.5,
-                priv->row_offset_temp[i] + offset,
+                priv->row_offset_temp[i],
                 priv->cols[j]->width_temp,
                 priv->rows[i]->height_temp
             );
@@ -297,8 +295,8 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 graph_width = graph_amount * graph_step;
 
                 cairo_rectangle(cr, 
-                    priv->col_offset_temp[j] + 4, 
-                    offset + 4, 
+                    priv->col_offset_temp[j] + 4,
+                    priv->row_offset_temp[i] + 4,
                     graph_width > 0 ? graph_width : 1,
                     priv->rows[i]->height_temp - 8
                 );
@@ -331,7 +329,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 /* align text */
                 cairo_move_to(cr, 
                     priv->col_offset_temp[j] + 10, 
-                    priv->row_offset_temp[i] + offset + 4
+                    priv->row_offset_temp[i] + 4
                 );
 
                 char *text_temp = NULL;
@@ -399,7 +397,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                         cairo_set_source_surface(cr,
                             surface,
                             priv->col_offset_temp[j] + 10,
-                            offset + 5
+                            priv->row_offset_temp[i] + 5
                         );
 
                         cairo_paint(cr);
@@ -443,9 +441,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
     }
 
     /* DRAW FOOTER ROW */ 
-    if(priv->has_footer && (priv->clip_lower >= priv->y)) {
-
-        int height = priv->foot->height_temp * (priv->y + priv->has_header);
+    if(priv->has_footer && priv->clip_lower == priv->y) {
 
         for(i = 0; i < priv->x; i++) {
 
@@ -454,7 +450,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
                 continue;
             }
                 
-            cairo_set_source_rgb(cr, 
+            cairo_set_source_rgb(cr,
                 rgb_border[0],
                 rgb_border[1],
                 rgb_border[2]
@@ -463,7 +459,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
             /* draw footer background color */
             cairo_rectangle(cr,
                 priv->col_offset_temp[i] + 0.5,
-                height,
+                priv->row_offset_temp[priv->y],
                 priv->cols[i]->width_temp,
                 priv->foot->height_temp
             );
@@ -486,7 +482,7 @@ void gtk_custom_table_paint(GtkWidget *table, cairo_t *cr) {
 
             cairo_move_to(cr,
                 priv->col_offset_temp[i] + 10,
-                height + 4
+                priv->row_offset_temp[priv->y] + 4
             );
 
             /* determine cell text alignment */
