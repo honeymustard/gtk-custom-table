@@ -34,7 +34,6 @@ void gtk_custom_table_calc_size(GtkWidget *table) {
     int size_x = gtk_custom_table_get_width(table);
     int size_y = gtk_custom_table_get_height(table);
 
-    printf("size request: %d x %d\n", size_x, size_y);
     gtk_widget_set_size_request(table, size_x, size_y);
 }
 
