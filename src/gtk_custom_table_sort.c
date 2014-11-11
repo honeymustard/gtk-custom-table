@@ -41,6 +41,13 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
     int col = row1->priv->sort_index;
     int sort = row1->priv->sort_order != GCT_SORT_ASC;
 
+    char *text1 = row1->cell[col]->text;
+    char *text2 = row2->cell[col]->text;
+
+    if(text1 == NULL || text2 == NULL) {
+        g_error("could not sort table: cell text was null");
+    }
+
     int result = 0;
 
     /* check to see if column has a sorting format */
@@ -54,16 +61,16 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
             unsigned long x = 0;
             unsigned long y = 0;
 
-            x = gtk_custom_table_string_parseint(row1->cell[col]->text);
-            y = gtk_custom_table_string_parseint(row2->cell[col]->text);
+            x = gtk_custom_table_string_parseint(text1);
+            y = gtk_custom_table_string_parseint(text2);
 
             result = sort ? (y < x) ? -1 : (y > x) : (x < y) ? -1 : (x > y);
         }
         /* compare large integers with optional +/- signs */
         else if(format == GCT_TEXT_SIGNED_INT) {
 
-            int x = atoll(row1->cell[col]->text);
-            int y = atoll(row2->cell[col]->text);
+            int x = atoll(text1);
+            int y = atoll(text2);
 
             result = sort ? (y < x) ? -1 : (y > x) : (x < y) ? -1 : (x > y);
         }
@@ -71,8 +78,8 @@ int gtk_custom_table_compare(const void *cmp1, const void *cmp2) {
     /* use natural compare sort */
     else {
 
-        char *x = row1->cell[col]->text;
-        char *y = row2->cell[col]->text;
+        char *x = text1;
+        char *y = text2;
 
         result = sort ? strnatcmp(y, x) : strnatcmp(x, y);
     }
@@ -109,7 +116,13 @@ void gtk_custom_table_sort(GtkWidget *table, int col, GctSortOrder sort) {
 
     /* set next table sort order */
     priv->sort_index = col;
-    priv->sort_order = sort == GCT_SORT_SWAP ? !priv->sort_order : sort;
+
+    if(sort == GCT_SORT_SWAP) {
+        priv->sort_order = !priv->sort_order;
+    }
+    else {
+        priv->sort_order = sort;
+    }
 
     /* perform qsort on table cells array */
     qsort((void *)priv->rows, priv->y, sizeof(TableRows *), 

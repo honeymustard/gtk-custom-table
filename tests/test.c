@@ -141,6 +141,11 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    gtk_custom_table_sort(table, 1, GCT_SORT_SWAP);
+    gtk_custom_table_sort(table, 0, GCT_SORT_ASC);
+    gtk_custom_table_sort(table, 2, GCT_SORT_DESC);
+    gtk_custom_table_sort(table, 3, GCT_SORT_SWAP);
+
     /* window meta */
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
         GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
